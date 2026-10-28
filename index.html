@@ -21,7 +21,7 @@
     <div class="max-w-[1380px] mx-auto px-4 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
 
       <!-- Brand Mark -->
-      <div class="flex items-center gap-3.5 cursor-pointer" onclick="switchTab('builder')">
+      <div class="flex items-center gap-3.5 cursor-pointer" data-click="switchTab" data-arg="builder">
         <div class="w-9 h-9 rounded-lg bg-[var(--ink-primary)] text-[var(--bg-canvas)] flex items-center justify-center font-editorial italic text-xl font-medium tracking-tight">
           C
         </div>
@@ -38,32 +38,32 @@
 
       <!-- Focused Customer Navigation: ONLY Quotes & Saved History (Owner tab hidden unless unlocked) -->
       <nav class="flex items-center gap-1 p-1 rounded-lg bg-[var(--bg-subtle)] border border-[var(--border-hairline)]">
-        <button id="tab-btn-builder" onclick="switchTab('builder')" class="tab-btn px-4 py-1.5 rounded-md text-xs font-semibold transition-all bg-[var(--bg-elevated)] text-[var(--ink-primary)] shadow-sm">
+        <button id="tab-btn-builder" data-click="switchTab" data-arg="builder" class="tab-btn px-4 py-1.5 rounded-md text-xs font-semibold transition-all bg-[var(--bg-elevated)] text-[var(--ink-primary)] shadow-sm">
           Crear Cotización
         </button>
-        <button id="tab-btn-history" onclick="switchTab('history')" class="tab-btn px-4 py-1.5 rounded-md text-xs font-medium transition-all text-[var(--ink-secondary)] hover:text-[var(--ink-primary)] flex items-center gap-1.5">
+        <button id="tab-btn-history" data-click="switchTab" data-arg="history" class="tab-btn px-4 py-1.5 rounded-md text-xs font-medium transition-all text-[var(--ink-secondary)] hover:text-[var(--ink-primary)] flex items-center gap-1.5">
           <span>Mis Cotizaciones</span>
           <span id="nav-quotes-counter" class="font-tabular text-[10px] px-1.5 py-0.2 rounded bg-[var(--bg-canvas)] text-[var(--ink-secondary)]">0</span>
         </button>
-        <button id="tab-btn-calculator" onclick="switchTab('calculator')" class="tab-btn px-4 py-1.5 rounded-md text-xs font-medium transition-all text-[var(--ink-secondary)] hover:text-[var(--ink-primary)]">
+        <button id="tab-btn-calculator" data-click="switchTab" data-arg="calculator" class="tab-btn px-4 py-1.5 rounded-md text-xs font-medium transition-all text-[var(--ink-secondary)] hover:text-[var(--ink-primary)]">
           Calculadora de Precio &amp; ROI
         </button>
         <!-- Hidden by default for regular visitors; visible only when Daniel opens ?admin=daniel or unlocks Owner Mode -->
-        <button id="tab-btn-admin" onclick="switchTab('admin')" class="hidden tab-btn px-3.5 py-1.5 rounded-md text-xs font-semibold transition-all text-[var(--accent-terracotta)]">
+        <button id="tab-btn-admin" data-click="switchTab" data-arg="admin" class="hidden tab-btn px-3.5 py-1.5 rounded-md text-xs font-semibold transition-all text-[var(--accent-terracotta)]">
           Panel Propietario
         </button>
       </nav>
 
       <!-- Right Actions: Theme + Upgrade PRO -->
       <div class="flex items-center gap-3">
-        <button onclick="toggleAtelierTheme()" class="text-xs font-medium text-[var(--ink-secondary)] hover:text-[var(--ink-primary)] flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-transparent hover:border-[var(--border-hairline)] transition" title="Cambiar apariencia">
+        <button data-click="toggleAtelierTheme" class="text-xs font-medium text-[var(--ink-secondary)] hover:text-[var(--ink-primary)] flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-transparent hover:border-[var(--border-hairline)] transition" title="Cambiar apariencia">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/>
           </svg>
           <span id="theme-toggle-label" class="hidden sm:inline">Modo Carbón</span>
         </button>
 
-        <button id="upgrade-header-btn" onclick="openProModal()" class="btn-terracotta px-4 py-2 text-xs flex items-center gap-1.5 shadow-sm">
+        <button id="upgrade-header-btn" data-click="openProModal" class="btn-terracotta px-4 py-2 text-xs flex items-center gap-1.5 shadow-sm">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/>
           </svg>
@@ -95,7 +95,7 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2.5">
-          <select id="preset-selector" onchange="loadPresetTemplate(this.value)" class="atelier-input pr-8 font-medium min-w-[250px]">
+          <select id="preset-selector" data-change="loadPresetTemplate" class="atelier-input pr-8 font-medium min-w-[250px]">
             <option value="">Usar plantilla de ejemplo por giro...</option>
             <option value="web_ecommerce">Desarrollo Web / Tienda Online</option>
             <option value="ai_automation">Automatización &amp; Chatbot WhatsApp</option>
@@ -107,18 +107,18 @@
             <option value="technical_services">Arquitectura, Remodelación o Servicios Técnicos</option>
           </select>
 
-          <button onclick="resetNewQuote()" class="btn-outline px-3 py-2 text-xs">
+          <button data-click="resetNewQuote" class="btn-outline px-3 py-2 text-xs">
             + Nueva en Blanco
           </button>
 
-          <button onclick="saveCurrentQuote()" class="btn-outline px-3.5 py-2 text-xs flex items-center gap-1.5">
+          <button data-click="saveCurrentQuote" class="btn-outline px-3.5 py-2 text-xs flex items-center gap-1.5">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"/>
             </svg>
             <span>Guardar</span>
           </button>
 
-          <button onclick="exportProposalPDF()" class="btn-obsidian px-4 py-2 text-xs flex items-center gap-1.5">
+          <button data-click="exportProposalPDF" class="btn-obsidian px-4 py-2 text-xs flex items-center gap-1.5">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z"/>
             </svg>
@@ -135,13 +135,13 @@
 
           <!-- 3-Step Selector -->
           <div class="grid grid-cols-3 gap-1 p-1 rounded-lg bg-[var(--bg-subtle)] border border-[var(--border-hairline)]">
-            <button id="step-btn-1" onclick="switchInspectorStep(1)" class="px-2.5 py-2 rounded-md text-xs font-semibold transition bg-[var(--bg-elevated)] text-[var(--ink-primary)] shadow-sm">
+            <button id="step-btn-1" data-click="switchInspectorStep" data-arg="1" class="px-2.5 py-2 rounded-md text-xs font-semibold transition bg-[var(--bg-elevated)] text-[var(--ink-primary)] shadow-sm">
               1. Datos &amp; IA
             </button>
-            <button id="step-btn-2" onclick="switchInspectorStep(2)" class="px-2.5 py-2 rounded-md text-xs font-medium transition text-[var(--ink-secondary)] hover:text-[var(--ink-primary)]">
+            <button id="step-btn-2" data-click="switchInspectorStep" data-arg="2" class="px-2.5 py-2 rounded-md text-xs font-medium transition text-[var(--ink-secondary)] hover:text-[var(--ink-primary)]">
               2. Conceptos ($)
             </button>
-            <button id="step-btn-3" onclick="switchInspectorStep(3)" class="px-2.5 py-2 rounded-md text-xs font-medium transition text-[var(--ink-secondary)] hover:text-[var(--ink-primary)]">
+            <button id="step-btn-3" data-click="switchInspectorStep" data-arg="3" class="px-2.5 py-2 rounded-md text-xs font-medium transition text-[var(--ink-secondary)] hover:text-[var(--ink-primary)]">
               3. Firma &amp; Contrato
             </button>
           </div>
@@ -160,7 +160,7 @@
                 Escribe qué trabajo vas a cotizar y la IA redactará el resumen, los conceptos sugeridos y precios base por ti.
               </p>
               <textarea id="ai-brief-input" rows="2" placeholder="Ej: Cotización para remodelación de oficinas o creación de página web para clínica dental..." class="atelier-input"></textarea>
-              <button onclick="generateProposalWithAI()" id="btn-generate-ai" class="btn-obsidian w-full py-2.5 px-4 text-xs flex items-center justify-center gap-2">
+              <button data-click="generateProposalWithAI" id="btn-generate-ai" class="btn-obsidian w-full py-2.5 px-4 text-xs flex items-center justify-center gap-2">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/>
                 </svg>
@@ -178,40 +178,40 @@
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label class="atelier-label">Tu Nombre o Empresa</label>
-                  <input id="sender-name" type="text" value="Daniel Segundo — Soluciones Digitales" oninput="renderProposalPreview()" class="atelier-input" />
+                  <input id="sender-name" type="text" value="Daniel Segundo — Soluciones Digitales" data-input="renderProposalPreview" class="atelier-input" />
                 </div>
                 <div>
                   <label class="atelier-label">Tu Correo o Teléfono</label>
-                  <input id="sender-contact" type="text" value="daniel.segundo.dev@gmail.com" oninput="renderProposalPreview()" class="atelier-input" />
+                  <input id="sender-contact" type="text" value="daniel.segundo.dev@gmail.com" data-input="renderProposalPreview" class="atelier-input" />
                 </div>
                 <div>
                   <label class="atelier-label">Nombre de tu Cliente</label>
-                  <input id="client-name" type="text" value="Grupo Médico San Ángel" oninput="renderProposalPreview()" class="atelier-input" />
+                  <input id="client-name" type="text" value="Grupo Médico San Ángel" data-input="renderProposalPreview" class="atelier-input" />
                 </div>
                 <div>
                   <label class="atelier-label">Título del Proyecto / Trabajo</label>
-                  <input id="project-title" type="text" value="Desarrollo de Portal Web & Automatización de Citas" oninput="renderProposalPreview()" class="atelier-input" />
+                  <input id="project-title" type="text" value="Desarrollo de Portal Web & Automatización de Citas" data-input="renderProposalPreview" class="atelier-input" />
                 </div>
               </div>
 
               <div>
                 <label class="atelier-label">Descripción General de la Propuesta</label>
-                <textarea id="proposal-summary" rows="3" oninput="renderProposalPreview()" class="atelier-input">Propuesta integral para el diseño, desarrollo y puesta en marcha de su plataforma digital de captación de clientes y agendamiento automático, optimizada para incrementar sus ventas y reducir tiempos operativos.</textarea>
+                <textarea id="proposal-summary" rows="3" data-input="renderProposalPreview" class="atelier-input">Propuesta integral para el diseño, desarrollo y puesta en marcha de su plataforma digital de captación de clientes y agendamiento automático, optimizada para incrementar sus ventas y reducir tiempos operativos.</textarea>
               </div>
 
               <div class="grid grid-cols-2 gap-3">
                 <div>
                   <label class="atelier-label">Tiempo de Entrega</label>
-                  <input id="delivery-time" type="text" value="10 a 14 días hábiles" oninput="renderProposalPreview()" class="atelier-input" />
+                  <input id="delivery-time" type="text" value="10 a 14 días hábiles" data-input="renderProposalPreview" class="atelier-input" />
                 </div>
                 <div>
                   <label class="atelier-label">Vigencia de la Cotización</label>
-                  <input id="validity-days" type="text" value="7 días naturales" oninput="renderProposalPreview()" class="atelier-input" />
+                  <input id="validity-days" type="text" value="7 días naturales" data-input="renderProposalPreview" class="atelier-input" />
                 </div>
               </div>
 
               <div class="pt-1 flex justify-end">
-                <button onclick="switchInspectorStep(2)" class="btn-obsidian px-4 py-2 text-xs">
+                <button data-click="switchInspectorStep" data-arg="2" class="btn-obsidian px-4 py-2 text-xs">
                   Siguiente: Conceptos y Precios &rarr;
                 </button>
               </div>
@@ -226,7 +226,7 @@
                   <h2 class="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)]">Conceptos a Cobrar</h2>
                   <p class="text-[11px] text-[var(--ink-muted)]">Agrega o edita cada servicio o producto</p>
                 </div>
-                <button onclick="addLineItem()" class="btn-outline px-2.5 py-1 text-xs">
+                <button data-click="addLineItem" class="btn-outline px-2.5 py-1 text-xs">
                   + Agregar Concepto
                 </button>
               </div>
@@ -238,7 +238,7 @@
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-3 border-t border-[var(--border-hairline)]">
                 <div>
                   <label class="atelier-label">Moneda</label>
-                  <select id="currency-select" onchange="renderProposalPreview()" class="atelier-input font-tabular">
+                  <select id="currency-select" data-change="renderProposalPreview" class="atelier-input font-tabular">
                     <option value="USD">USD ($)</option>
                     <option value="MXN">MXN ($)</option>
                     <option value="EUR">EUR (€)</option>
@@ -250,21 +250,21 @@
                 </div>
                 <div>
                   <label class="atelier-label">IVA (%)</label>
-                  <input id="tax-rate" type="number" min="0" max="50" value="16" oninput="renderProposalPreview()" class="atelier-input font-tabular" />
+                  <input id="tax-rate" type="number" min="0" max="50" value="16" data-input="renderProposalPreview" class="atelier-input font-tabular" />
                 </div>
                 <div>
                   <label class="atelier-label">Descuento (%)</label>
-                  <input id="discount-rate" type="number" min="0" max="90" value="0" oninput="renderProposalPreview()" class="atelier-input font-tabular" />
+                  <input id="discount-rate" type="number" min="0" max="90" value="0" data-input="renderProposalPreview" class="atelier-input font-tabular" />
                 </div>
                 <div>
                   <label class="atelier-label">% Anticipo</label>
-                  <input id="deposit-rate" type="number" min="10" max="100" value="50" oninput="renderProposalPreview()" class="atelier-input font-tabular" />
+                  <input id="deposit-rate" type="number" min="10" max="100" value="50" data-input="renderProposalPreview" class="atelier-input font-tabular" />
                 </div>
               </div>
 
               <div class="pt-1 flex justify-between">
-                <button onclick="switchInspectorStep(1)" class="btn-outline px-3 py-1.5 text-xs">&larr; Paso 1</button>
-                <button onclick="switchInspectorStep(3)" class="btn-obsidian px-4 py-2 text-xs">Siguiente: Firma y Contrato &rarr;</button>
+                <button data-click="switchInspectorStep" data-arg="1" class="btn-outline px-3 py-1.5 text-xs">&larr; Paso 1</button>
+                <button data-click="switchInspectorStep" data-arg="3" class="btn-obsidian px-4 py-2 text-xs">Siguiente: Firma y Contrato &rarr;</button>
               </div>
             </div>
           </div>
@@ -278,7 +278,7 @@
 
               <div>
                 <label class="atelier-label">Tus Datos de Pago o Cuenta Bancaria (Se muestran en la cotización)</label>
-                <input id="payment-methods-note" type="text" value="Transferencia bancaria, Tarjeta de crédito/débito o PayPal." oninput="renderProposalPreview()" class="atelier-input" />
+                <input id="payment-methods-note" type="text" value="Transferencia bancaria, Tarjeta de crédito/débito o PayPal." data-input="renderProposalPreview" class="atelier-input" />
               </div>
 
               <label class="flex items-start justify-between gap-3 p-3 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-hairline)] cursor-pointer">
@@ -286,14 +286,14 @@
                   <span class="text-xs font-semibold text-[var(--ink-primary)] block">Incluir Contrato de Prestación de Servicios</span>
                   <span class="text-[11px] text-[var(--ink-secondary)]">Agrega cláusulas legales de alcance, propiedad, tiempos y garantía al pie del PDF.</span>
                 </div>
-                <input id="toggle-contract" type="checkbox" checked onchange="renderProposalPreview()" class="mt-0.5 w-4 h-4 accent-[#141413]" />
+                <input id="toggle-contract" type="checkbox" checked data-change="renderProposalPreview" class="mt-0.5 w-4 h-4 accent-[#141413]" />
               </label>
 
               <!-- Digital Signature Pad -->
               <div class="space-y-1.5">
                 <div class="flex items-center justify-between">
                   <label class="atelier-label mb-0">Tu Firma Digital (Dibuja con el mouse o tu dedo)</label>
-                  <button onclick="clearSignature()" class="text-[11px] font-medium text-[var(--accent-terracotta)] hover:underline">
+                  <button data-click="clearSignature" class="text-[11px] font-medium text-[var(--accent-terracotta)] hover:underline">
                     Borrar firma
                   </button>
                 </div>
@@ -306,8 +306,8 @@
               </div>
 
               <div class="pt-2 flex justify-between items-center border-t border-[var(--border-hairline)]">
-                <button onclick="switchInspectorStep(2)" class="btn-outline px-3 py-1.5 text-xs">&larr; Paso 2</button>
-                <button onclick="exportProposalPDF()" class="btn-obsidian px-4 py-2 text-xs">
+                <button data-click="switchInspectorStep" data-arg="2" class="btn-outline px-3 py-1.5 text-xs">&larr; Paso 2</button>
+                <button data-click="exportProposalPDF" class="btn-obsidian px-4 py-2 text-xs">
                   Descargar Cotización PDF &rarr;
                 </button>
               </div>
@@ -330,10 +330,10 @@
             </div>
 
             <div class="flex flex-wrap items-center gap-2">
-              <button onclick="sendWhatsAppPitch()" class="btn-forest px-3.5 py-1.5 text-xs flex items-center gap-1.5">
+              <button data-click="sendWhatsAppPitch" class="btn-forest px-3.5 py-1.5 text-xs flex items-center gap-1.5">
                 <span>Enviar Cotización por WhatsApp</span>
               </button>
-              <button onclick="copyProposalSummary()" class="btn-outline px-3 py-1.5 text-xs">
+              <button data-click="copyProposalSummary" class="btn-outline px-3 py-1.5 text-xs">
                 Copiar Texto
               </button>
             </div>
@@ -350,7 +350,7 @@
                     COTIZACIÓN &amp; PROPUESTA DE SERVICIOS
                   </span>
                 </div>
-                <h2 id="doc-project-title" contenteditable="true" onblur="syncInlineEdit('project-title', this.innerText)" class="inline-editable font-editorial text-2xl sm:text-3xl font-normal text-[#141413] leading-tight">
+                <h2 id="doc-project-title" contenteditable="true" data-blur="syncInlineEdit" data-arg="project-title" class="inline-editable font-editorial text-2xl sm:text-3xl font-normal text-[#141413] leading-tight">
                   Desarrollo de Portal Web &amp; Automatización de Citas
                 </h2>
                 <div class="pt-1 text-xs text-[#57544E] flex flex-wrap items-center gap-x-3 gap-y-1">
@@ -377,7 +377,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-3 border border-[#D6D1C7] divide-y sm:divide-y-0 sm:divide-x divide-[#D6D1C7] bg-[#FAF9F5] text-xs">
               <div class="p-3.5">
                 <span class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C] block">Cliente / Destinatario</span>
-                <span id="doc-client-name" contenteditable="true" onblur="syncInlineEdit('client-name', this.innerText)" class="inline-editable font-semibold text-[#141413] text-sm mt-0.5 block">Grupo Médico San Ángel</span>
+                <span id="doc-client-name" contenteditable="true" data-blur="syncInlineEdit" data-arg="client-name" class="inline-editable font-semibold text-[#141413] text-sm mt-0.5 block">Grupo Médico San Ángel</span>
               </div>
               <div class="p-3.5">
                 <span class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C] block">Tiempo de Entrega</span>
@@ -395,7 +395,7 @@
                 <span class="font-tabular text-[10px] font-bold uppercase tracking-widest text-[#8A857C]">01 · Descripción &amp; Alcance del Proyecto</span>
                 <div class="flex-1 border-t border-[#E5E0D5]"></div>
               </div>
-              <p id="doc-summary" contenteditable="true" onblur="syncInlineEdit('proposal-summary', this.innerText)" class="inline-editable text-xs sm:text-[13.5px] text-[#262624] leading-relaxed pl-3.5 border-l-2 border-[#C84B31] py-1">
+              <p id="doc-summary" contenteditable="true" data-blur="syncInlineEdit" data-arg="proposal-summary" class="inline-editable text-xs sm:text-[13.5px] text-[#262624] leading-relaxed pl-3.5 border-l-2 border-[#C84B31] py-1">
               </p>
             </div>
 
@@ -509,7 +509,7 @@
             <!-- Subtle Freemium Colophon (Removed in PRO) -->
             <div id="doc-viral-watermark" class="pt-3 border-t border-dashed border-[#E5E0D5] flex flex-wrap items-center justify-between gap-2 font-tabular text-[10px] text-[#8A857C]">
               <span>COTIZACIÓN GENERADA CON COTIZAPRO STUDIO</span>
-              <span class="text-[#C84B31] font-semibold cursor-pointer" onclick="openProModal()">Quitar marca de agua con Pase PRO &rarr;</span>
+              <span class="text-[#C84B31] font-semibold cursor-pointer" data-click="openProModal">Quitar marca de agua con Pase PRO &rarr;</span>
             </div>
 
           </article>
@@ -536,7 +536,7 @@
             <span class="font-tabular text-[10px] uppercase tracking-wider text-[var(--ink-secondary)] block">Total Acumulado</span>
             <span id="history-total-amount" class="font-tabular text-base font-bold text-[var(--accent-forest)]">$0.00 USD</span>
           </div>
-          <button onclick="switchTab('builder'); resetNewQuote();" class="btn-obsidian px-4 py-2.5 text-xs">
+          <button data-click="startNewQuote" class="btn-obsidian px-4 py-2.5 text-xs">
             + Crear Nueva Cotización
           </button>
         </div>
@@ -569,12 +569,12 @@
 
           <div>
             <label class="atelier-label">Nombre de tu Cliente</label>
-            <input id="audit-business-name" type="text" value="Clínica Dental Sonrisa" oninput="calculateB2BAudit()" class="atelier-input" />
+            <input id="audit-business-name" type="text" value="Clínica Dental Sonrisa" data-input="calculateB2BAudit" class="atelier-input" />
           </div>
 
           <div>
             <label class="atelier-label">Giro del Cliente</label>
-            <select id="audit-niche" onchange="calculateB2BAudit()" class="atelier-input">
+            <select id="audit-niche" data-change="calculateB2BAudit" class="atelier-input">
               <option value="clinica">Salud / Consultorio / Clínica</option>
               <option value="inmobiliaria">Inmobiliaria / Bienes Raíces</option>
               <option value="restaurante">Restaurante / Cafetería / Alimentos</option>
@@ -587,11 +587,11 @@
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="atelier-label">Clientes / Mes</label>
-              <input id="audit-leads-month" type="number" value="120" min="5" oninput="calculateB2BAudit()" class="atelier-input font-tabular" />
+              <input id="audit-leads-month" type="number" value="120" min="5" data-input="calculateB2BAudit" class="atelier-input font-tabular" />
             </div>
             <div>
               <label class="atelier-label">Venta Promedio ($)</label>
-              <input id="audit-ticket-usd" type="number" value="150" min="5" oninput="calculateB2BAudit()" class="atelier-input font-tabular" />
+              <input id="audit-ticket-usd" type="number" value="150" min="5" data-input="calculateB2BAudit" class="atelier-input font-tabular" />
             </div>
           </div>
 
@@ -600,15 +600,15 @@
               <label class="atelier-label mb-0">% de Mejora o Clientes Recuperados con tu Trabajo</label>
               <span id="audit-loss-pct-label" class="font-tabular text-xs font-bold text-[var(--accent-terracotta)]">25%</span>
             </div>
-            <input id="audit-loss-pct" type="range" min="10" max="60" value="25" oninput="calculateB2BAudit()" class="w-full accent-[#C84B31]" />
+            <input id="audit-loss-pct" type="range" min="10" max="60" value="25" data-input="calculateB2BAudit" class="w-full accent-[#C84B31]" />
           </div>
 
           <div>
             <label class="atelier-label">Precio que Piensas Cobrarle ($ USD)</label>
-            <input id="audit-your-price" type="number" value="650" min="50" oninput="calculateB2BAudit()" class="atelier-input font-tabular font-bold text-[var(--accent-forest)]" />
+            <input id="audit-your-price" type="number" value="650" min="50" data-input="calculateB2BAudit" class="atelier-input font-tabular font-bold text-[var(--accent-forest)]" />
           </div>
 
-          <button onclick="convertAuditToProposal()" class="btn-obsidian w-full py-3 px-4 text-xs">
+          <button data-click="convertAuditToProposal" class="btn-obsidian w-full py-3 px-4 text-xs">
             Pasar estos Datos a mi Cotización PDF &rarr;
           </button>
         </div>
@@ -641,8 +641,8 @@
                 <p class="text-[11px] text-[var(--ink-muted)]">Úsalo para acompañar tu archivo PDF cuando se lo mandes a tu cliente</p>
               </div>
               <div class="flex items-center gap-2">
-                <button onclick="copyAuditPitch()" class="btn-outline px-3 py-1.5 text-xs">Copiar Mensaje</button>
-                <button onclick="sendAuditWhatsApp()" class="btn-forest px-3.5 py-1.5 text-xs">Enviar por WhatsApp &rarr;</button>
+                <button data-click="copyAuditPitch" class="btn-outline px-3 py-1.5 text-xs">Copiar Mensaje</button>
+                <button data-click="sendAuditWhatsApp" class="btn-forest px-3.5 py-1.5 text-xs">Enviar por WhatsApp &rarr;</button>
               </div>
             </div>
             <textarea id="audit-whatsapp-script" rows="7" class="atelier-input font-tabular text-xs leading-relaxed"></textarea>
@@ -663,7 +663,7 @@
             Administración de Stripe, IA y Licencias PRO
           </h2>
         </div>
-        <button onclick="switchTab('builder')" class="btn-outline px-3.5 py-2 text-xs">Volver al Cotizador</button>
+        <button data-click="switchTab" data-arg="builder" class="btn-outline px-3.5 py-2 text-xs">Volver al Cotizador</button>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -678,7 +678,7 @@
               <label class="atelier-label">Google Gemini API Key (Opcional)</label>
               <div class="flex gap-2">
                 <input id="cfg-gemini-key" type="password" placeholder="AIzaSy..." class="atelier-input font-tabular flex-1" />
-                <button onclick="testGeminiConnection()" class="btn-outline px-3.5 py-2 text-xs">Probar Key</button>
+                <button data-click="testGeminiConnection" class="btn-outline px-3.5 py-2 text-xs">Probar Key</button>
               </div>
             </div>
 
@@ -697,7 +697,7 @@
               </div>
             </div>
 
-            <button onclick="saveOwnerConfig()" class="btn-obsidian w-full py-2.5 text-xs">
+            <button data-click="saveOwnerConfig" class="btn-obsidian w-full py-2.5 text-xs">
               Guardar Configuración
             </button>
           </div>
@@ -716,7 +716,7 @@
 
             <div class="flex gap-2">
               <input id="license-client-email" type="email" placeholder="cliente@correo.com" class="atelier-input flex-1" />
-              <button onclick="generateClientLicenseKey()" class="btn-terracotta px-4 py-2 text-xs">Generar</button>
+              <button data-click="generateClientLicenseKey" class="btn-terracotta px-4 py-2 text-xs">Generar</button>
             </div>
 
             <div id="generated-license-box" class="hidden p-3.5 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-hairline)] flex items-center justify-between">
@@ -724,7 +724,7 @@
                 <div class="font-tabular text-[10px] uppercase text-[var(--ink-muted)]">Clave Generada</div>
                 <div id="generated-license-code" class="font-tabular text-sm font-bold text-[var(--ink-primary)]">CPRO-XXXXX-XXXXX-XXXXX-XXXXX</div>
               </div>
-              <button onclick="copyGeneratedLicense()" class="btn-outline px-3 py-1 text-xs">Copiar</button>
+              <button data-click="copyGeneratedLicense" class="btn-outline px-3 py-1 text-xs">Copiar</button>
             </div>
           </div>
         </div>
@@ -737,7 +737,7 @@
   <footer class="no-print border-t border-[var(--border-hairline)] py-4 px-4 sm:px-8 mt-12 text-[11px] text-[var(--ink-muted)]">
     <div class="max-w-[1380px] mx-auto flex flex-wrap items-center justify-between gap-2">
       <span>CotizaPro Studio — Plataforma de Cotizaciones Comerciales y Contratos</span>
-      <button onclick="promptOwnerAccess()" class="hover:text-[var(--ink-primary)] transition">Acceso Propietario</button>
+      <button data-click="promptOwnerAccess" class="hover:text-[var(--ink-primary)] transition">Acceso Propietario</button>
     </div>
   </footer>
 
@@ -746,7 +746,7 @@
        ==================================================================== -->
   <div id="pro-modal" class="no-print fixed inset-0 z-50 hidden bg-[#141413]/70 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="atelier-card max-w-lg w-full rounded-2xl p-7 space-y-6 relative">
-      <button onclick="closeProModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full border border-[var(--border-hairline)] text-[var(--ink-secondary)] hover:text-[var(--ink-primary)] flex items-center justify-center text-xs">
+      <button data-click="closeProModal" class="absolute top-5 right-5 w-8 h-8 rounded-full border border-[var(--border-hairline)] text-[var(--ink-secondary)] hover:text-[var(--ink-primary)] flex items-center justify-center text-xs">
         ✕
       </button>
 
@@ -773,7 +773,7 @@
               <li>· Contratos legales y Firma Digital</li>
             </ul>
           </div>
-          <button onclick="triggerPaymentCheckout('monthly')" class="btn-outline mt-5 w-full py-2.5 text-xs">
+          <button data-click="triggerPaymentCheckout" data-arg="monthly" class="btn-outline mt-5 w-full py-2.5 text-xs">
             Suscribirme en Stripe &rarr;
           </button>
         </div>
@@ -791,7 +791,7 @@
               <li>· Uso comercial para tu negocio</li>
             </ul>
           </div>
-          <button onclick="triggerPaymentCheckout('lifetime')" class="btn-obsidian mt-5 w-full py-2.5 text-xs">
+          <button data-click="triggerPaymentCheckout" data-arg="lifetime" class="btn-obsidian mt-5 w-full py-2.5 text-xs">
             Comprar Pase en Stripe &rarr;
           </button>
         </div>
@@ -801,7 +801,7 @@
         <label class="atelier-label">¿Ya tienes un código de licencia PRO?</label>
         <div class="flex gap-2">
           <input id="activate-license-input" type="text" placeholder="Escribe tu código CPRO-..." class="atelier-input font-tabular uppercase flex-1" />
-          <button onclick="activateProLicense()" class="btn-forest px-4 py-2 text-xs">Activar</button>
+          <button data-click="activateProLicense" class="btn-forest px-4 py-2 text-xs">Activar</button>
         </div>
       </div>
     </div>

@@ -123,9 +123,43 @@ let state = {
 
 function formatMoney(amount, currency = 'USD') {
   const symbols = { USD: '$', MXN: '$', EUR: '€', COP: '$', ARS: '$', CLP: '$', PEN: 'S/' };
-  const sym = symbols[currency] || '$';
-  const num = Number(amount || 0);
-  return `${sym}${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`;
+  const code = Object.prototype.hasOwnProperty.call(symbols, currency) ? currency : 'USD';
+  const num = safeNumber(amount);
+  return `${symbols[code]}${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${code}`;
+}
+
+function safeNumber(value) {
+  const num = Number(value);
+  return Number.isFinite(num) ? num : 0;
+}
+
+// Datos de localStorage o del servidor son no confiables: se normalizan antes de usarse
+function normalizeQuote(q) {
+  if (!q || typeof q !== 'object') return null;
+  const text = (v, max) => (typeof v === 'string' || typeof v === 'number' ? String(v).slice(0, max) : '');
+  const id = text(q.id, 40);
+  if (!/^[A-Za-z0-9-]{1,40}$/.test(id)) return null;
+  return {
+    ...q,
+    id,
+    date: text(q.date, 40),
+    clientName: text(q.clientName, 120),
+    projectTitle: text(q.projectTitle, 180),
+    total: safeNumber(q.total),
+    depositAmount: safeNumber(q.depositAmount),
+    currency: text(q.currency, 10),
+    items: Array.isArray(q.items)
+      ? q.items.slice(0, 50).filter(i => i && typeof i === 'object').map(i => ({
+          name: text(i.name, 200),
+          qty: safeNumber(i.qty),
+          price: safeNumber(i.price)
+        }))
+      : []
+  };
+}
+
+function normalizeQuotes(list) {
+  return Array.isArray(list) ? list.map(normalizeQuote).filter(Boolean) : [];
 }
 
 function showToast(msg) {
@@ -278,7 +312,7 @@ async function initApp() {
     }
 
     const savedQuotes = localStorage.getItem(STORAGE_KEYS.QUOTES);
-    if (savedQuotes) state.savedQuotes = JSON.parse(savedQuotes);
+    if (savedQuotes) state.savedQuotes = normalizeQuotes(JSON.parse(savedQuotes));
 
     // El plan PRO ya no se confía desde localStorage: se verifica la licencia en el servidor.
     // Las licencias legadas (CPRO-2026-...) eran falsificables y dejan de ser válidas.
@@ -311,10 +345,16 @@ async function initApp() {
     if (res.ok) {
       const serverData = await res.json();
       if (serverData.quotes && serverData.quotes.length > 0 && state.savedQuotes.length === 0) {
-        state.savedQuotes = serverData.quotes;
+        state.savedQuotes = normalizeQuotes(serverData.quotes);
       }
       if (serverData.config && Object.keys(serverData.config).length > 0) {
-        state.config = { ...state.config, ...serverData.config };
+        const { stripeMonthlyUrl, stripeLifetimeUrl, aiEnabled } = serverData.config;
+        state.config = {
+          ...state.config,
+          ...(stripeMonthlyUrl ? { stripeMonthlyUrl } : {}),
+          ...(stripeLifetimeUrl ? { stripeLifetimeUrl } : {}),
+          aiEnabled: aiEnabled === true
+        };
       }
     }
   } catch (_) {}
@@ -418,22 +458,22 @@ function renderLineItemsEditor() {
       <div class="flex items-center justify-between gap-2">
         <span class="font-tabular text-[11px] font-bold text-[var(--ink-muted)]">${numLabel}</span>
         <input type="text" value="${escapeHtml(item.name)}"
-          oninput="updateLineItem(${idx}, 'name', this.value)"
+          data-input="updateLineItem" data-idx="${idx}" data-field="name"
           placeholder="Nombre del servicio o producto..."
           class="atelier-input flex-1" />
-        <button onclick="removeLineItem(${idx})" class="text-[var(--ink-muted)] hover:text-[var(--accent-terracotta)] px-1.5 text-xs font-bold" title="Eliminar">✕</button>
+        <button data-click="removeLineItem" data-idx="${idx}" class="text-[var(--ink-muted)] hover:text-[var(--accent-terracotta)] px-1.5 text-xs font-bold" title="Eliminar">✕</button>
       </div>
       <div class="grid grid-cols-2 gap-2.5 pl-6">
         <div class="flex items-center gap-2">
           <span class="font-tabular text-[10px] uppercase text-[var(--ink-secondary)]">Cant:</span>
-          <input type="number" min="1" value="${item.qty}"
-            oninput="updateLineItem(${idx}, 'qty', this.value)"
+          <input type="number" min="1" value="${safeNumber(item.qty)}"
+            data-input="updateLineItem" data-idx="${idx}" data-field="qty"
             class="atelier-input font-tabular py-1" />
         </div>
         <div class="flex items-center gap-2">
           <span class="font-tabular text-[10px] uppercase text-[var(--ink-secondary)]">Precio ($):</span>
-          <input type="number" min="0" step="10" value="${item.price}"
-            oninput="updateLineItem(${idx}, 'price', this.value)"
+          <input type="number" min="0" step="10" value="${safeNumber(item.price)}"
+            data-input="updateLineItem" data-idx="${idx}" data-field="price"
             class="atelier-input font-tabular font-semibold text-[var(--accent-forest)] py-1" />
         </div>
       </div>
@@ -555,7 +595,7 @@ function renderProposalPreview() {
     tr.innerHTML = `
       <td class="py-3 px-3.5 font-tabular text-[11px] text-[#8A857C]">${idxStr}</td>
       <td class="py-3 px-3.5 font-medium text-[#141413]">${escapeHtml(item.name)}</td>
-      <td class="py-3 px-3.5 text-center font-tabular text-[#57544E]">${item.qty}</td>
+      <td class="py-3 px-3.5 text-center font-tabular text-[#57544E]">${safeNumber(item.qty)}</td>
       <td class="py-3 px-3.5 text-right font-tabular text-[#57544E]">${formatMoney(item.price, calc.currency)}</td>
       <td class="py-3 px-3.5 text-right font-tabular font-semibold text-[#141413]">${formatMoney(lineTotal, calc.currency)}</td>
     `;
@@ -858,7 +898,7 @@ function renderCustomerQuotesHistory() {
       <div class="col-span-full atelier-card rounded-xl p-10 text-center space-y-3">
         <p class="font-editorial text-xl text-[var(--ink-primary)]">Aún no tienes cotizaciones guardadas</p>
         <p class="text-xs text-[var(--ink-secondary)]">Todas las cotizaciones que guardes o descargues en PDF aparecerán aquí para cuando quieras volver a editarlas.</p>
-        <button onclick="switchTab('builder')" class="btn-obsidian px-4 py-2 text-xs mt-2">Crear mi primera cotización &rarr;</button>
+        <button data-click="switchTab" data-arg="builder" class="btn-obsidian px-4 py-2 text-xs mt-2">Crear mi primera cotización &rarr;</button>
       </div>
     `;
     return;
@@ -881,13 +921,13 @@ function renderCustomerQuotesHistory() {
           <span class="font-tabular text-base font-bold text-[var(--accent-forest)]">${formatMoney(q.total, q.currency)}</span>
         </div>
         <div class="flex items-center gap-2">
-          <button onclick="loadSavedQuote('${escapeHtml(q.id)}')" class="btn-obsidian flex-1 py-1.5 text-xs">
+          <button data-click="loadSavedQuote" data-quote-id="${escapeHtml(q.id)}" class="btn-obsidian flex-1 py-1.5 text-xs">
             Abrir y Editar
           </button>
-          <button onclick="duplicateSavedQuote('${escapeHtml(q.id)}')" class="btn-outline px-2.5 py-1.5 text-xs" title="Duplicar">
+          <button data-click="duplicateSavedQuote" data-quote-id="${escapeHtml(q.id)}" class="btn-outline px-2.5 py-1.5 text-xs" title="Duplicar">
             Duplicar
           </button>
-          <button onclick="deleteSavedQuote('${escapeHtml(q.id)}')" class="btn-outline px-2.5 py-1.5 text-xs text-[var(--accent-terracotta)]" title="Eliminar">
+          <button data-click="deleteSavedQuote" data-quote-id="${escapeHtml(q.id)}" class="btn-outline px-2.5 py-1.5 text-xs text-[var(--accent-terracotta)]" title="Eliminar">
             ✕
           </button>
         </div>
@@ -973,7 +1013,7 @@ Quedo atento a tus comentarios para iniciar.`;
 
 function sendWhatsAppPitch() {
   const text = buildProposalPitchText();
-  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
 }
 
 function copyProposalSummary() {
@@ -1029,7 +1069,7 @@ function copyAuditPitch() {
 function sendAuditWhatsApp() {
   const scriptEl = document.getElementById('audit-whatsapp-script');
   if (!scriptEl) return;
-  window.open(`https://wa.me/?text=${encodeURIComponent(scriptEl.value)}`, '_blank');
+  window.open(`https://wa.me/?text=${encodeURIComponent(scriptEl.value)}`, '_blank', 'noopener,noreferrer');
 }
 
 function convertAuditToProposal() {
@@ -1263,5 +1303,62 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 }
+
+// Delegación de eventos: sin handlers inline, la CSP puede prohibir todo script en línea.
+// Solo se ejecutan acciones de esta lista blanca.
+function startNewQuote() {
+  switchTab('builder');
+  resetNewQuote();
+}
+
+const UI_ACTIONS = {
+  switchTab: el => switchTab(el.dataset.arg),
+  switchInspectorStep: el => switchInspectorStep(Number(el.dataset.arg)),
+  triggerPaymentCheckout: el => triggerPaymentCheckout(el.dataset.arg),
+  loadPresetTemplate: el => loadPresetTemplate(el.value),
+  syncInlineEdit: el => syncInlineEdit(el.dataset.arg, el.innerText),
+  updateLineItem: el => updateLineItem(Number(el.dataset.idx), el.dataset.field, el.value),
+  removeLineItem: el => removeLineItem(Number(el.dataset.idx)),
+  loadSavedQuote: el => loadSavedQuote(el.dataset.quoteId),
+  duplicateSavedQuote: el => duplicateSavedQuote(el.dataset.quoteId),
+  deleteSavedQuote: el => deleteSavedQuote(el.dataset.quoteId),
+  startNewQuote,
+  activateProLicense,
+  addLineItem,
+  calculateB2BAudit,
+  clearSignature,
+  closeProModal,
+  convertAuditToProposal,
+  copyAuditPitch,
+  copyGeneratedLicense,
+  copyProposalSummary,
+  exportProposalPDF,
+  generateClientLicenseKey,
+  generateProposalWithAI,
+  openProModal,
+  promptOwnerAccess,
+  renderProposalPreview,
+  resetNewQuote,
+  saveCurrentQuote: () => saveCurrentQuote(),
+  saveOwnerConfig,
+  sendAuditWhatsApp,
+  sendWhatsAppPitch,
+  testGeminiConnection,
+  toggleAtelierTheme
+};
+
+function dispatchUiAction(kind, event) {
+  const el = event.target instanceof Element ? event.target.closest(`[data-${kind}]`) : null;
+  if (!el) return;
+  const action = UI_ACTIONS[el.dataset[kind]];
+  if (typeof action === 'function' && Object.prototype.hasOwnProperty.call(UI_ACTIONS, el.dataset[kind])) {
+    action(el);
+  }
+}
+
+['click', 'input', 'change'].forEach(kind => {
+  document.addEventListener(kind, event => dispatchUiAction(kind, event));
+});
+document.addEventListener('focusout', event => dispatchUiAction('blur', event));
 
 window.addEventListener('DOMContentLoaded', initApp);
