@@ -22,7 +22,10 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_FILES = ["index.html", "app.js", "styles.css", "tailwind.css", "server.py", "wsgi.py"]
+PROJECT_FILES = [
+    "index.html", "app.js", "styles.css", "tailwind.css", "server.py", "wsgi.py",
+    "favicon.svg", "og-image.png", "robots.txt", "sitemap.xml",
+]
 # Only server secrets are copied to the remote .env; deployment credentials stay local
 REMOTE_ENV_KEYS = ["COTIZAPRO_OWNER_PASSWORD", "STRIPE_SECRET_KEY", "STRIPE_PAYMENT_LINK_IDS", "GEMINI_API_KEY"]
 

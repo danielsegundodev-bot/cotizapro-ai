@@ -268,6 +268,15 @@ class SecurityRegressionTests(unittest.TestCase):
             self.request("POST", "/api/ai/generate", {"brief": "x"})
         self.assertEqual(self.request("POST", "/api/ai/generate", {"brief": "x"})[0], 429)
 
+    def test_seo_assets_are_public_and_api_is_disallowed(self):
+        for path, content_type in (("/robots.txt", "text/plain"), ("/sitemap.xml", "xml"),
+                                   ("/favicon.svg", "image/svg+xml"), ("/og-image.png", "image/png")):
+            status, _, resp = self.request("GET", path)
+            self.assertEqual(status, 200, path)
+            self.assertIn(content_type, resp.getheader("Content-Type"), path)
+        _, robots, _ = self.request("GET", "/robots.txt")
+        self.assertIn(b"Disallow: /api/", robots)
+
     # --- Phase 6: headers -----------------------------------------------------------------------
 
     def test_security_headers_are_sent(self):

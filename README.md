@@ -6,7 +6,7 @@
 
 ## 💰 Los 3 Motores de Ingresos Integrados
 
-1. **Motor 1 — Suscripciones SaaS & Licencias PRO ($9/mes o $29 USD Lifetime):**
+1. **Motor 1 — Suscripciones SaaS & Licencias PRO ($168.22 MXN/mes o $542.13 MXN de por vida, ≈ $9 / $29 USD):**
    - Los usuarios pueden generar hasta **3 cotizaciones gratis** (las cuales llevan una marca de agua viral al pie del PDF que atrae tráfico orgánico a tu plataforma).
    - Para eliminar la marca de agua y desbloquear cotizaciones ilimitadas, el usuario adquiere el **Plan PRO** mediante tu enlace de **Stripe / LemonSqueezy / MercadoPago / PayPal** o pago directo por WhatsApp.
    - En el **Panel de Dueño** tienes un **Generador Criptográfico de Licencias (`CPRO-2026-...`)** para activar cuentas de clientes con 100% de margen para ti.

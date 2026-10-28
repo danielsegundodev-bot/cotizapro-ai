@@ -10,6 +10,7 @@ const STORAGE_KEYS = {
   PLAN: 'cotizapro_user_plan_v1',
   LICENSE_KEY: 'cotizapro_license_key_v1',
   CLIENT_ID: 'cotizapro_client_id_v1',
+  SENDER: 'cotizapro_sender_profile_v1',
   USAGE: 'cotizapro_free_usage_v1',
   THEME: 'cotizapro_atelier_theme_v1'
 };
@@ -214,9 +215,9 @@ function switchTab(tabId) {
     if (sec) sec.classList.toggle('hidden', t !== tabId);
     if (btn && !btn.classList.contains('hidden')) {
       if (t === tabId) {
-        btn.className = 'tab-btn px-4 py-1.5 rounded-md text-xs font-semibold transition-all bg-[var(--bg-elevated)] text-[var(--ink-primary)] shadow-sm flex items-center gap-1.5';
+        btn.className = 'tab-btn px-2 sm:px-4 py-1.5 rounded-md text-xs font-semibold transition-all bg-[var(--bg-elevated)] text-[var(--ink-primary)] shadow-sm flex items-center justify-center gap-1.5';
       } else {
-        btn.className = 'tab-btn px-4 py-1.5 rounded-md text-xs font-medium transition-all text-[var(--ink-secondary)] hover:text-[var(--ink-primary)] flex items-center gap-1.5';
+        btn.className = 'tab-btn px-2 sm:px-4 py-1.5 rounded-md text-xs font-medium transition-all text-[var(--ink-secondary)] hover:text-[var(--ink-primary)] flex items-center justify-center gap-1.5';
       }
     }
   });
@@ -362,6 +363,7 @@ async function initApp() {
   });
   document.getElementById('doc-quote-number').textContent = state.quoteNumber;
 
+  loadSenderProfile();
   populateOwnerConfigInputs();
   updatePlanUI();
   updateQuotesCounter();
@@ -392,7 +394,7 @@ function updatePlanUI() {
   if (state.isPro) {
     if (badge) {
       badge.textContent = 'CUENTA PRO ILIMITADA';
-      badge.className = 'font-tabular text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[var(--accent-forest-soft)] text-[var(--accent-forest)]';
+      badge.className = 'hidden sm:inline whitespace-nowrap font-tabular text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[var(--accent-forest-soft)] text-[var(--accent-forest)]';
     }
     // Ocultar por completo el botón de "Obtener PRO Ilimitado" y mostrar la insignia fija de PRO Activo
     if (upgradeBtn) {
@@ -555,8 +557,8 @@ function getCalculatedTotals() {
 }
 
 function renderProposalPreview() {
-  const senderName = document.getElementById('sender-name')?.value || 'Tu Empresa';
-  const senderContact = document.getElementById('sender-contact')?.value || '';
+  const senderName = document.getElementById('sender-name')?.value.trim() || 'Tu Empresa';
+  const senderContact = document.getElementById('sender-contact')?.value.trim() || 'tu@correo.com';
   const clientName = document.getElementById('client-name')?.value || 'Cliente';
   const projectTitle = document.getElementById('project-title')?.value || 'Propuesta Comercial';
   const summary = document.getElementById('proposal-summary')?.value || '';
@@ -819,8 +821,38 @@ function clearSignature() {
   if (placeholder) placeholder.classList.remove('hidden');
 }
 
+// Datos del emisor: el ejemplo no trae datos reales; cada usuario guarda los suyos solo en su navegador
+function loadSenderProfile() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEYS.SENDER) || '{}');
+    const nameEl = document.getElementById('sender-name');
+    const contactEl = document.getElementById('sender-contact');
+    if (nameEl && typeof saved.name === 'string') nameEl.value = saved.name.slice(0, 120);
+    if (contactEl && typeof saved.contact === 'string') contactEl.value = saved.contact.slice(0, 120);
+  } catch (_) {}
+}
+
+function onSenderInput() {
+  try {
+    localStorage.setItem(STORAGE_KEYS.SENDER, JSON.stringify({
+      name: document.getElementById('sender-name')?.value || '',
+      contact: document.getElementById('sender-contact')?.value || ''
+    }));
+  } catch (_) {}
+  renderProposalPreview();
+}
+
 // Descargar PDF
 function exportProposalPDF() {
+  const senderInput = document.getElementById('sender-name');
+  if (senderInput && !senderInput.value.trim()) {
+    showToast('Escribe tu nombre o empresa antes de descargar la cotización.');
+    switchTab('builder');
+    switchInspectorStep(1);
+    senderInput.focus();
+    return;
+  }
+
   if (!state.isPro && state.freeUsed >= state.freeLimit) {
     showToast('Llegaste al límite de 3 cotizaciones gratuitas. Desbloquea Studio PRO.');
     openProModal();
@@ -1304,6 +1336,11 @@ function escapeHtml(str) {
 
 // Delegación de eventos: sin handlers inline, la CSP puede prohibir todo script en línea.
 // Solo se ejecutan acciones de esta lista blanca.
+function scrollToBuilder() {
+  switchTab('builder');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 function startNewQuote() {
   switchTab('builder');
   resetNewQuote();
@@ -1315,12 +1352,14 @@ const UI_ACTIONS = {
   triggerPaymentCheckout: el => triggerPaymentCheckout(el.dataset.arg),
   loadPresetTemplate: el => loadPresetTemplate(el.value),
   syncInlineEdit: el => syncInlineEdit(el.dataset.arg, el.innerText),
+  onSenderInput,
   updateLineItem: el => updateLineItem(Number(el.dataset.idx), el.dataset.field, el.value),
   removeLineItem: el => removeLineItem(Number(el.dataset.idx)),
   loadSavedQuote: el => loadSavedQuote(el.dataset.quoteId),
   duplicateSavedQuote: el => duplicateSavedQuote(el.dataset.quoteId),
   deleteSavedQuote: el => deleteSavedQuote(el.dataset.quoteId),
   startNewQuote,
+  scrollToBuilder,
   activateProLicense,
   addLineItem,
   calculateB2BAudit,

@@ -89,6 +89,10 @@ ALLOWED_STATIC_PATHS = {
     "/styles.css",
     "/app.js",
     "/tailwind.css",
+    "/favicon.svg",
+    "/og-image.png",
+    "/robots.txt",
+    "/sitemap.xml",
 }
 
 # Strict CSP: no inline scripts/handlers, no third-party scripts (Tailwind is compiled locally).

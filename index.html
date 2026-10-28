@@ -1,14 +1,64 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es-MX">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-Content-Type-Options" content="nosniff" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none';" />
-  <title>CotizaPro Studio — Cotizaciones Comerciales &amp; Contratos Listos para Firmar</title>
-  <meta name="description" content="Crea cotizaciones profesionales en PDF, desglosa presupuestos y anexa contratos legales con firma digital en 30 segundos." />
-  <link rel="icon" href="data:," />
+  <title>Cotizador Online Gratis: Formato de Cotización en PDF | CotizaPro</title>
+  <meta name="description" content="Haz cotizaciones profesionales en PDF gratis: formato de cotización con IVA, anticipo, contrato y firma digital. Envíala por WhatsApp en segundos. Sin registro." />
+  <link rel="canonical" href="https://ssjosedaniel.pythonanywhere.com/" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="theme-color" content="#141413" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+
+  <!-- Vista previa al compartir (WhatsApp, Facebook, LinkedIn, X) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="es_MX" />
+  <meta property="og:site_name" content="CotizaPro" />
+  <meta property="og:title" content="Cotizador Online Gratis: Formato de Cotización en PDF" />
+  <meta property="og:description" content="Crea cotizaciones profesionales con contrato y firma digital, y envíalas por WhatsApp en segundos." />
+  <meta property="og:url" content="https://ssjosedaniel.pythonanywhere.com/" />
+  <meta property="og:image" content="https://ssjosedaniel.pythonanywhere.com/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="CotizaPro: formato de cotización profesional en PDF" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Cotizador Online Gratis: Formato de Cotización en PDF" />
+  <meta name="twitter:description" content="Cotizaciones profesionales con contrato y firma digital, listas para WhatsApp." />
+  <meta name="twitter:image" content="https://ssjosedaniel.pythonanywhere.com/og-image.png" />
+
+  <!-- Datos estructurados para Google (no se ejecutan; la CSP no los bloquea) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "CotizaPro",
+        "url": "https://ssjosedaniel.pythonanywhere.com/",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web",
+        "inLanguage": "es-MX",
+        "description": "Cotizador online para crear cotizaciones profesionales en PDF con contrato, firma digital y envío por WhatsApp.",
+        "offers": [
+          { "@type": "Offer", "name": "Gratis", "price": "0", "priceCurrency": "MXN" },
+          { "@type": "Offer", "name": "PRO Mensual", "price": "168.22", "priceCurrency": "MXN" },
+          { "@type": "Offer", "name": "PRO de por vida", "price": "542.13", "priceCurrency": "MXN" }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          { "@type": "Question", "name": "¿Cómo hago una cotización en PDF gratis?", "acceptedAnswer": { "@type": "Answer", "text": "Elige una plantilla por giro o empieza en blanco, escribe tu nombre, el de tu cliente y tus conceptos con precio, y pulsa Descargar Cotización PDF. Las primeras 3 cotizaciones son gratis y no necesitas registrarte." } },
+          { "@type": "Question", "name": "¿Qué debe llevar un formato de cotización?", "acceptedAnswer": { "@type": "Answer", "text": "Datos de quien cotiza y del cliente, folio y fecha, alcance, desglose de conceptos con cantidades y precios, IVA o descuentos, total, condiciones de pago, vigencia y tiempo de entrega." } },
+          { "@type": "Question", "name": "¿Puedo enviar la cotización por WhatsApp?", "acceptedAnswer": { "@type": "Answer", "text": "Sí. CotizaPro genera un resumen con conceptos, total, anticipo y tiempo de entrega listo para enviar por WhatsApp, además del PDF." } }
+        ]
+      }
+    ]
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -19,8 +69,8 @@
 <body class="min-h-screen flex flex-col">
 
   <!-- CLEAN, FOCUSED HEADER FOR CUSTOMERS -->
-  <header class="no-print sticky top-0 z-30 bg-[var(--bg-canvas)]/95 backdrop-blur-md border-b border-[var(--border-hairline)]">
-    <div class="max-w-[1380px] mx-auto px-4 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+  <header class="no-print sm:sticky top-0 z-30 bg-[var(--bg-canvas)]/95 backdrop-blur-md border-b border-[var(--border-hairline)]">
+    <div class="max-w-[1380px] mx-auto px-4 sm:px-8 py-3 sm:py-3.5 flex flex-wrap items-center justify-between gap-3 sm:gap-4">
 
       <!-- Brand Mark -->
       <div class="flex items-center gap-3.5 cursor-pointer" data-click="switchTab" data-arg="builder">
@@ -29,8 +79,8 @@
         </div>
         <div>
           <div class="flex items-center gap-2.5">
-            <span class="font-editorial text-xl font-medium tracking-tight text-[var(--ink-primary)]">CotizaPro <span class="italic font-normal text-[var(--accent-terracotta)]">Studio</span></span>
-            <span id="plan-badge" class="font-tabular text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded border border-[var(--border-hairline)] bg-[var(--bg-elevated)] text-[var(--ink-secondary)]">
+            <span class="whitespace-nowrap font-editorial text-xl font-medium tracking-tight text-[var(--ink-primary)]">CotizaPro <span class="italic font-normal text-[var(--accent-terracotta)]">Studio</span></span>
+            <span id="plan-badge" class="hidden sm:inline whitespace-nowrap font-tabular text-[9px] sm:text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded border border-[var(--border-hairline)] bg-[var(--bg-elevated)] text-[var(--ink-secondary)]">
               3 Cotizaciones Gratis
             </span>
           </div>
@@ -39,18 +89,18 @@
       </div>
 
       <!-- Focused Customer Navigation: ONLY Quotes & Saved History (Owner tab hidden unless unlocked) -->
-      <nav class="flex items-center gap-1 p-1 rounded-lg bg-[var(--bg-subtle)] border border-[var(--border-hairline)]">
-        <button id="tab-btn-builder" data-click="switchTab" data-arg="builder" class="tab-btn px-4 py-1.5 rounded-md text-xs font-semibold transition-all bg-[var(--bg-elevated)] text-[var(--ink-primary)] shadow-sm">
-          Crear Cotización
+      <nav class="order-3 lg:order-none w-full lg:w-auto grid grid-cols-3 lg:flex items-center gap-1 p-1 rounded-lg bg-[var(--bg-subtle)] border border-[var(--border-hairline)]">
+        <button id="tab-btn-builder" data-click="switchTab" data-arg="builder" class="tab-btn px-2 sm:px-4 py-1.5 rounded-md text-xs font-semibold transition-all bg-[var(--bg-elevated)] text-[var(--ink-primary)] shadow-sm">
+          <span class="sm:hidden">Crear</span><span class="hidden sm:inline">Crear Cotización</span>
         </button>
-        <button id="tab-btn-history" data-click="switchTab" data-arg="history" class="tab-btn px-4 py-1.5 rounded-md text-xs font-medium transition-all text-[var(--ink-secondary)] hover:text-[var(--ink-primary)] flex items-center gap-1.5">
-          <span>Mis Cotizaciones</span>
+        <button id="tab-btn-history" data-click="switchTab" data-arg="history" class="tab-btn px-2 sm:px-4 py-1.5 rounded-md text-xs font-medium transition-all text-[var(--ink-secondary)] hover:text-[var(--ink-primary)] flex items-center justify-center gap-1.5">
+          <span class="sm:hidden">Historial</span><span class="hidden sm:inline">Mis Cotizaciones</span>
           <span id="nav-quotes-counter" class="font-tabular text-[10px] px-1.5 py-0.2 rounded bg-[var(--bg-canvas)] text-[var(--ink-secondary)]">0</span>
         </button>
-        <button id="tab-btn-calculator" data-click="switchTab" data-arg="calculator" class="tab-btn px-4 py-1.5 rounded-md text-xs font-medium transition-all text-[var(--ink-secondary)] hover:text-[var(--ink-primary)]">
-          Calculadora de Precio &amp; ROI
+        <button id="tab-btn-calculator" data-click="switchTab" data-arg="calculator" class="tab-btn px-2 sm:px-4 py-1.5 rounded-md text-xs font-medium transition-all text-[var(--ink-secondary)] hover:text-[var(--ink-primary)]">
+          <span class="sm:hidden">Calculadora</span><span class="hidden sm:inline">Calculadora de Precio &amp; ROI</span>
         </button>
-        <!-- Hidden by default for regular visitors; visible only when Daniel opens ?admin=daniel or unlocks Owner Mode -->
+        <!-- Hidden by default; shown only after server-verified owner login -->
         <button id="tab-btn-admin" data-click="switchTab" data-arg="admin" class="hidden tab-btn px-3.5 py-1.5 rounded-md text-xs font-semibold transition-all text-[var(--accent-terracotta)]">
           Panel Propietario
         </button>
@@ -69,7 +119,7 @@
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/>
           </svg>
-          <span>Obtener PRO Ilimitado</span>
+          <span class="sm:hidden">PRO</span><span class="hidden sm:inline">Obtener PRO Ilimitado</span>
         </button>
 
         <span id="pro-active-pill" class="hidden font-tabular text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg bg-[var(--accent-forest-soft)] text-[var(--accent-forest)] border border-[var(--accent-forest)]/30 select-none">
@@ -92,8 +142,11 @@
         <div>
           <span class="font-tabular text-[11px] uppercase tracking-widest text-[var(--accent-terracotta)] font-semibold">Generador de Cotizaciones &amp; Contratos</span>
           <h1 class="font-editorial text-2xl sm:text-3xl font-normal text-[var(--ink-primary)] mt-0.5">
-            Prepara tu Propuesta Comercial en Segundos
+            Haz cotizaciones profesionales en PDF, gratis y en segundos
           </h1>
+          <p class="text-xs text-[var(--ink-secondary)] mt-1.5">
+            3 cotizaciones gratis · Contrato y firma digital incluidos · Envío directo por WhatsApp · Sin registro
+          </p>
         </div>
 
         <div class="flex flex-wrap items-center gap-2.5">
@@ -180,11 +233,11 @@
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label class="atelier-label">Tu Nombre o Empresa</label>
-                  <input id="sender-name" type="text" value="Daniel Segundo — Soluciones Digitales" data-input="renderProposalPreview" class="atelier-input" />
+                  <input id="sender-name" type="text" value="" placeholder="Ej: Estudio Creativo López" autocomplete="organization" data-input="onSenderInput" class="atelier-input" />
                 </div>
                 <div>
                   <label class="atelier-label">Tu Correo o Teléfono</label>
-                  <input id="sender-contact" type="text" value="daniel.segundo.dev@gmail.com" data-input="renderProposalPreview" class="atelier-input" />
+                  <input id="sender-contact" type="text" value="" placeholder="Ej: contacto@tuempresa.com · 55 1234 5678" autocomplete="email" data-input="onSenderInput" class="atelier-input" />
                 </div>
                 <div>
                   <label class="atelier-label">Nombre de tu Cliente</label>
@@ -342,7 +395,7 @@
           </div>
 
           <!-- THE PRINTABLE QUOTE PAPER SHEET -->
-          <article id="proposal-document" class="dossier-paper p-7 sm:p-12 space-y-8">
+          <article id="proposal-document" class="dossier-paper p-4 sm:p-12 space-y-8">
 
             <!-- Header -->
             <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-6 border-b-2 border-[#141413] pb-6">
@@ -356,9 +409,9 @@
                   Desarrollo de Portal Web &amp; Automatización de Citas
                 </h2>
                 <div class="pt-1 text-xs text-[#57544E] flex flex-wrap items-center gap-x-3 gap-y-1">
-                  <span id="doc-sender-name" class="font-semibold text-[#141413]">Daniel Segundo — Soluciones Digitales</span>
+                  <span id="doc-sender-name" class="font-semibold text-[#141413]">Tu Empresa</span>
                   <span>·</span>
-                  <span id="doc-sender-contact" class="font-tabular text-[11px]">daniel.segundo.dev@gmail.com</span>
+                  <span id="doc-sender-contact" class="font-tabular text-[11px]">tu@correo.com</span>
                 </div>
               </div>
 
@@ -408,7 +461,7 @@
                 <div class="flex-1 border-t border-[#E5E0D5]"></div>
               </div>
 
-              <div class="border border-[#D6D1C7]">
+              <div class="border border-[#D6D1C7] overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                   <thead>
                     <tr class="border-b border-[#141413] bg-[#FAF9F5] font-tabular text-[10px] uppercase tracking-wider text-[#57544E]">
@@ -496,7 +549,7 @@
                   <img id="doc-signature-img" alt="Firma Emisor" class="max-h-16 object-contain hidden" />
                   <span id="doc-signature-placeholder" class="font-editorial italic text-sm text-[#8A857C]">Firma del emisor</span>
                 </div>
-                <p id="sig-sender-name" class="text-xs font-bold text-[#141413]">Daniel Segundo</p>
+                <p id="sig-sender-name" class="text-xs font-bold text-[#141413]">Tu Empresa</p>
                 <p class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C]">Proveedor / Especialista</p>
               </div>
               <div>
@@ -516,6 +569,112 @@
 
           </article>
         </div>
+      </div>
+
+      <!-- ====================================================================
+           LANDING: BENEFICIOS, PRECIOS Y PREGUNTAS FRECUENTES (contenido indexable)
+           ==================================================================== -->
+      <div class="no-print pt-12 mt-6 border-t border-[var(--border-hairline)] space-y-14">
+
+        <section aria-labelledby="beneficios-title" class="space-y-6">
+          <div class="max-w-2xl">
+            <span class="font-tabular text-[11px] uppercase tracking-widest text-[var(--accent-terracotta)] font-semibold">Por qué CotizaPro</span>
+            <h2 id="beneficios-title" class="font-editorial text-2xl sm:text-3xl text-[var(--ink-primary)] mt-1">Cotiza más rápido y cierra más ventas</h2>
+            <p class="text-sm text-[var(--ink-secondary)] mt-2 leading-relaxed">
+              CotizaPro es un cotizador online para freelancers, agencias y negocios de servicios en México y Latinoamérica.
+              Crea un formato de cotización profesional, agrega tus conceptos y precios, anexa un contrato con firma digital
+              y envíalo por WhatsApp o en PDF en menos de un minuto.
+            </p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="atelier-card rounded-xl p-5 space-y-2">
+              <h3 class="text-sm font-semibold text-[var(--ink-primary)]">Formato de cotización listo</h3>
+              <p class="text-xs text-[var(--ink-secondary)] leading-relaxed">Plantillas por giro (desarrollo web, marketing, diseño, remodelación, consultoría) con conceptos y precios sugeridos. Calcula IVA, descuentos y anticipo automáticamente.</p>
+            </div>
+            <div class="atelier-card rounded-xl p-5 space-y-2">
+              <h3 class="text-sm font-semibold text-[var(--ink-primary)]">Contrato y firma digital</h3>
+              <p class="text-xs text-[var(--ink-secondary)] leading-relaxed">Anexa términos de alcance, pagos y garantía, y firma directamente en pantalla. Tu cliente recibe una propuesta formal que inspira confianza.</p>
+            </div>
+            <div class="atelier-card rounded-xl p-5 space-y-2">
+              <h3 class="text-sm font-semibold text-[var(--ink-primary)]">Envío por WhatsApp y PDF</h3>
+              <p class="text-xs text-[var(--ink-secondary)] leading-relaxed">Comparte un resumen de la cotización por WhatsApp con un clic o descárgala en PDF. Guarda tu historial para duplicar y reutilizar cotizaciones.</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="precios" aria-labelledby="precios-title" class="space-y-6">
+          <div class="max-w-2xl">
+            <span class="font-tabular text-[11px] uppercase tracking-widest text-[var(--accent-terracotta)] font-semibold">Precios</span>
+            <h2 id="precios-title" class="font-editorial text-2xl sm:text-3xl text-[var(--ink-primary)] mt-1">Empieza gratis, pasa a PRO cuando lo necesites</h2>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="atelier-card rounded-xl p-6 flex flex-col justify-between">
+              <div>
+                <div class="font-tabular text-[10px] uppercase tracking-wider text-[var(--ink-secondary)]">Gratis</div>
+                <div class="font-tabular text-2xl font-bold text-[var(--ink-primary)] mt-1">$0</div>
+                <ul class="mt-3 space-y-1.5 text-xs text-[var(--ink-secondary)]">
+                  <li>· 3 cotizaciones en PDF</li>
+                  <li>· Contrato y firma digital</li>
+                  <li>· Envío por WhatsApp</li>
+                  <li>· Pie de página "Generada con CotizaPro"</li>
+                </ul>
+              </div>
+              <button data-click="scrollToBuilder" class="btn-outline mt-5 w-full py-2.5 text-xs">Crear cotización gratis</button>
+            </div>
+            <div class="atelier-card rounded-xl p-6 flex flex-col justify-between">
+              <div>
+                <div class="font-tabular text-[10px] uppercase tracking-wider text-[var(--ink-secondary)]">PRO Mensual</div>
+                <div class="font-tabular text-2xl font-bold text-[var(--ink-primary)] mt-1">$168.22 <span class="text-xs font-normal text-[var(--ink-muted)]">MXN / mes</span></div>
+                <div class="font-tabular text-[10px] text-[var(--ink-muted)]">≈ $9 USD · cancela cuando quieras</div>
+                <ul class="mt-3 space-y-1.5 text-xs text-[var(--ink-secondary)]">
+                  <li>· Cotizaciones ilimitadas</li>
+                  <li>· Sin marca de agua</li>
+                  <li>· Historial de clientes</li>
+                </ul>
+              </div>
+              <button data-click="triggerPaymentCheckout" data-arg="monthly" class="btn-outline mt-5 w-full py-2.5 text-xs">Suscribirme &rarr;</button>
+            </div>
+            <div class="rounded-xl p-6 bg-[var(--bg-elevated)] border-2 border-[var(--ink-primary)] flex flex-col justify-between relative">
+              <span class="font-tabular absolute -top-2.5 right-3 px-2 py-0.5 bg-[var(--accent-terracotta)] text-white text-[9px] font-bold uppercase tracking-wider">Más elegido</span>
+              <div>
+                <div class="font-tabular text-[10px] uppercase tracking-wider text-[var(--accent-terracotta)] font-semibold">PRO de por vida</div>
+                <div class="font-tabular text-2xl font-bold text-[var(--ink-primary)] mt-1">$542.13 <span class="text-xs font-normal text-[var(--ink-muted)]">MXN un solo pago</span></div>
+                <div class="font-tabular text-[10px] text-[var(--ink-muted)]">≈ $29 USD · sin mensualidades</div>
+                <ul class="mt-3 space-y-1.5 text-xs text-[var(--ink-secondary)]">
+                  <li>· Todo lo de PRO, para siempre</li>
+                  <li>· Uso comercial para tu negocio</li>
+                  <li>· Licencia para tus dispositivos</li>
+                </ul>
+              </div>
+              <button data-click="triggerPaymentCheckout" data-arg="lifetime" class="btn-obsidian mt-5 w-full py-2.5 text-xs">Comprar pase &rarr;</button>
+            </div>
+          </div>
+          <p class="text-[11px] text-[var(--ink-muted)]">Pagos seguros procesados por Stripe. Al pagar, tu cuenta PRO se activa automáticamente y recibes tu licencia.</p>
+        </section>
+
+        <section aria-labelledby="faq-title" class="space-y-4 max-w-3xl">
+          <h2 id="faq-title" class="font-editorial text-2xl sm:text-3xl text-[var(--ink-primary)]">Preguntas frecuentes</h2>
+          <details class="atelier-card rounded-lg p-4">
+            <summary class="text-sm font-semibold text-[var(--ink-primary)] cursor-pointer">¿Cómo hago una cotización en PDF gratis?</summary>
+            <p class="text-xs text-[var(--ink-secondary)] mt-2 leading-relaxed">Elige una plantilla por giro o empieza en blanco, escribe tu nombre, el de tu cliente y tus conceptos con precio. Pulsa "Descargar Cotización PDF" y guárdala o imprímela. Las primeras 3 cotizaciones son gratis y no necesitas registrarte.</p>
+          </details>
+          <details class="atelier-card rounded-lg p-4">
+            <summary class="text-sm font-semibold text-[var(--ink-primary)] cursor-pointer">¿Qué debe llevar un formato de cotización?</summary>
+            <p class="text-xs text-[var(--ink-secondary)] mt-2 leading-relaxed">Datos de quien cotiza y del cliente, folio y fecha, descripción del alcance, desglose de conceptos con cantidades y precios, IVA o descuentos, total, condiciones de pago, vigencia y tiempo de entrega. CotizaPro incluye todo esto automáticamente.</p>
+          </details>
+          <details class="atelier-card rounded-lg p-4">
+            <summary class="text-sm font-semibold text-[var(--ink-primary)] cursor-pointer">¿Puedo enviar la cotización por WhatsApp?</summary>
+            <p class="text-xs text-[var(--ink-secondary)] mt-2 leading-relaxed">Sí. Con "Enviar Cotización por WhatsApp" se genera un resumen con conceptos, total, anticipo y tiempo de entrega, listo para mandar a tu cliente. También puedes adjuntar el PDF.</p>
+          </details>
+          <details class="atelier-card rounded-lg p-4">
+            <summary class="text-sm font-semibold text-[var(--ink-primary)] cursor-pointer">¿Mis datos y los de mis clientes están seguros?</summary>
+            <p class="text-xs text-[var(--ink-secondary)] mt-2 leading-relaxed">Tus cotizaciones se guardan en tu navegador y en un espacio privado ligado a él; nadie más puede verlas. Los pagos los procesa Stripe y nunca vemos los datos de tu tarjeta.</p>
+          </details>
+          <details class="atelier-card rounded-lg p-4">
+            <summary class="text-sm font-semibold text-[var(--ink-primary)] cursor-pointer">¿Cómo activo PRO en otro dispositivo?</summary>
+            <p class="text-xs text-[var(--ink-secondary)] mt-2 leading-relaxed">Al pagar recibes una licencia con formato CPRO-XXXXX-XXXXX-XXXXX-XXXXX. En otro dispositivo abre "Obtener PRO" y escríbela en "¿Ya tienes un código de licencia PRO?".</p>
+          </details>
+        </section>
       </div>
     </section>
 
@@ -655,7 +814,6 @@
 
     <!-- ====================================================================
          VIEW 04: PRIVATE OWNER ADMIN PANEL (HIDDEN FROM CUSTOMERS!)
-         Only accessible to Daniel via ?admin=daniel or footer PIN
          ==================================================================== -->
     <section id="tab-admin" class="hidden no-print space-y-6">
       <div class="pb-5 border-b border-[var(--border-hairline)] flex items-center justify-between">
@@ -768,7 +926,8 @@
         <div class="p-5 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-hairline)] flex flex-col justify-between">
           <div>
             <div class="font-tabular text-[10px] uppercase tracking-wider text-[var(--ink-secondary)]">Plan Mensual</div>
-            <div class="font-tabular text-2xl font-bold text-[var(--ink-primary)] mt-1">$9 <span class="text-xs font-normal text-[var(--ink-muted)]">USD / mes</span></div>
+            <div class="font-tabular text-2xl font-bold text-[var(--ink-primary)] mt-1">$168.22 <span class="text-xs font-normal text-[var(--ink-muted)]">MXN / mes</span></div>
+            <div class="font-tabular text-[10px] text-[var(--ink-muted)]">≈ $9 USD</div>
             <ul class="mt-3 space-y-1.5 text-xs text-[var(--ink-secondary)]">
               <li>· Cotizaciones PDF ilimitadas</li>
               <li>· Sin marca de agua al pie</li>
@@ -786,7 +945,8 @@
           </span>
           <div>
             <div class="font-tabular text-[10px] uppercase tracking-wider text-[var(--accent-terracotta)] font-semibold">Un Solo Pago</div>
-            <div class="font-tabular text-2xl font-bold text-[var(--ink-primary)] mt-1">$29 <span class="text-xs font-normal text-[var(--ink-muted)]">USD de por vida</span></div>
+            <div class="font-tabular text-2xl font-bold text-[var(--ink-primary)] mt-1">$542.13 <span class="text-xs font-normal text-[var(--ink-muted)]">MXN de por vida</span></div>
+            <div class="font-tabular text-[10px] text-[var(--ink-muted)]">≈ $29 USD</div>
             <ul class="mt-3 space-y-1.5 text-xs text-[var(--ink-secondary)]">
               <li>· Acceso vitalicio sin mensualidades</li>
               <li>· Cotizaciones y clientes ilimitados</li>
