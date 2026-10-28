@@ -98,8 +98,11 @@ def main():
     print(f"   ✅ .env remoto ({', '.join(k for k in REMOTE_ENV_KEYS if env.get(k))})")
 
     print(f"2. Configurando la app web {domain} ...")
-    status, _ = pa.call("GET", f"/webapps/{domain}/")
-    if status == 404:
+    # A missing app answers 403 (not 404), so check the list of the user's apps instead
+    status, apps = pa.call("GET", "/webapps/")
+    if status != 200:
+        raise SystemExit(f"   ❌ No se pudo listar las apps: {status} {apps}")
+    if not any(app.get("domain_name") == domain for app in apps):
         _, versions = pa.call("GET", "/default_python_version/")
         available = versions.get("available_python_versions", []) if isinstance(versions, dict) else []
         candidates = sorted((v for v in available if str(v).startswith("3.")), key=lambda v: tuple(int(p) for p in v.split(".")))
