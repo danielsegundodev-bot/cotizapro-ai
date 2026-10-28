@@ -8,6 +8,7 @@ const STORAGE_KEYS = {
   QUOTES: 'cotizapro_saved_quotes_v1',
   LICENSES: 'cotizapro_generated_licenses_v1',
   PLAN: 'cotizapro_user_plan_v1',
+  LICENSE_KEY: 'cotizapro_license_key_v1',
   USAGE: 'cotizapro_free_usage_v1',
   THEME: 'cotizapro_atelier_theme_v1'
 };
@@ -188,31 +189,6 @@ function switchTab(tabId) {
   if (tabId === 'calculator') calculateB2BAudit();
 }
 
-// Hash del token legado de retorno de Stripe (las claves maestras y de propietario ya no viven en el cliente)
-const SECURITY_SALTS = {
-  PREFIX: 'COTIZAPRO_SALT_2026::',
-  STRIPE_TOKEN_HASH: 'a0cd46572561803fdaa68724c2a5b3b45b380ff0a694d933b37c3d455a36bae4'
-};
-
-async function sha256Salted(rawText) {
-  const data = new TextEncoder().encode(SECURITY_SALTS.PREFIX + String(rawText || ''));
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  return Array.from(new Uint8Array(hashBuffer))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
-}
-
-// Firma criptográfica de 4 caracteres para validar autenticidad de licencias CPRO-2026-XXXXXX-CCCC
-function computeLicenseChecksum4(payload6) {
-  let h = 0x811c9dc5;
-  const str = `CPRO_VERIFY_2026::${String(payload6).toUpperCase()}::9F8A`;
-  for (let i = 0; i < str.length; i++) {
-    h ^= str.charCodeAt(i);
-    h = Math.imul(h, 0x01000193);
-  }
-  return (h >>> 0).toString(36).toUpperCase().padStart(4, '0').slice(0, 4);
-}
-
 // Acceso Privado para el Propietario (verificado en el servidor; la clave nunca vive en el código)
 let ownerSessionToken = '';
 
@@ -286,11 +262,10 @@ async function initApp() {
     const savedQuotes = localStorage.getItem(STORAGE_KEYS.QUOTES);
     if (savedQuotes) state.savedQuotes = JSON.parse(savedQuotes);
 
-    const savedLicenses = localStorage.getItem(STORAGE_KEYS.LICENSES);
-    if (savedLicenses) state.generatedLicenses = JSON.parse(savedLicenses);
-
-    const savedPlan = localStorage.getItem(STORAGE_KEYS.PLAN);
-    if (savedPlan === 'PRO') state.isPro = true;
+    // El plan PRO ya no se confía desde localStorage: se verifica la licencia en el servidor.
+    // Las licencias legadas (CPRO-2026-...) eran falsificables y dejan de ser válidas.
+    localStorage.removeItem(STORAGE_KEYS.PLAN);
+    localStorage.removeItem(STORAGE_KEYS.LICENSES);
 
     const savedUsage = localStorage.getItem(STORAGE_KEYS.USAGE);
     if (savedUsage) state.freeUsed = parseInt(savedUsage, 10) || 0;
@@ -301,24 +276,13 @@ async function initApp() {
       setTimeout(() => promptOwnerAccess(), 300);
     }
 
-    // Desbloqueo automático al regresar de Stripe con token firmado o session_id real de Stripe (cs_live_... / cs_test_...)
-    const proParam = params.get('pro_token') || params.get('pro') || '';
+    // Al regresar de Stripe, el servidor confirma el pago con la API de Stripe y emite la licencia
     const sessionId = params.get('session_id') || '';
-    const isValidStripeSession = /^cs_(live|test)_[A-Za-z0-9]{20,}$/.test(sessionId);
-    let isValidProToken = false;
-    if (proParam) {
-      const tokHash = await sha256Salted(proParam);
-      isValidProToken = (tokHash === SECURITY_SALTS.STRIPE_TOKEN_HASH);
-    }
-
-    if (isValidStripeSession || isValidProToken) {
-      state.isPro = true;
-      localStorage.setItem(STORAGE_KEYS.PLAN, 'PRO');
-      updatePlanUI();
-      setTimeout(() => {
-        showToast('¡Pago confirmado en Stripe! Tu cuenta PRO Ilimitada está activa.');
-      }, 600);
+    if (sessionId) {
       window.history.replaceState({}, document.title, window.location.pathname);
+      await redeemStripeSession(sessionId);
+    } else {
+      await verifyStoredLicense();
     }
   } catch (e) {
     console.warn('Init warning:', e);
@@ -1154,16 +1118,6 @@ async function testGeminiConnection() {
   }
 }
 
-function computeLicenseSignature(emailClean) {
-  let hash = 2166136261;
-  const seed = `COTIZAPRO-SECRET-2026:${emailClean.toLowerCase()}`;
-  for (let i = 0; i < seed.length; i++) {
-    hash ^= seed.charCodeAt(i);
-    hash = Math.imul(hash, 16777619);
-  }
-  return (hash >>> 0).toString(36).toUpperCase().padStart(6, '0').slice(0, 6);
-}
-
 async function generateClientLicenseKey() {
   const emailInput = document.getElementById('license-client-email');
   const email = (emailInput?.value || '').trim();
@@ -1172,25 +1126,24 @@ async function generateClientLicenseKey() {
     return;
   }
 
-  const sig6 = computeLicenseSignature(email);
-  const check4 = computeLicenseChecksum4(sig6);
-  const licenseKey = `CPRO-2026-${sig6}-${check4}`;
-
-  const record = { email, licenseKey, createdAt: new Date().toISOString() };
-  state.generatedLicenses.unshift(record);
-  localStorage.setItem(STORAGE_KEYS.LICENSES, JSON.stringify(state.generatedLicenses));
-
   try {
-    await fetch('/api/licenses', {
+    const res = await fetch('/api/licenses', {
       method: 'POST',
       headers: ownerAuthHeaders(),
-      body: JSON.stringify(record)
+      body: JSON.stringify({ email })
     });
-  } catch (_) {}
-
-  document.getElementById('generated-license-code').textContent = licenseKey;
-  document.getElementById('generated-license-box').classList.remove('hidden');
-  showToast(`Código verificado generado para ${email}`);
+    if (!res.ok) {
+      showToast(res.status === 401 ? 'Tu sesión de propietario expiró. Vuelve a ingresar.' : 'No se pudo generar la licencia.');
+      return;
+    }
+    const record = await res.json();
+    state.generatedLicenses.unshift({ email: record.email, licenseKey: record.licenseKey, createdAt: new Date().toISOString() });
+    document.getElementById('generated-license-code').textContent = record.licenseKey;
+    document.getElementById('generated-license-box').classList.remove('hidden');
+    showToast(`Licencia generada para ${record.email}`);
+  } catch (_) {
+    showToast('No se pudo conectar con el servidor.');
+  }
 }
 
 function copyGeneratedLicense() {
@@ -1225,6 +1178,59 @@ function triggerPaymentCheckout(planType) {
   }
 }
 
+function setProActive(licenseKey) {
+  state.isPro = true;
+  localStorage.setItem(STORAGE_KEYS.LICENSE_KEY, licenseKey);
+  updatePlanUI();
+}
+
+async function verifyLicenseOnServer(licenseKey) {
+  try {
+    const res = await fetch('/api/licenses/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ licenseKey })
+    });
+    if (!res.ok) return false;
+    const data = await res.json();
+    return data.valid === true;
+  } catch (_) {
+    return false;
+  }
+}
+
+async function verifyStoredLicense() {
+  const storedKey = localStorage.getItem(STORAGE_KEYS.LICENSE_KEY);
+  if (!storedKey) return;
+  if (await verifyLicenseOnServer(storedKey)) {
+    setProActive(storedKey);
+  } else {
+    state.isPro = false;
+  }
+}
+
+async function redeemStripeSession(sessionId) {
+  try {
+    const res = await fetch('/api/stripe/redeem', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionId })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      setProActive(data.licenseKey);
+      setTimeout(() => {
+        window.prompt('¡Pago confirmado en Stripe! Guarda tu licencia PRO para activarla en otros dispositivos:', data.licenseKey);
+      }, 600);
+      return;
+    }
+  } catch (_) {}
+  await verifyStoredLicense();
+  if (!state.isPro) {
+    setTimeout(() => showToast('No pudimos confirmar el pago. Si ya pagaste, contáctanos con tu recibo de Stripe.'), 600);
+  }
+}
+
 async function activateProLicense() {
   const inputEl = document.getElementById('activate-license-input');
   const code = (inputEl?.value || '').trim().toUpperCase();
@@ -1233,27 +1239,13 @@ async function activateProLicense() {
     return;
   }
 
-  // Verificar firma de claves emitidas a clientes: CPRO-2026-<PAYLOAD6>-<CHECK4>
-  let isVerified = false;
-  {
-    const match = /^CPRO-2026-([A-Z0-9]{6})-([A-Z0-9]{4})$/.exec(code);
-    if (match) {
-      const payload6 = match[1];
-      const providedCheck4 = match[2];
-      const expectedCheck4 = computeLicenseChecksum4(payload6);
-      isVerified = (providedCheck4 === expectedCheck4);
-    }
-  }
-
-  if (!isVerified) {
-    showToast('Código inválido o alterado. Verifica tu credencial CPRO-2026-...');
+  if (!(await verifyLicenseOnServer(code))) {
+    showToast('Código inválido o revocado. Verifica tu licencia CPRO-...');
     return;
   }
 
-  state.isPro = true;
-  localStorage.setItem(STORAGE_KEYS.PLAN, 'PRO');
+  setProActive(code);
   if (inputEl) inputEl.value = '';
-  updatePlanUI();
   closeProModal();
   showToast('¡Cuenta PRO Ilimitada Activada! Se eliminaron todos los anuncios de actualización.');
 }

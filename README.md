@@ -32,3 +32,15 @@ Abre en tu navegador: `http://localhost:8080`
 El **Panel de Propietario** se abre desde el pie de página ("Acceso Propietario") con la clave definida en
 `COTIZAPRO_OWNER_PASSWORD`. La clave se verifica en el servidor y nunca se incluye en el código del navegador.
 Si la variable no está definida, el panel queda deshabilitado.
+
+## 💳 Desbloqueo PRO seguro con Stripe
+
+1. En cada Payment Link de Stripe, en **Después del pago → Redirigir a tu sitio**, usa:
+   `https://TU-DOMINIO/?session_id={CHECKOUT_SESSION_ID}`
+2. Define `STRIPE_SECRET_KEY` en `.env` (idealmente una *restricted key* de solo lectura).
+3. Al volver de Stripe, el servidor consulta la sesión en la API de Stripe, confirma que está pagada
+   y emite una licencia única `CPRO-XXXXX-XXXXX-XXXXX-XXXXX` (cada pago canjea una sola licencia).
+   Las suscripciones mensuales dejan de ser válidas cuando se cancelan en Stripe.
+
+> GitHub Pages solo sirve archivos estáticos: ahí funciona el cotizador como demo, pero el desbloqueo PRO
+> y el Panel de Propietario requieren desplegar `server.py` (Render, Railway, Fly.io, un VPS, etc.).

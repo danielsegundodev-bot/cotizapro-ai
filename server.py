@@ -1,9 +1,11 @@
 """
 CotizaPro Studio — Hardened Local & Cloud Python Backend Server
 Includes strict file whitelisting, HTTP security headers, payload size limits, and SQLite persistence.
-Owner authentication is verified server-side; secrets are loaded from environment variables / .env.
+Owner authentication, PRO licenses and Stripe payments are verified server-side;
+secrets are loaded from environment variables / .env.
 """
 
+import base64
 import hashlib
 import hmac
 import json
@@ -13,8 +15,11 @@ import sqlite3
 import sys
 import threading
 import time
+import urllib.error
+import urllib.request
+from datetime import datetime, timezone
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
-from urllib.parse import urlparse
+from urllib.parse import quote, urlparse
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -47,6 +52,16 @@ OWNER_SESSION_TTL = 8 * 3600
 LOGIN_MAX_ATTEMPTS = 5
 LOGIN_WINDOW_SECONDS = 15 * 60
 
+# Stripe secret key is only used server-side to confirm that a Checkout Session was really paid
+STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY", "")
+# Optional allowlist of Payment Link IDs (plink_...) whose checkouts may unlock PRO
+STRIPE_PAYMENT_LINK_IDS = {
+    p.strip() for p in os.environ.get("STRIPE_PAYMENT_LINK_IDS", "").split(",") if p.strip()
+}
+SUBSCRIPTION_CACHE_TTL = 3600
+ACTIVE_SUBSCRIPTION_STATUSES = {"active", "trialing", "past_due"}
+LICENSE_PATTERN = "CPRO-XXXXX-XXXXX-XXXXX-XXXXX"
+
 ALLOWED_STATIC_PATHS = {
     "/",
     "/index.html",
@@ -77,6 +92,8 @@ class RateLimiter:
 
 
 login_limiter = RateLimiter(LOGIN_MAX_ATTEMPTS, LOGIN_WINDOW_SECONDS)
+license_limiter = RateLimiter(20, 60)
+subscription_cache = {}
 owner_sessions = {}
 owner_sessions_lock = threading.Lock()
 
@@ -106,6 +123,50 @@ def is_valid_owner_session(token):
         return token in owner_sessions
 
 
+def utc_now_iso():
+    return datetime.now(timezone.utc).isoformat()
+
+
+def generate_license_key():
+    """100 random bits rendered as CPRO-XXXXX-XXXXX-XXXXX-XXXXX; unguessable, unlike the old checksum keys."""
+    raw = base64.b32encode(secrets.token_bytes(15)).decode("ascii")[:20]
+    return "CPRO-" + "-".join(raw[i:i + 5] for i in range(0, 20, 5))
+
+
+def normalize_license_key(value):
+    key = str(value or "").strip().upper()
+    if len(key) != len(LICENSE_PATTERN) or not key.startswith("CPRO-"):
+        return ""
+    groups = key[5:].split("-")
+    alphabet = set("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567")
+    if len(groups) != 4 or any(len(g) != 5 or not set(g) <= alphabet for g in groups):
+        return ""
+    return key
+
+
+def hash_license_key(key):
+    # Only hashes are stored, so a leaked database does not leak usable licenses
+    return hashlib.sha256(key.encode("utf-8")).hexdigest()
+
+
+def stripe_get(path):
+    req = urllib.request.Request(f"https://api.stripe.com/v1/{path}")
+    token = base64.b64encode(f"{STRIPE_SECRET_KEY}:".encode("utf-8")).decode("ascii")
+    req.add_header("Authorization", f"Basic {token}")
+    with urllib.request.urlopen(req, timeout=10) as resp:
+        return json.loads(resp.read().decode("utf-8"))
+
+
+def subscription_is_active(subscription_id):
+    cached = subscription_cache.get(subscription_id)
+    if cached and cached[1] > time.time():
+        return cached[0]
+    sub = stripe_get(f"subscriptions/{quote(subscription_id, safe='')}")
+    active = sub.get("status") in ACTIVE_SUBSCRIPTION_STATUSES
+    subscription_cache[subscription_id] = (active, time.time() + SUBSCRIPTION_CACHE_TTL)
+    return active
+
+
 def init_db():
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
@@ -122,10 +183,15 @@ def init_db():
         )
     """)
     cur.execute("""
-        CREATE TABLE IF NOT EXISTS licenses (
-            license_key TEXT PRIMARY KEY,
+        CREATE TABLE IF NOT EXISTS pro_licenses (
+            key_hash TEXT PRIMARY KEY,
             email TEXT,
-            created_at TEXT
+            plan TEXT,
+            source TEXT,
+            stripe_session TEXT UNIQUE,
+            stripe_subscription TEXT,
+            created_at TEXT,
+            revoked INTEGER DEFAULT 0
         )
     """)
     cur.execute("""
@@ -264,6 +330,12 @@ class CotizaProHandler(SimpleHTTPRequestHandler):
                 owner_sessions.pop(token, None)
             return self._send_json({"ok": True})
 
+        if parsed.path == "/api/licenses/verify":
+            return self._verify_license(data)
+
+        if parsed.path == "/api/stripe/redeem":
+            return self._redeem_stripe_session(data)
+
         if parsed.path in ("/api/licenses", "/api/config") and not self._is_owner():
             return self._send_json({"error": "Unauthorized"}, status=401)
 
@@ -294,20 +366,22 @@ class CotizaProHandler(SimpleHTTPRequestHandler):
             return self._send_json({"saved": True, "id": quote_id})
 
         if parsed.path == "/api/licenses":
+            email = str(data.get("email", "")).strip()[:120]
+            if "@" not in email:
+                conn.close()
+                return self._send_json({"error": "Invalid email"}, status=400)
+            plan = "monthly" if data.get("plan") == "monthly" else "lifetime"
+            license_key = generate_license_key()
             cur.execute(
                 """
-                INSERT OR REPLACE INTO licenses (license_key, email, created_at)
-                VALUES (?, ?, ?)
+                INSERT INTO pro_licenses (key_hash, email, plan, source, created_at)
+                VALUES (?, ?, ?, 'owner', ?)
                 """,
-                (
-                    str(data.get("licenseKey", ""))[:40],
-                    str(data.get("email", ""))[:120],
-                    str(data.get("createdAt", ""))[:40],
-                ),
+                (hash_license_key(license_key), email, plan, utc_now_iso()),
             )
             conn.commit()
             conn.close()
-            return self._send_json({"saved": True})
+            return self._send_json({"licenseKey": license_key, "email": email, "plan": plan})
 
         if parsed.path == "/api/config":
             current = load_owner_config(cur)
@@ -327,6 +401,78 @@ class CotizaProHandler(SimpleHTTPRequestHandler):
 
         conn.close()
         return self._send_json({"error": "Not found"}, status=404)
+
+
+    def _verify_license(self, data):
+        if not license_limiter.allow(self._client_ip()):
+            return self._send_json({"error": "Too many requests"}, status=429)
+        key = normalize_license_key(data.get("licenseKey"))
+        if not key:
+            return self._send_json({"valid": False})
+        conn = sqlite3.connect(DB_PATH)
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT plan, stripe_subscription, revoked FROM pro_licenses WHERE key_hash = ?",
+            (hash_license_key(key),),
+        )
+        row = cur.fetchone()
+        conn.close()
+        if not row or row[2]:
+            return self._send_json({"valid": False})
+        plan, subscription_id = row[0], row[1]
+        if subscription_id and STRIPE_SECRET_KEY:
+            try:
+                if not subscription_is_active(subscription_id):
+                    return self._send_json({"valid": False, "reason": "subscription_inactive"})
+            except (urllib.error.URLError, ValueError):
+                pass  # Stripe unreachable: keep honoring a license that was valid when issued
+        return self._send_json({"valid": True, "plan": plan})
+
+    def _redeem_stripe_session(self, data):
+        """Exchange a paid Stripe Checkout Session for a license; the payment is confirmed with Stripe's API."""
+        if not license_limiter.allow(self._client_ip()):
+            return self._send_json({"error": "Too many requests"}, status=429)
+        if not STRIPE_SECRET_KEY:
+            return self._send_json({"error": "Stripe verification is not configured"}, status=503)
+        session_id = str(data.get("sessionId", ""))
+        if not session_id.startswith(("cs_live_", "cs_test_")) or len(session_id) > 255 or not session_id.replace("_", "").isalnum():
+            return self._send_json({"error": "Invalid session"}, status=400)
+
+        conn = sqlite3.connect(DB_PATH)
+        cur = conn.cursor()
+        try:
+            try:
+                session = stripe_get(f"checkout/sessions/{session_id}")
+            except urllib.error.HTTPError:
+                return self._send_json({"error": "Invalid session"}, status=400)
+            except (urllib.error.URLError, ValueError):
+                return self._send_json({"error": "Stripe unavailable"}, status=502)
+
+            paid = session.get("status") == "complete" and session.get("payment_status") in ("paid", "no_payment_required")
+            if not paid:
+                return self._send_json({"error": "Payment not completed"}, status=402)
+            if STRIPE_PAYMENT_LINK_IDS and session.get("payment_link") not in STRIPE_PAYMENT_LINK_IDS:
+                return self._send_json({"error": "Session does not belong to this product"}, status=403)
+
+            # Idempotent: the same paid session can be revisited but never mints a second license
+            cur.execute("SELECT key_hash FROM pro_licenses WHERE stripe_session = ?", (session_id,))
+            if cur.fetchone():
+                return self._send_json({"error": "Session already redeemed; use your license key"}, status=409)
+
+            plan = "monthly" if session.get("mode") == "subscription" else "lifetime"
+            email = str((session.get("customer_details") or {}).get("email") or "")[:120]
+            license_key = generate_license_key()
+            cur.execute(
+                """
+                INSERT INTO pro_licenses (key_hash, email, plan, source, stripe_session, stripe_subscription, created_at)
+                VALUES (?, ?, ?, 'stripe', ?, ?, ?)
+                """,
+                (hash_license_key(license_key), email, plan, session_id, session.get("subscription"), utc_now_iso()),
+            )
+            conn.commit()
+            return self._send_json({"licenseKey": license_key, "plan": plan})
+        finally:
+            conn.close()
 
 
 if __name__ == "__main__":
