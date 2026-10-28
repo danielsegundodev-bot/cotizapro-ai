@@ -62,6 +62,9 @@ class CotizaProHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=BASE_DIR, **kwargs)
 
+    def log_message(self, fmt, *args):
+        pass
+
     def end_headers(self):
         # Security headers on all responses
         self.send_header("X-Content-Type-Options", "nosniff")
