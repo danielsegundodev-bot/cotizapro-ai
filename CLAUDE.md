@@ -17,7 +17,8 @@ Micro-SaaS en español (México/LatAm) para crear **cotizaciones profesionales e
 envío por WhatsApp, calculadora de ROI y autocompletado con IA (Gemini). Modelo freemium:
 3 PDFs gratis y luego **PRO** vía Stripe.
 
-- **App en producción:** https://ssjosedaniel.pythonanywhere.com (PythonAnywhere, plan gratis, región US)
+- **App en producción:** https://cotizapro.pythonanywhere.com (PythonAnywhere cuenta `cotizapro`, plan gratis, región US)
+- **URL anterior:** https://ssjosedaniel.pythonanywhere.com (cuenta `ssjosedaniel`). Ahora solo redirige con 301 a la nueva y conserva ruta y `?session_id=`. Sus credenciales están en `.env` como `PA_OLD_*`.
 - **Repositorio:** github.com/danielsegundodev-bot/cotizapro-ai (rama principal `main`)
 - **GitHub Pages** (`danielsegundodev-bot.github.io/cotizapro-ai`): solo una página que **redirige** a la app real y conserva `?session_id=`. Pages se sirve desde la rama `gh-pages`, que publica el workflow.
 
@@ -52,7 +53,7 @@ En otra computadora hay que recrear `.env` a mano: los valores los tiene el due�
 
 - **PRO Mensual:** https://buy.stripe.com/eVq3co9No92q3E2g0Vbsc04 · `plink_1UVbHD2Uj5JI4KG84VTcz4eg` · $168.22 MXN/mes (≈ $9 USD)
 - **PRO de por vida:** https://buy.stripe.com/eVq28kaRs92qfmK3e9bsc03 · `plink_1UVbFu2Uj5JI4KG8t40HKWZx` · $542.13 MXN (≈ $29 USD)
-- Ambos redirigen después del pago a `https://ssjosedaniel.pythonanywhere.com/?session_id={CHECKOUT_SESSION_ID}`.
+- Ambos redirigen después del pago a `https://cotizapro.pythonanywhere.com/?session_id={CHECKOUT_SESSION_ID}`.
 - Flujo: el cliente vuelve con `session_id` → `POST /api/stripe/redeem` → el servidor consulta la sesión en la API de Stripe (`status=complete`, pagada y de un link permitido) → emite una licencia `CPRO-XXXXX-XXXXX-XXXXX-XXXXX` (100 bits aleatorios, se guarda solo el hash SHA-256). Cada sesión se canjea una sola vez; las licencias mensuales dejan de valer al cancelar la suscripción.
 - Links viejos todavía activos en Stripe y que **no** desbloquean PRO: `…Vbsc00`, `…mhbsc01`, `…Cxbsc02`. Conviene desactivarlos.
 - Si cambian los precios, actualiza la sección `#precios` y el modal en `index.html`, el JSON-LD y este archivo.
@@ -90,11 +91,8 @@ Todas las vulnerabilidades se explotaron primero con pruebas reales y después s
 
 ## Pendientes / ideas
 
-- [ ] **Cambiar la URL para que no diga `ssjosedaniel`.**
-  - Gratis: crear otra cuenta de PythonAnywhere con un mejor nombre de usuario (por ejemplo `cotizapro`), poner ese usuario y su token en `.env` y desplegar.
-  - Después, reemplazar `ssjosedaniel.pythonanywhere.com` por la nueva URL en `index.html` (canonical, og, twitter, JSON-LD), `robots.txt`, `sitemap.xml`, `pages/index.html`, `pages/redirect.js`, `README.md` y este archivo.
-  - Cambiar la redirección de los 2 Payment Links en Stripe y re-verificar el sitio en Search Console.
-  - Mejor a largo plazo: dominio propio (unos $10–15 USD al año), que requiere el plan de pago de PythonAnywhere (unos $5 USD al mes).
+- [x] URL cambiada a `cotizapro.pythonanywhere.com` (2026-10-28); la vieja redirige.
+- [ ] A largo plazo: dominio propio (unos $10–15 USD al año), que requiere el plan de pago de PythonAnywhere (unos $5 USD al mes). Al migrar, cambia la URL en `index.html` (canonical, og, twitter, JSON-LD), `robots.txt`, `sitemap.xml`, `pages/`, `CLAUDE.md`, las redirecciones de Stripe y Search Console.
 - [ ] Mover al servidor el límite de 3 PDFs gratis.
 - [ ] Páginas de aterrizaje por giro (cotización para página web, remodelación, fotografía, clínica…) para ganar búsquedas de Google.
 - [ ] Renovar el token de API de PythonAnywhere (se expuso en un chat).
