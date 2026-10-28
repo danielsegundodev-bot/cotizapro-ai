@@ -1,4 +1,4 @@
-name: Deploy CotizaPro AI to GitHub Pages
+name: Test and publish GitHub Pages redirect
 
 on:
   push:
@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       # Actions pinned to commit SHAs so a moved or compromised tag cannot inject code
@@ -36,30 +36,28 @@ jobs:
       - name: Run security regression tests
         run: python3 -m unittest discover -s tests -v
 
-      # Publish ONLY the static frontend; server.py, scripts, README and config stay out of Pages
-      - name: Stage static site
-        run: |
-          mkdir _site
-          cp index.html app.js styles.css tailwind.css _site/
-
-      - name: Configure Pages
-        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
-
-      - name: Upload static artifact
-        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
-        with:
-          path: '_site'
-
-  deploy:
-    needs: build
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  publish:
+    # GitHub Pages serves the gh-pages branch. The app itself runs on PythonAnywhere, so Pages
+    # only gets a redirect page; server code and docs are never published there.
+    needs: test
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+      - name: Checkout repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Replace gh-pages content with the redirect page
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin gh-pages
+          git worktree add ../site origin/gh-pages
+          cd ../site
+          git rm -rq --ignore-unmatch .
+          cp "$GITHUB_WORKSPACE"/pages/index.html "$GITHUB_WORKSPACE"/pages/redirect.js .
+          touch .nojekyll
+          git add -A
+          if git diff --cached --quiet; then echo "gh-pages already up to date"; exit 0; fi
+          git commit -m "publish: redirect page for ${GITHUB_SHA::7}"
+          git push origin HEAD:gh-pages
