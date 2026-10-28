@@ -9,7 +9,9 @@ import base64
 import hashlib
 import hmac
 import json
+import math
 import os
+import re
 import secrets
 import sqlite3
 import sys
@@ -43,8 +45,22 @@ def load_dotenv(path):
 load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 DB_PATH = os.environ.get("COTIZAPRO_DB_PATH", os.path.join(BASE_DIR, "cotizapro.db"))
+# Loopback by default; set HOST=0.0.0.0 explicitly when deploying behind a cloud proxy
+HOST = os.environ.get("HOST", "127.0.0.1")
 PORT = int(os.environ.get("PORT", "8080"))
+# Only trust X-Forwarded-For when running behind a known reverse proxy (Render, Railway, nginx...)
+TRUST_PROXY = os.environ.get("TRUST_PROXY", "") == "1"
 MAX_BODY_BYTES = 65536  # 64 KB max body to prevent memory DoS
+REQUEST_TIMEOUT_SECONDS = 20  # drops slow/idle connections (slowloris)
+MAX_QUOTES_PER_CLIENT = 500
+MAX_LINE_ITEMS = 50
+
+CLIENT_ID_RE = re.compile(r"^[a-f0-9]{32}$")
+QUOTE_ID_RE = re.compile(r"^[A-Za-z0-9-]{1,40}$")
+STRIPE_LINK_RE = re.compile(r"^https://buy\.stripe\.com/[A-Za-z0-9_-]{1,64}$")
+WHATSAPP_RE = re.compile(r"^[0-9]{8,15}$")
+GEMINI_KEY_RE = re.compile(r"^[A-Za-z0-9_-]{20,100}$")
+CURRENCIES = {"USD", "MXN", "EUR", "COP", "ARS", "CLP", "PEN"}
 
 # Owner password is NEVER shipped to the browser; if unset, the owner panel stays disabled.
 OWNER_PASSWORD = os.environ.get("COTIZAPRO_OWNER_PASSWORD", "")
@@ -93,6 +109,7 @@ class RateLimiter:
 
 login_limiter = RateLimiter(LOGIN_MAX_ATTEMPTS, LOGIN_WINDOW_SECONDS)
 license_limiter = RateLimiter(20, 60)
+write_limiter = RateLimiter(60, 60)
 subscription_cache = {}
 owner_sessions = {}
 owner_sessions_lock = threading.Lock()
@@ -170,16 +187,20 @@ def subscription_is_active(subscription_id):
 def init_db():
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
+    # Quotes are scoped to an unguessable per-browser client id; the legacy global
+    # "quotes" table (readable and writable by anyone) is no longer served.
     cur.execute("""
-        CREATE TABLE IF NOT EXISTS quotes (
-            id TEXT PRIMARY KEY,
+        CREATE TABLE IF NOT EXISTS client_quotes (
+            client_id TEXT NOT NULL,
+            id TEXT NOT NULL,
             date TEXT,
             client_name TEXT,
             project_title TEXT,
             total REAL,
             currency TEXT,
             deposit_amount REAL,
-            items_json TEXT
+            items_json TEXT,
+            PRIMARY KEY (client_id, id)
         )
     """)
     cur.execute("""
@@ -210,9 +231,78 @@ def load_owner_config(cur):
     return json.loads(row[0]) if row else {}
 
 
+def clean_text(value, max_len):
+    if value is None:
+        return ""
+    if not isinstance(value, (str, int, float)) or isinstance(value, bool):
+        raise ValueError("Expected text")
+    return str(value).replace("\x00", "")[:max_len]
+
+
+def finite_number(value, minimum, maximum):
+    if isinstance(value, bool):
+        raise ValueError("Expected number")
+    number = float(value)
+    if not math.isfinite(number) or number < minimum or number > maximum:
+        raise ValueError("Number out of range")
+    return number
+
+
+def validate_quote(data):
+    quote_id = str(data.get("id", ""))
+    if not QUOTE_ID_RE.match(quote_id):
+        raise ValueError("Invalid quote id")
+    currency = str(data.get("currency", "USD"))
+    if currency not in CURRENCIES:
+        raise ValueError("Invalid currency")
+    items = data.get("items", [])
+    if not isinstance(items, list) or len(items) > MAX_LINE_ITEMS:
+        raise ValueError("Invalid items")
+    clean_items = []
+    for item in items:
+        if not isinstance(item, dict):
+            raise ValueError("Invalid item")
+        clean_items.append({
+            "name": clean_text(item.get("name"), 200),
+            "qty": finite_number(item.get("qty", 1), 0, 1e6),
+            "price": finite_number(item.get("price", 0), 0, 1e9),
+        })
+    return (
+        quote_id,
+        clean_text(data.get("date"), 40),
+        clean_text(data.get("clientName"), 120),
+        clean_text(data.get("projectTitle"), 180),
+        finite_number(data.get("total", 0), 0, 1e12),
+        currency,
+        finite_number(data.get("depositAmount", 0), 0, 1e12),
+        json.dumps(clean_items, ensure_ascii=False),
+    )
+
+
+def validate_owner_config(data, current):
+    """Accept only known keys with strict formats (payment links must be Stripe Payment Links)."""
+    cfg = {}
+    for key in ("stripeMonthlyUrl", "stripeLifetimeUrl"):
+        url = str(data.get(key, "")).strip()
+        if not STRIPE_LINK_RE.match(url):
+            raise ValueError(f"{key} must be a https://buy.stripe.com/... link")
+        cfg[key] = url
+    whatsapp = str(data.get("ownerWhatsapp", "")).strip()
+    if whatsapp and not WHATSAPP_RE.match(whatsapp):
+        raise ValueError("ownerWhatsapp must contain 8-15 digits")
+    cfg["ownerWhatsapp"] = whatsapp
+    gemini_key = str(data.get("geminiApiKey", "")).strip()
+    if gemini_key and not GEMINI_KEY_RE.match(gemini_key):
+        raise ValueError("Invalid Gemini API key format")
+    # An empty Gemini key keeps the stored one, so the key never needs to round-trip to the browser
+    cfg["geminiApiKey"] = gemini_key or current.get("geminiApiKey", "")
+    return cfg
+
+
 class CotizaProHandler(SimpleHTTPRequestHandler):
     server_version = "CotizaPro"
     sys_version = ""
+    timeout = REQUEST_TIMEOUT_SECONDS
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=BASE_DIR, **kwargs)
@@ -229,7 +319,26 @@ class CotizaProHandler(SimpleHTTPRequestHandler):
         super().end_headers()
 
     def _client_ip(self):
+        if TRUST_PROXY:
+            forwarded = self.headers.get("X-Forwarded-For", "")
+            if forwarded:
+                # The right-most entry is the one appended by our own proxy; the rest is client-controlled
+                return forwarded.split(",")[-1].strip()
         return self.client_address[0]
+
+    def _client_id(self):
+        client_id = self.headers.get("X-Client-Id", "").strip().lower()
+        return client_id if CLIENT_ID_RE.match(client_id) else ""
+
+    def _is_same_origin_json(self):
+        """CSRF guard: cross-site forms cannot send application/json, and foreign Origins are rejected."""
+        content_type = self.headers.get("Content-Type", "").split(";")[0].strip().lower()
+        if content_type != "application/json":
+            return False
+        origin = self.headers.get("Origin")
+        if origin:
+            return urlparse(origin).netloc.lower() == self.headers.get("Host", "").lower()
+        return True
 
     def _bearer_token(self):
         auth = self.headers.get("Authorization", "")
@@ -254,11 +363,40 @@ class CotizaProHandler(SimpleHTTPRequestHandler):
         if length <= 0:
             return {}
         if length > MAX_BODY_BYTES:
-            raise ValueError("Payload too large")
+            raise OverflowError("Payload too large")
         raw = self.rfile.read(length).decode("utf-8")
-        return json.loads(raw)
+        # Reject NaN/Infinity literals, which would later produce invalid JSON for browsers
+        return json.loads(raw, parse_constant=lambda c: (_ for _ in ()).throw(ValueError(c)))
+
+    def _send_internal_error(self):
+        sys.stderr.write(f"[error] {self.command} {self.path}\n")
+        try:
+            self._send_json({"error": "Internal server error"}, status=500)
+        except Exception:
+            pass
+
+    def do_HEAD(self):
+        # SimpleHTTPRequestHandler.do_HEAD would otherwise bypass the static whitelist
+        if urlparse(self.path).path not in ALLOWED_STATIC_PATHS:
+            self.send_response(403)
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+            return
+        return super().do_HEAD()
 
     def do_GET(self):
+        try:
+            return self._handle_get()
+        except Exception:
+            return self._send_internal_error()
+
+    def do_POST(self):
+        try:
+            return self._handle_post()
+        except Exception:
+            return self._send_internal_error()
+
+    def _handle_get(self):
         parsed = urlparse(self.path)
         if parsed.path == "/api/health":
             return self._send_json({"status": "ok", "service": "CotizaPro Studio"})
@@ -267,7 +405,14 @@ class CotizaProHandler(SimpleHTTPRequestHandler):
             conn = sqlite3.connect(DB_PATH)
             cur = conn.cursor()
 
-            cur.execute("SELECT id, date, client_name, project_title, total, currency, deposit_amount, items_json FROM quotes ORDER BY date DESC LIMIT 200")
+            # Each browser only ever sees its own quotes
+            cur.execute(
+                """
+                SELECT id, date, client_name, project_title, total, currency, deposit_amount, items_json
+                FROM client_quotes WHERE client_id = ? ORDER BY date DESC LIMIT 200
+                """,
+                (self._client_id() or "-",),
+            )
             quotes = [
                 {
                     "id": r[0],
@@ -308,14 +453,18 @@ class CotizaProHandler(SimpleHTTPRequestHandler):
 
         return super().do_GET()
 
-    def do_POST(self):
+    def _handle_post(self):
         parsed = urlparse(self.path)
+        if not self._is_same_origin_json():
+            return self._send_json({"error": "Cross-origin or non-JSON request rejected"}, status=403)
         try:
             data = self._read_json_body()
-        except ValueError:
+        except OverflowError:
             return self._send_json({"error": "Payload exceeds maximum allowed size"}, status=413)
         except Exception:
             return self._send_json({"error": "Invalid JSON"}, status=400)
+        if not isinstance(data, dict):
+            return self._send_json({"error": "JSON object expected"}, status=400)
 
         if parsed.path == "/api/owner/login":
             if not login_limiter.allow(self._client_ip()):
@@ -339,31 +488,11 @@ class CotizaProHandler(SimpleHTTPRequestHandler):
         if parsed.path in ("/api/licenses", "/api/config") and not self._is_owner():
             return self._send_json({"error": "Unauthorized"}, status=401)
 
+        if parsed.path == "/api/quotes":
+            return self._save_quote(data)
+
         conn = sqlite3.connect(DB_PATH)
         cur = conn.cursor()
-
-        if parsed.path == "/api/quotes":
-            quote_id = str(data.get("id", ""))[:40]
-            cur.execute(
-                """
-                INSERT OR REPLACE INTO quotes
-                (id, date, client_name, project_title, total, currency, deposit_amount, items_json)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    quote_id,
-                    str(data.get("date", ""))[:40],
-                    str(data.get("clientName", ""))[:120],
-                    str(data.get("projectTitle", ""))[:180],
-                    float(data.get("total", 0)),
-                    str(data.get("currency", "USD"))[:10],
-                    float(data.get("depositAmount", 0)),
-                    json.dumps(data.get("items", [])[:50], ensure_ascii=False),
-                ),
-            )
-            conn.commit()
-            conn.close()
-            return self._send_json({"saved": True, "id": quote_id})
 
         if parsed.path == "/api/licenses":
             email = str(data.get("email", "")).strip()[:120]
@@ -384,16 +513,17 @@ class CotizaProHandler(SimpleHTTPRequestHandler):
             return self._send_json({"licenseKey": license_key, "email": email, "plan": plan})
 
         if parsed.path == "/api/config":
-            current = load_owner_config(cur)
-            # An empty Gemini key keeps the stored one, so the key never needs to round-trip to the browser
-            if not data.get("geminiApiKey"):
-                data["geminiApiKey"] = current.get("geminiApiKey", "")
+            try:
+                cfg = validate_owner_config(data, load_owner_config(cur))
+            except ValueError as exc:
+                conn.close()
+                return self._send_json({"error": str(exc)}, status=400)
             cur.execute(
                 """
                 INSERT OR REPLACE INTO owner_config (key, value_json)
                 VALUES ('main', ?)
                 """,
-                (json.dumps(data, ensure_ascii=False),),
+                (json.dumps(cfg, ensure_ascii=False),),
             )
             conn.commit()
             conn.close()
@@ -402,6 +532,37 @@ class CotizaProHandler(SimpleHTTPRequestHandler):
         conn.close()
         return self._send_json({"error": "Not found"}, status=404)
 
+    def _save_quote(self, data):
+        if not write_limiter.allow(self._client_ip()):
+            return self._send_json({"error": "Too many requests"}, status=429)
+        client_id = self._client_id()
+        if not client_id:
+            return self._send_json({"error": "Missing or invalid X-Client-Id"}, status=400)
+        try:
+            row = validate_quote(data)
+        except (ValueError, TypeError):
+            return self._send_json({"error": "Invalid quote data"}, status=400)
+        conn = sqlite3.connect(DB_PATH)
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT COUNT(*) FROM client_quotes WHERE client_id = ? AND id != ?",
+                (client_id, row[0]),
+            )
+            if cur.fetchone()[0] >= MAX_QUOTES_PER_CLIENT:
+                return self._send_json({"error": "Quote limit reached"}, status=429)
+            cur.execute(
+                """
+                INSERT OR REPLACE INTO client_quotes
+                (client_id, id, date, client_name, project_title, total, currency, deposit_amount, items_json)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (client_id,) + row,
+            )
+            conn.commit()
+            return self._send_json({"saved": True, "id": row[0]})
+        finally:
+            conn.close()
 
     def _verify_license(self, data):
         if not license_limiter.allow(self._client_ip()):
@@ -479,7 +640,7 @@ if __name__ == "__main__":
     init_db()
     if not OWNER_PASSWORD:
         print("AVISO: COTIZAPRO_OWNER_PASSWORD no está definido; el panel de propietario queda deshabilitado.")
-    server = ThreadingHTTPServer(("0.0.0.0", PORT), CotizaProHandler)
+    server = ThreadingHTTPServer((HOST, PORT), CotizaProHandler)
     print("============================================================")
     print(f"CotizaPro Studio (Hardened) corriendo en: http://localhost:{PORT}")
     print(f"Base de datos SQLite activa en: {DB_PATH}")

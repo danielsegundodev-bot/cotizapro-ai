@@ -9,6 +9,7 @@ const STORAGE_KEYS = {
   LICENSES: 'cotizapro_generated_licenses_v1',
   PLAN: 'cotizapro_user_plan_v1',
   LICENSE_KEY: 'cotizapro_license_key_v1',
+  CLIENT_ID: 'cotizapro_client_id_v1',
   USAGE: 'cotizapro_free_usage_v1',
   THEME: 'cotizapro_atelier_theme_v1'
 };
@@ -189,6 +190,21 @@ function switchTab(tabId) {
   if (tabId === 'calculator') calculateB2BAudit();
 }
 
+// Identificador aleatorio (128 bits) de este navegador: el servidor solo devuelve sus propias cotizaciones
+function getClientId() {
+  let id = localStorage.getItem(STORAGE_KEYS.CLIENT_ID) || '';
+  if (!/^[a-f0-9]{32}$/.test(id)) {
+    const bytes = crypto.getRandomValues(new Uint8Array(16));
+    id = Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
+    localStorage.setItem(STORAGE_KEYS.CLIENT_ID, id);
+  }
+  return id;
+}
+
+function clientApiHeaders() {
+  return { 'Content-Type': 'application/json', 'X-Client-Id': getClientId() };
+}
+
 // Acceso Privado para el Propietario (verificado en el servidor; la clave nunca vive en el código)
 let ownerSessionToken = '';
 
@@ -289,7 +305,7 @@ async function initApp() {
   }
 
   try {
-    const res = await fetch('/api/state', { method: 'GET' });
+    const res = await fetch('/api/state', { method: 'GET', headers: { 'X-Client-Id': getClientId() } });
     if (res.ok) {
       const serverData = await res.json();
       if (serverData.quotes && serverData.quotes.length > 0 && state.savedQuotes.length === 0) {
@@ -834,7 +850,7 @@ async function saveCurrentQuote(silent = false) {
   try {
     await fetch('/api/quotes', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: clientApiHeaders(),
       body: JSON.stringify(quoteRecord)
     });
   } catch (_) {}
