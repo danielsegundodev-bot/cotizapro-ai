@@ -1,5 +1,5 @@
 /**
- * CotizaPro AI — Core Application & Triple Monetization Engine
+ * CotizaPro Studio — Swiss Editorial & Financial Atelier Engine
  * Works both statically on GitHub Pages ($0/mo) and connected to Python server.py (SQLite API)
  */
 
@@ -8,7 +8,8 @@ const STORAGE_KEYS = {
   QUOTES: 'cotizapro_saved_quotes_v1',
   LICENSES: 'cotizapro_generated_licenses_v1',
   PLAN: 'cotizapro_user_plan_v1',
-  USAGE: 'cotizapro_free_usage_v1'
+  USAGE: 'cotizapro_free_usage_v1',
+  THEME: 'cotizapro_atelier_theme_v1'
 };
 
 // Default Owner Configuration (Daniel Segundo)
@@ -17,7 +18,7 @@ const DEFAULT_CONFIG = {
   stripeMonthlyUrl: 'https://buy.stripe.com/4gM6oA2kWceC4I6g0Vbsc00',
   stripeLifetimeUrl: 'https://buy.stripe.com/4gM6oA2kWceC4I6g0Vbsc00',
   ownerWhatsapp: '5215500000000',
-  bankInstructions: 'Pago seguro con tarjeta en línea: https://buy.stripe.com/4gM6oA2kWceC4I6g0Vbsc00 o vía PayPal/Transferencia (daniel.segundo.dev@gmail.com).',
+  bankInstructions: 'Liquidación mediante tarjeta bancaria vía Stripe (https://buy.stripe.com/4gM6oA2kWceC4I6g0Vbsc00) o transferencia electrónica autorizada (daniel.segundo.dev@gmail.com).',
   affHosting: 'https://www.hostinger.com/?REFERRALCODE=COTIZAPRO',
   affEcommerce: 'https://www.shopify.com/?ref=cotizapro-ai',
   affCrm: 'https://www.make.com/en/register?pc=cotizapro'
@@ -26,81 +27,81 @@ const DEFAULT_CONFIG = {
 // High-Ticket Presets for Instant Monetization
 const HIGH_TICKET_PRESETS = {
   ai_automation: {
-    title: 'Automatización Comercial con IA + Agente WhatsApp 24/7',
-    summary: 'Implementación de un ecosistema inteligente de atención y calificación de prospectos en WhatsApp y Web con Inteligencia Artificial, entrenado con la información de tu negocio para responder en menos de 5 segundos, agendar citas automáticamente y evitar la pérdida de clientes fuera de horario.',
+    title: 'Arquitectura de Automatización Comercial & Concierge IA 24/7',
+    summary: 'Implementación de un ecosistema de recepción, calificación y agendamiento de prospectos en WhatsApp y Web con Inteligencia Artificial, entrenado sobre las reglas del negocio para responder en menos de 5 segundos y suprimir la fuga de ingresos fuera de horario.',
     delivery: '7 a 10 días hábiles',
     items: [
-      { name: 'Arquitectura y Entrenamiento de Agente IA (Base de Conocimiento del Negocio)', qty: 1, price: 350 },
-      { name: 'Integración con WhatsApp Business y Captura de Leads en CRM / Google Sheets', qty: 1, price: 300 },
-      { name: 'Automatización de Recordatorios de Citas y Seguimiento de Ventas', qty: 1, price: 200 }
+      { name: 'Ingeniería y Entrenamiento de Agente IA (Base de Conocimiento Corporativa)', qty: 1, price: 350 },
+      { name: 'Integración Oficial con WhatsApp Business y Registro Automático en CRM', qty: 1, price: 300 },
+      { name: 'Flujo Automatizado de Confirmación de Citas y Reactivación de Prospectos', qty: 1, price: 200 }
     ]
   },
   web_ecommerce: {
-    title: 'Tienda Online E-Commerce de Alta Conversión + Pasarela de Pagos',
-    summary: 'Desarrollo integral de plataforma de comercio electrónico optimizada para ventas móviles, catálogo autogestionable, carrito de compras rápido, recuperación de carritos abandonados e integración con tarjetas de crédito/débito y transferencias.',
+    title: 'Plataforma E-Commerce de Alta Conversión & Pasarela Financiera',
+    summary: 'Desarrollo integral de plataforma de comercio electrónico optimizada para conversión móvil, catálogo autogestionable, checkout sin fricción, recuperación de carritos abandonados e integración bancaria.',
     delivery: '12 a 15 días hábiles',
     items: [
-      { name: 'Diseño UI/UX Mobile-First y Configuración de Tienda E-Commerce', qty: 1, price: 450 },
-      { name: 'Integración de Pasarelas de Pago (Stripe / MercadoPago / PayPal) y Envíos', qty: 1, price: 280 },
-      { name: 'Optimización SEO Técnico, Velocidad de Carga y Capacitación de Uso', qty: 1, price: 220 }
+      { name: 'Dirección UI/UX Mobile-First y Construcción de Catálogo Transaccional', qty: 1, price: 450 },
+      { name: 'Integración de Pasarelas de Cobro (Stripe / MercadoPago) y Logística', qty: 1, price: 280 },
+      { name: 'Auditoría de Velocidad, SEO Estructural y Transferencia Operativa', qty: 1, price: 220 }
     ]
   },
   landing_funnel: {
-    title: 'Landing Page de Alta Conversión + Embudo de Captación por WhatsApp',
-    summary: 'Diseño y programación de página de aterrizaje persuasiva con estructura psicológica de ventas (AIDA), redacción comercial persuasiva, velocidad ultrarrápida y conexión directa a WhatsApp con mensajes pre-calificados.',
+    title: 'Landing Page Editorial de Alta Conversión & Embudo Comercial',
+    summary: 'Diseño y programación de página de captación con arquitectura persuasiva, redacción comercial orientada a retorno sobre inversión (ROI), tiempos de carga sub-segundo y canalización directa a cierre por WhatsApp.',
     delivery: '5 a 7 días hábiles',
     items: [
-      { name: 'Diseño y Desarrollo de Landing Page Responsiva de Alta Velocidad', qty: 1, price: 260 },
-      { name: 'Copywriting Persuasivo Orientado a Conversión y Llamados a la Acción', qty: 1, price: 110 },
-      { name: 'Integración de Pixel de Seguimiento, Analítica y Embudo de WhatsApp', qty: 1, price: 80 }
+      { name: 'Diseño Editorial y Desarrollo Frontend de Alta Velocidad', qty: 1, price: 260 },
+      { name: 'Copywriting Estratégico Orientado a Conversión de Prospectos', qty: 1, price: 110 },
+      { name: 'Instrumentación Analítica, Tracking y Enrutamiento a WhatsApp', qty: 1, price: 80 }
     ]
   },
   saas_mvp: {
-    title: 'Desarrollo de Aplicación Web a Medida / Plataforma Micro-SaaS',
-    summary: 'Ingeniería y construcción de plataforma web full-stack con panel de administración, gestión de usuarios, base de datos segura en la nube, pasarela de suscripciones y despliegue en producción de alta disponibilidad.',
+    title: 'Ingeniería de Aplicación Web a Medida / Producto Micro-SaaS',
+    summary: 'Arquitectura y desarrollo full-stack de aplicación web propietaria con panel ejecutivo de administración, control de sesiones, base de datos relacional segura, cobros recurrentes y despliegue en producción.',
     delivery: '21 a 30 días hábiles',
     items: [
-      { name: 'Arquitectura de Base de Datos, Backend API y Autenticación Segura', qty: 1, price: 750 },
-      { name: 'Desarrollo de Interfaz Frontend Interactiva y Panel de Control (Dashboard)', qty: 1, price: 650 },
-      { name: 'Integración de Cobros Recurrentes (Stripe) y Despliegue Cloud', qty: 1, price: 400 }
+      { name: 'Modelado de Datos, API Backend y Control de Autenticación', qty: 1, price: 750 },
+      { name: 'Interfaz Operativa (Frontend) y Tablero de Control Administrativo', qty: 1, price: 650 },
+      { name: 'Integración de Suscripciones (Stripe) y Puesta en Producción Cloud', qty: 1, price: 400 }
     ]
   },
   marketing_seo: {
-    title: 'Estrategia de Posicionamiento SEO Local & Campañas de Captación B2B',
-    summary: 'Sistema mensual de atracción de clientes calificados mediante optimización en buscadores (Google Maps + SEO Orgánico) y estructura de anuncios orientados a retorno de inversión medible.',
-    delivery: 'Implementación inicial en 7 días (Mensual)',
+    title: 'Estrategia de Posicionamiento Orgánico (SEO Local) & Adquisición B2B',
+    summary: 'Programa mensual de captación de demanda calificada mediante optimización en motores de búsqueda (Google Maps + Búsqueda Orgánica) y campañas orientadas a costo por adquisición controlado.',
+    delivery: 'Despliegue inicial en 7 días (Iguala Mensual)',
     items: [
-      { name: 'Auditoría SEO, Optimización de Perfil de Google Business y Palabras Clave', qty: 1, price: 250 },
-      { name: 'Creación y Gestión de Campañas de Captación de Clientes (Meta / Google Ads)', qty: 1, price: 220 },
-      { name: 'Reporte Ejecutivo de Conversiones y Optimización Continua de Costo por Lead', qty: 1, price: 130 }
+      { name: 'Auditoría Técnica SEO, Optimización de Ficha Google Business e Indexación', qty: 1, price: 250 },
+      { name: 'Estructuración y Gestión de Campañas de Adquisición (Google / Meta Ads)', qty: 1, price: 220 },
+      { name: 'Informe Financiero de Atribución y Optimización Continua de Conversión', qty: 1, price: 130 }
     ]
   },
   branding_ui: {
-    title: 'Rediseño de Identidad Visual Corporativa & Sistema UI/UX',
-    summary: 'Modernización completa de la imagen comercial para proyectar máxima autoridad, confianza y justificar precios premium frente a la competencia.',
+    title: 'Dirección de Arte, Identidad Corporativa & Sistema de Diseño UI/UX',
+    summary: 'Renovación integral de los activos visuales y digitales de la firma para consolidar autoridad institucional, diferenciación competitiva y respaldo de precios premium.',
     delivery: '10 días hábiles',
     items: [
-      { name: 'Diseño de Identidad Visual, Logotipo Vectorial y Manual de Marca', qty: 1, price: 280 },
-      { name: 'Kit de Plantillas Comerciales y Prototipo UI/UX Web Interactivo', qty: 1, price: 270 }
+      { name: 'Sistema de Identidad Visual, Logometría Vectorial y Manual de Marca', qty: 1, price: 280 },
+      { name: 'Papelería Corporativa Digital y Prototipo Interactivo UI/UX', qty: 1, price: 270 }
     ]
   },
   consulting_b2b: {
-    title: 'Auditoría de Procesos Comerciales y Digitalización Operativa',
-    summary: 'Diagnóstico profundo de cuellos de botella operativos y fugas de ventas, acompañado de la implementación de herramientas digitales para reducir costos operativos hasta en un 30%.',
+    title: 'Diagnóstico de Eficiencia Operativa & Digitalización de Procesos',
+    summary: 'Auditoría profunda de cuellos de botella comerciales y fugas de facturación, seguida de la implantación de flujos digitales para disminuir tiempos operativos hasta en un 35%.',
     delivery: '10 a 14 días hábiles',
     items: [
-      { name: 'Mapeo de Procesos Actuales y Detección de Fugas de Ingresos', qty: 1, price: 320 },
-      { name: 'Implementación de Tablero de Control Financiero y CRM Comercial', qty: 1, price: 430 }
+      { name: 'Mapeo de Arquitectura Operativa Actual y Cuantificación de Mermas', qty: 1, price: 320 },
+      { name: 'Implantación de Tablero de Control Directivo y Pipeline CRM', qty: 1, price: 430 }
     ]
   },
   technical_services: {
-    title: 'Proyecto Integral de Implementación Técnica e Infraestructura',
-    summary: 'Ejecución llave en mano con materiales de primera calidad, mano de obra certificada, supervisión técnica y garantía por escrito sobre cada entregable.',
+    title: 'Proyecto Llave en Mano de Ingeniería, Adecuación e Infraestructura',
+    summary: 'Ejecución integral bajo estándares normativos con insumos especificados, supervisión especializada, cronograma garantizado y póliza de respaldo técnico por escrito.',
     delivery: '14 días hábiles',
     items: [
-      { name: 'Levantamiento Técnico, Planeación e Ingeniería de Detalle', qty: 1, price: 350 },
-      { name: 'Suministro de Equipos / Materiales e Instalación Especializada', qty: 1, price: 600 },
-      { name: 'Pruebas de Calidad, Puesta en Marcha y Póliza de Garantía', qty: 1, price: 250 }
+      { name: 'Levantamiento en Sitio, Ingeniería de Detalle y Memoria Técnica', qty: 1, price: 350 },
+      { name: 'Suministro de Equipamiento e Instalación por Personal Certificado', qty: 1, price: 600 },
+      { name: 'Protocolo de Pruebas, Entrega Formal y Póliza de Garantía', qty: 1, price: 250 }
     ]
   }
 };
@@ -109,9 +110,9 @@ const HIGH_TICKET_PRESETS = {
 let state = {
   quoteNumber: 'CP-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000),
   lineItems: [
-    { name: 'Diseño y Desarrollo Web de Alta Conversión (Mobile-First)', qty: 1, price: 380 },
-    { name: 'Asistente Inteligente IA 24/7 Conectado a WhatsApp', qty: 1, price: 320 },
-    { name: 'Panel de Control de Prospectos + Capacitación de Equipo', qty: 1, price: 150 }
+    { name: 'Arquitectura y Desarrollo Web de Alta Conversión (Mobile-First)', qty: 1, price: 380 },
+    { name: 'Concierge Inteligente IA 24/7 Integrado a WhatsApp Business', qty: 1, price: 320 },
+    { name: 'Tablero de Control de Prospectos y Transferencia Operativa', qty: 1, price: 150 }
   ],
   signatureDataUrl: null,
   isPro: false,
@@ -130,7 +131,7 @@ function formatMoney(amount, currency = 'USD') {
   return `${sym}${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`;
 }
 
-// Toast Notification Helper
+// Editorial Toast Notification
 function showToast(msg) {
   const el = document.getElementById('toast-notification');
   if (!el) return;
@@ -142,7 +143,43 @@ function showToast(msg) {
   }, 3600);
 }
 
-// Tab Navigation
+// Theme Switcher (Warm Paper vs Warm Carbon Obsidian)
+function toggleAtelierTheme() {
+  const html = document.documentElement;
+  const isCarbon = html.classList.toggle('theme-carbon');
+  localStorage.setItem(STORAGE_KEYS.THEME, isCarbon ? 'carbon' : 'paper');
+  const label = document.getElementById('theme-toggle-label');
+  if (label) {
+    label.textContent = isCarbon ? 'Modo Papel Editorial' : 'Modo Carbón';
+  }
+}
+
+// Segmented Inspector Step Switcher (Step 1, 2, 3)
+function switchInspectorStep(stepNum) {
+  [1, 2, 3].forEach(n => {
+    const panel = document.getElementById(`inspector-step-${n}`);
+    const btn = document.getElementById(`step-btn-${n}`);
+    if (panel) panel.classList.toggle('hidden', n !== stepNum);
+    if (btn) {
+      if (n === stepNum) {
+        btn.className = 'px-2.5 py-2 rounded-md text-xs font-semibold transition bg-[var(--bg-elevated)] text-[var(--ink-primary)] shadow-sm';
+      } else {
+        btn.className = 'px-2.5 py-2 rounded-md text-xs font-medium transition text-[var(--ink-secondary)] hover:text-[var(--ink-primary)]';
+      }
+    }
+  });
+}
+
+// Sync Direct Inline Paper Edits Back to Inspector Form Inputs
+function syncInlineEdit(inputId, newText) {
+  const input = document.getElementById(inputId);
+  if (input) {
+    input.value = String(newText || '').trim();
+    renderProposalPreview();
+  }
+}
+
+// Main Studio Tab Navigation
 function switchTab(tabId) {
   const tabs = ['builder', 'auditor', 'affiliates', 'admin'];
   tabs.forEach(t => {
@@ -151,9 +188,9 @@ function switchTab(tabId) {
     if (sec) sec.classList.toggle('hidden', t !== tabId);
     if (btn) {
       if (t === tabId) {
-        btn.className = 'tab-btn px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-indigo-600 text-white shadow';
+        btn.className = 'tab-btn px-3.5 py-1.5 rounded-md text-xs font-semibold transition-all bg-[var(--bg-elevated)] text-[var(--ink-primary)] shadow-sm';
       } else {
-        btn.className = 'tab-btn px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-white hover:bg-slate-800/60';
+        btn.className = 'tab-btn px-3.5 py-1.5 rounded-md text-xs font-medium transition-all text-[var(--ink-secondary)] hover:text-[var(--ink-primary)]';
       }
     }
   });
@@ -162,9 +199,16 @@ function switchTab(tabId) {
   if (tabId === 'admin') renderAdminDashboard();
 }
 
-// Load State from LocalStorage + Optional Python Backend
+// Initialize Studio
 async function initApp() {
   try {
+    const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME);
+    if (savedTheme === 'carbon') {
+      document.documentElement.classList.add('theme-carbon');
+      const label = document.getElementById('theme-toggle-label');
+      if (label) label.textContent = 'Modo Papel Editorial';
+    }
+
     const savedCfg = localStorage.getItem(STORAGE_KEYS.CONFIG);
     if (savedCfg) {
       const parsedCfg = JSON.parse(savedCfg);
@@ -194,7 +238,7 @@ async function initApp() {
       state.isPro = true;
       localStorage.setItem(STORAGE_KEYS.PLAN, 'PRO');
       setTimeout(() => {
-        showToast('🎉 ¡Pago de Stripe confirmado! Tu Plan PRO Ilimitado ya está activo.');
+        showToast('Pago verificado en Stripe. Tu licencia Studio PRO está activa.');
       }, 600);
       window.history.replaceState({}, document.title, window.location.pathname);
     }
@@ -202,7 +246,7 @@ async function initApp() {
     console.warn('LocalStorage init warning:', e);
   }
 
-  // Also try syncing with local Python backend if running
+  // Sync with local Python SQLite server if active
   try {
     const res = await fetch('/api/state', { method: 'GET' });
     if (res.ok) {
@@ -214,9 +258,7 @@ async function initApp() {
         state.config = { ...state.config, ...serverData.config };
       }
     }
-  } catch (_) {
-    // Running statically (e.g. GitHub Pages) — works 100% client-side
-  }
+  } catch (_) {}
 
   document.getElementById('doc-date').textContent = new Date().toLocaleDateString('es-ES', {
     day: '2-digit', month: 'short', year: 'numeric'
@@ -232,7 +274,7 @@ async function initApp() {
   renderAffiliateMarketplace();
 }
 
-// Update Freemium / Pro Plan UI Indicators
+// Update Freemium / Studio PRO UI
 function updatePlanUI() {
   const badge = document.getElementById('plan-badge');
   const upgradeBtn = document.getElementById('upgrade-header-btn');
@@ -241,57 +283,59 @@ function updatePlanUI() {
   const statusText = document.getElementById('ai-status-text');
 
   if (state.config.geminiApiKey && state.config.geminiApiKey.trim().length > 10) {
-    dot.className = 'w-2 h-2 rounded-full bg-emerald-400';
-    statusText.textContent = 'Gemini API Conectada';
+    dot.className = 'w-1.5 h-1.5 rounded-full bg-[var(--accent-forest)]';
+    statusText.textContent = 'Gemini API Activa';
   } else {
-    dot.className = 'w-2 h-2 rounded-full bg-amber-400';
-    statusText.textContent = 'IA Híbrida Lista ($0 Costo)';
+    dot.className = 'w-1.5 h-1.5 rounded-full bg-[var(--accent-terracotta)]';
+    statusText.textContent = 'Motor Editorial Listo';
   }
 
   if (state.isPro) {
-    badge.textContent = '👑 PLAN PRO ILIMITADO';
-    badge.className = 'text-[11px] font-extrabold uppercase px-2.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40';
+    badge.textContent = 'STUDIO PRO ACTIVO';
+    badge.className = 'font-tabular text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[var(--accent-forest-soft)] text-[var(--accent-forest)]';
     if (upgradeBtn) {
-      upgradeBtn.textContent = '👑 Licencia PRO Activa';
-      upgradeBtn.className = 'px-3.5 py-2 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold text-xs';
+      upgradeBtn.innerHTML = '<span>Licencia Studio PRO</span>';
+      upgradeBtn.className = 'btn-outline px-3.5 py-1.5 text-xs font-tabular';
     }
     if (watermark) watermark.classList.add('hidden');
   } else {
     const remaining = Math.max(0, state.freeLimit - state.freeUsed);
-    badge.textContent = `Plan Gratis (${remaining}/${state.freeLimit} libres)`;
+    badge.textContent = `Edición Base · ${remaining}/${state.freeLimit}`;
     if (watermark) watermark.classList.remove('hidden');
   }
 }
 
-// Render Line Items Editor in Left Column
+// Render Line Items Editor in Step 2
 function renderLineItemsEditor() {
   const container = document.getElementById('line-items-editor');
   if (!container) return;
   container.innerHTML = '';
 
   state.lineItems.forEach((item, idx) => {
+    const numLabel = String(idx + 1).padStart(2, '0');
     const row = document.createElement('div');
-    row.className = 'p-2.5 rounded-xl bg-slate-950/90 border border-slate-800 space-y-2';
+    row.className = 'p-3 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-hairline)] space-y-2';
     row.innerHTML = `
       <div class="flex items-center justify-between gap-2">
+        <span class="font-tabular text-[11px] font-bold text-[var(--ink-muted)]">${numLabel}</span>
         <input type="text" value="${escapeHtml(item.name)}"
           oninput="updateLineItem(${idx}, 'name', this.value)"
-          placeholder="Descripción del entregable..."
-          class="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-white focus:border-indigo-500 focus:outline-none" />
-        <button onclick="removeLineItem(${idx})" class="text-slate-500 hover:text-rose-400 px-1.5 text-xs font-bold" title="Eliminar">✕</button>
+          placeholder="Descripción de la partida..."
+          class="atelier-input flex-1" />
+        <button onclick="removeLineItem(${idx})" class="text-[var(--ink-muted)] hover:text-[var(--accent-terracotta)] px-1.5 text-xs font-bold" title="Remover partida">✕</button>
       </div>
-      <div class="grid grid-cols-2 gap-2">
-        <div class="flex items-center gap-1.5">
-          <span class="text-[11px] text-slate-400">Cant:</span>
+      <div class="grid grid-cols-2 gap-2.5 pl-6">
+        <div class="flex items-center gap-2">
+          <span class="font-tabular text-[10px] uppercase text-[var(--ink-secondary)]">Cant:</span>
           <input type="number" min="1" value="${item.qty}"
             oninput="updateLineItem(${idx}, 'qty', this.value)"
-            class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-xs text-white focus:outline-none" />
+            class="atelier-input font-tabular py-1" />
         </div>
-        <div class="flex items-center gap-1.5">
-          <span class="text-[11px] text-slate-400">Precio Unit ($):</span>
+        <div class="flex items-center gap-2">
+          <span class="font-tabular text-[10px] uppercase text-[var(--ink-secondary)]">Unitario ($):</span>
           <input type="number" min="0" step="10" value="${item.price}"
             oninput="updateLineItem(${idx}, 'price', this.value)"
-            class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-xs text-emerald-300 font-semibold focus:outline-none" />
+            class="atelier-input font-tabular font-semibold text-[var(--accent-forest)] py-1" />
         </div>
       </div>
     `;
@@ -313,7 +357,7 @@ function updateLineItem(idx, field, value) {
 
 function addLineItem() {
   state.lineItems.push({
-    name: 'Módulo Adicional / Soporte Prioritario',
+    name: 'Módulo Complementario / Póliza de Acompañamiento',
     qty: 1,
     price: 150
   });
@@ -323,7 +367,7 @@ function addLineItem() {
 
 function removeLineItem(idx) {
   if (state.lineItems.length <= 1) {
-    showToast('La cotización debe tener al menos 1 concepto.');
+    showToast('El dossier requiere al menos una partida presupuestal.');
     return;
   }
   state.lineItems.splice(idx, 1);
@@ -331,7 +375,6 @@ function removeLineItem(idx) {
   renderProposalPreview();
 }
 
-// Load a 1-Click High-Ticket Preset
 function loadPresetTemplate(presetKey) {
   const preset = HIGH_TICKET_PRESETS[presetKey];
   if (!preset) return;
@@ -343,10 +386,10 @@ function loadPresetTemplate(presetKey) {
 
   renderLineItemsEditor();
   renderProposalPreview();
-  showToast('✨ Plantilla de alto ticket cargada.');
+  showToast('Plantilla sectorial aplicada al dossier.');
 }
 
-// Calculate Totals & Render Live Proposal Preview
+// Totals Calculator
 function getCalculatedTotals() {
   const currency = document.getElementById('currency-select')?.value || 'USD';
   const taxRate = Math.max(0, parseFloat(document.getElementById('tax-rate')?.value) || 0);
@@ -375,10 +418,11 @@ function getCalculatedTotals() {
   };
 }
 
+// Render Live Editorial Dossier Sheet
 function renderProposalPreview() {
-  const senderName = document.getElementById('sender-name')?.value || 'Tu Agencia';
+  const senderName = document.getElementById('sender-name')?.value || 'Estudio Consultor';
   const senderContact = document.getElementById('sender-contact')?.value || '';
-  const clientName = document.getElementById('client-name')?.value || 'Cliente';
+  const clientName = document.getElementById('client-name')?.value || 'Organización Cliente';
   const projectTitle = document.getElementById('project-title')?.value || 'Propuesta Comercial';
   const summary = document.getElementById('proposal-summary')?.value || '';
   const deliveryTime = document.getElementById('delivery-time')?.value || '10 días hábiles';
@@ -388,32 +432,41 @@ function renderProposalPreview() {
 
   const calc = getCalculatedTotals();
 
-  // Header & Metadata
-  document.getElementById('doc-project-title').textContent = projectTitle;
+  const setIfNotFocused = (id, text) => {
+    const el = document.getElementById(id);
+    if (el && document.activeElement !== el) {
+      el.textContent = text;
+    }
+  };
+
+  setIfNotFocused('doc-project-title', projectTitle);
+  setIfNotFocused('doc-client-name', clientName);
+  setIfNotFocused('doc-summary', summary);
+
   document.getElementById('doc-sender-name').textContent = senderName;
   document.getElementById('doc-sender-contact').textContent = senderContact;
-  document.getElementById('doc-client-name').textContent = clientName;
   document.getElementById('doc-delivery-time').textContent = deliveryTime;
   document.getElementById('doc-validity').textContent = validityDays;
   document.getElementById('doc-deposit-condition').textContent = `${calc.depositRate}% Anticipo (${formatMoney(calc.depositAmount, calc.currency)})`;
-  document.getElementById('doc-summary').textContent = summary;
 
-  // Table Rows
+  // Schedule Table Rows with Numbered Indices
   const tbody = document.getElementById('doc-items-tbody');
   tbody.innerHTML = '';
-  state.lineItems.forEach(item => {
+  state.lineItems.forEach((item, index) => {
     const lineTotal = item.qty * item.price;
+    const idxStr = String(index + 1).padStart(2, '0');
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td class="py-3 px-3 font-medium text-slate-800">${escapeHtml(item.name)}</td>
-      <td class="py-3 px-3 text-center text-slate-600">${item.qty}</td>
-      <td class="py-3 px-3 text-right text-slate-600">${formatMoney(item.price, calc.currency)}</td>
-      <td class="py-3 px-3 text-right font-bold text-slate-900">${formatMoney(lineTotal, calc.currency)}</td>
+      <td class="py-3 px-3.5 font-tabular text-[11px] text-[#8A857C]">${idxStr}</td>
+      <td class="py-3 px-3.5 font-medium text-[#141413]">${escapeHtml(item.name)}</td>
+      <td class="py-3 px-3.5 text-center font-tabular text-[#57544E]">${item.qty}</td>
+      <td class="py-3 px-3.5 text-right font-tabular text-[#57544E]">${formatMoney(item.price, calc.currency)}</td>
+      <td class="py-3 px-3.5 text-right font-tabular font-semibold text-[#141413]">${formatMoney(lineTotal, calc.currency)}</td>
     `;
     tbody.appendChild(tr);
   });
 
-  // Totals
+  // Financial Breakdown
   document.getElementById('doc-subtotal').textContent = formatMoney(calc.subtotal, calc.currency);
   document.getElementById('doc-discount-pct').textContent = calc.discountRate;
   document.getElementById('doc-discount-amount').textContent = '-' + formatMoney(calc.discountAmount, calc.currency);
@@ -433,7 +486,7 @@ function renderProposalPreview() {
   document.getElementById('doc-balance-amount').textContent = formatMoney(calc.balanceAmount, calc.currency);
   document.getElementById('doc-payment-instructions').textContent = state.config.bankInstructions || DEFAULT_CONFIG.bankInstructions;
 
-  // Contract Section
+  // Legal Contract Clauses
   const contractSec = document.getElementById('doc-contract-section');
   contractSec.classList.toggle('hidden', !includeContract);
   document.getElementById('contract-sender').textContent = senderName;
@@ -445,60 +498,59 @@ function renderProposalPreview() {
   document.getElementById('sig-sender-name').textContent = senderName;
   document.getElementById('sig-client-name').textContent = clientName;
 
-  // Affiliates Block inside Proposal
+  // Affiliates Block inside Dossier
   const affSec = document.getElementById('doc-affiliates-section');
   affSec.classList.toggle('hidden', !includeAffiliates);
   const affList = document.getElementById('doc-affiliates-list');
   if (affList) {
     affList.innerHTML = `
-      <a href="${escapeHtml(state.config.affHosting)}" target="_blank" rel="noopener" class="p-2.5 rounded-lg bg-white border border-indigo-200 hover:border-indigo-400 block transition">
-        <div class="font-bold text-indigo-900">🌐 Hosting Cloud + Dominio</div>
-        <div class="text-[11px] text-slate-600 mt-0.5">Servidor de alta velocidad con SSL gratis y hasta 75% DTO.</div>
-        <div class="text-[10px] font-bold text-indigo-600 mt-1">Activar beneficio &rarr;</div>
+      <a href="${escapeHtml(state.config.affHosting)}" target="_blank" rel="noopener" class="p-3 bg-white border border-[#D6D1C7] hover:border-[#141413] block transition">
+        <div class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C]">Infraestructura Cloud</div>
+        <div class="font-semibold text-[#141413] mt-0.5">Servidor Dedicado &amp; Dominio SSL</div>
+        <div class="font-tabular text-[10px] text-[#C84B31] font-semibold mt-1.5">Consultar tarifa preferencial &rarr;</div>
       </a>
-      <a href="${escapeHtml(state.config.affEcommerce)}" target="_blank" rel="noopener" class="p-2.5 rounded-lg bg-white border border-indigo-200 hover:border-indigo-400 block transition">
-        <div class="font-bold text-indigo-900">🛍️ Motor E-Commerce &amp; Pagos</div>
-        <div class="text-[11px] text-slate-600 mt-0.5">Infraestructura global para cobros con tarjeta y catálogo.</div>
-        <div class="text-[10px] font-bold text-indigo-600 mt-1">Activar beneficio &rarr;</div>
+      <a href="${escapeHtml(state.config.affEcommerce)}" target="_blank" rel="noopener" class="p-3 bg-white border border-[#D6D1C7] hover:border-[#141413] block transition">
+        <div class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C]">Motor Transaccional</div>
+        <div class="font-semibold text-[#141413] mt-0.5">Pasarela E-Commerce &amp; Catálogo</div>
+        <div class="font-tabular text-[10px] text-[#C84B31] font-semibold mt-1.5">Consultar tarifa preferencial &rarr;</div>
       </a>
-      <a href="${escapeHtml(state.config.affCrm)}" target="_blank" rel="noopener" class="p-2.5 rounded-lg bg-white border border-indigo-200 hover:border-indigo-400 block transition">
-        <div class="font-bold text-indigo-900">🤖 Automatización &amp; CRM IA</div>
-        <div class="text-[11px] text-slate-600 mt-0.5">Conecta WhatsApp, correos y agenda en piloto automático.</div>
-        <div class="text-[10px] font-bold text-indigo-600 mt-1">Activar beneficio &rarr;</div>
+      <a href="${escapeHtml(state.config.affCrm)}" target="_blank" rel="noopener" class="p-3 bg-white border border-[#D6D1C7] hover:border-[#141413] block transition">
+        <div class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C]">Orquestación</div>
+        <div class="font-semibold text-[#141413] mt-0.5">Automatización de Flujos &amp; CRM</div>
+        <div class="font-tabular text-[10px] text-[#C84B31] font-semibold mt-1.5">Consultar tarifa preferencial &rarr;</div>
       </a>
     `;
   }
 }
 
-// AI Proposal Generator (Hybrid: Google Gemini API + Local Smart Engine)
+// AI Proposal Synthesis (Gemini API + Local Editorial Engine)
 async function generateProposalWithAI() {
   const brief = document.getElementById('ai-brief-input')?.value.trim();
   if (!brief) {
-    showToast('⚠️ Escribe una breve descripción del proyecto o cliente primero.');
+    showToast('Describe brevemente el alcance del cliente para estructurar la propuesta.');
     document.getElementById('ai-brief-input')?.focus();
     return;
   }
 
   const btn = document.getElementById('btn-generate-ai');
-  const originalText = btn.innerHTML;
+  const originalHtml = btn.innerHTML;
   btn.disabled = true;
-  btn.innerHTML = '<span>⏳ Analizando nicho y redactando propuesta comercial...</span>';
+  btn.innerHTML = '<span>Estructurando tesis, partidas e inversión...</span>';
 
   try {
     const apiKey = (state.config.geminiApiKey || '').trim();
     if (apiKey.length > 12) {
-      // Live Gemini API Call
-      const prompt = `Eres un consultor de ventas B2B experto. Genera una cotización de alto valor para la siguiente solicitud: "${brief}".
-Responde ÚNICAMENTE con un objeto JSON válido (sin bloques markdown) con este esquema exacto:
+      const prompt = `Actúa como socio director de una firma consultora de ingeniería y diseño digital. Estructura una propuesta comercial formal para: "${brief}".
+Responde ÚNICAMENTE con un objeto JSON válido con este esquema exacto:
 {
-  "clientName": "Nombre sugerido del cliente",
-  "projectTitle": "Título atractivo del proyecto",
-  "summary": "Resumen ejecutivo persuasivo de 2 a 3 oraciones enfocado en ROI",
+  "clientName": "Nombre sugerido de la empresa cliente",
+  "projectTitle": "Título ejecutivo del proyecto",
+  "summary": "Tesis ejecutiva de 2 a 3 oraciones con enfoque en rentabilidad y eficiencia operativa",
   "deliveryTime": "Ej: 10 a 14 días hábiles",
   "items": [
-    {"name": "Entregable 1", "qty": 1, "price": 350},
-    {"name": "Entregable 2", "qty": 1, "price": 280},
-    {"name": "Entregable 3", "qty": 1, "price": 190}
+    {"name": "Partida 1", "qty": 1, "price": 350},
+    {"name": "Partida 2", "qty": 1, "price": 280},
+    {"name": "Partida 3", "qty": 1, "price": 190}
   ]
 }`;
       const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`, {
@@ -515,82 +567,75 @@ Responde ÚNICAMENTE con un objeto JSON válido (sin bloques markdown) con este 
         const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
         const parsed = JSON.parse(rawText);
         applyGeneratedProposal(parsed);
-        showToast('✨ Propuesta generada con Google Gemini AI.');
+        showToast('Dossier estructurado mediante Google Gemini.');
         return;
       }
     }
 
-    // Intelligent Local Synthesis Fallback ($0 API Cost, Instant)
     const synthesized = synthesizeProposalLocally(brief);
     applyGeneratedProposal(synthesized);
-    showToast('✨ Propuesta generada con el Motor IA Híbrido.');
+    showToast('Dossier estructurado y actualizado.');
   } catch (err) {
-    console.warn('AI fallback used:', err);
     const synthesized = synthesizeProposalLocally(brief);
     applyGeneratedProposal(synthesized);
-    showToast('✨ Propuesta optimizada generada con éxito.');
+    showToast('Dossier estructurado con éxito.');
   } finally {
     btn.disabled = false;
-    btn.innerHTML = originalText;
+    btn.innerHTML = originalHtml;
   }
 }
 
 function synthesizeProposalLocally(brief) {
   const lower = brief.toLowerCase();
   let items = [];
-  let projectTitle = 'Implementación Digital de Captación y Automatización Comercial';
+  let projectTitle = 'Arquitectura Digital de Captación & Automatización Operativa';
   let deliveryTime = '10 a 12 días hábiles';
-  let summary = `Solución integral diseñada a medida para "${brief}", enfocada en automatizar la captación de clientes, profesionalizar la presencia digital y acelerar el cierre de ventas con retorno de inversión medible desde el primer mes.`;
+  let summary = `Intervención tecnológica diseñada a medida para "${brief}", orientada a sistematizar la recepción de prospectos, elevar la autoridad institucional de la marca y acelerar la conversión comercial con retorno medible desde el primer ciclo mensual.`;
 
-  if (lower.includes('clínica') || lower.includes('clinica') || lower.includes('dental') || lower.includes('médic') || lower.includes('medic') || lower.includes('doctor')) {
-    projectTitle = 'Sistema de Agendamiento Médico + Asistente IA en WhatsApp 24/7';
+  if (lower.includes('clínica') || lower.includes('clinica') || lower.includes('dental') || lower.includes('médic') || lower.includes('medic') || lower.includes('dermat')) {
+    projectTitle = 'Sistema de Gestión de Pacientes & Concierge IA en WhatsApp 24/7';
     deliveryTime = '7 a 10 días hábiles';
-    summary = 'Ecosistema digital para sector salud que responde dudas frecuentes de pacientes al instante por WhatsApp, califica tratamientos de alto valor y agenda citas con recordatorios automáticos para reducir la inasistencia hasta en un 45%.';
+    summary = 'Infraestructura digital para el sector salud que atiende consultas de pacientes al instante por WhatsApp, pre-califica tratamientos de especialidad y coordina la agenda clínica con recordatorios automáticos para disminuir el ausentismo hasta en un 45%.';
     items = [
-      { name: 'Portal Web Médico de Alta Conversión con Perfil de Especialidades', qty: 1, price: 340 },
-      { name: 'Asistente IA en WhatsApp para Pre-Valoración y Agendamiento de Citas 24/7', qty: 1, price: 320 },
-      { name: 'Sistema Automático de Recordatorios Anti-Inasistencia y CRM de Pacientes', qty: 1, price: 190 }
+      { name: 'Portal Clínico de Alta Conversión con Directorio de Especialidades', qty: 1, price: 340 },
+      { name: 'Concierge IA en WhatsApp para Pre-Valoración y Citas 24/7', qty: 1, price: 320 },
+      { name: 'Protocolo Automatizado de Confirmaciones y Registro de Pacientes', qty: 1, price: 190 }
     ];
   } else if (lower.includes('restaurante') || lower.includes('comida') || lower.includes('menú') || lower.includes('menu') || lower.includes('cafeter')) {
-    projectTitle = 'Plataforma de Pedidos Directos Sin Comisiones + Bot de Reservas WhatsApp';
+    projectTitle = 'Plataforma Propia de Pedidos Directos & Sistema de Reservaciones';
     deliveryTime = '7 días hábiles';
-    summary = 'Sistema propio de pedidos en línea y reservaciones por WhatsApp para ahorrar hasta el 30% de comisiones de plataformas externas y fidelizar a los comensales con promociones automatizadas.';
+    summary = 'Canal transaccional directo para recepción de pedidos y reservaciones de mesa por WhatsApp, diseñado para eliminar comisiones de hasta 30% en plataformas de terceros y fidelizar la cartera de comensales.';
     items = [
-      { name: 'Menú Digital Interactivo con Carrito de Pedidos Directo a Cocina/WhatsApp', qty: 1, price: 290 },
-      { name: 'Bot Automatizado de Reservaciones de Mesas y Atención a Domicilio', qty: 1, price: 240 },
-      { name: 'Base de Datos de Clientes Frecuentes y Campaña de Reactivación VIP', qty: 1, price: 140 }
+      { name: 'Carta Digital Transaccional con Enrutamiento Directo a Cocina', qty: 1, price: 290 },
+      { name: 'Asistente Automatizado de Reservaciones y Domicilios en WhatsApp', qty: 1, price: 240 },
+      { name: 'CRM Gastronómico para Clientes Frecuentes y Reactivación', qty: 1, price: 140 }
     ];
-  } else if (lower.includes('inmobiliaria') || lower.includes('bienes') || lower.includes('casas') || lower.includes('departamentos')) {
-    projectTitle = 'Portal Inmobiliario con Filtro Inteligente + Pre-Calificador de Compradores IA';
+  } else if (lower.includes('inmobiliaria') || lower.includes('bienes') || lower.includes('casas') || lower.includes('departamentos') || lower.includes('desarroll')) {
+    projectTitle = 'Portal Patrimonial de Propiedades & Pre-Calificador Hipotecario IA';
     deliveryTime = '12 a 15 días hábiles';
-    summary = 'Plataforma de exhibición de propiedades conectada a un agente IA que filtra prospectos por presupuesto, zona y tipo de crédito antes de asignarlos a un asesor inmobiliario.';
+    summary = 'Plataforma de exhibición inmobiliaria vinculada a un agente IA que segmenta interesados por rango de inversión, ubicación y liquidez antes de asignarlos a la fuerza de ventas.';
     items = [
-      { name: 'Catálogo Web de Propiedades con Fichas Técnicas y Galería HD', qty: 1, price: 450 },
-      { name: 'Agente IA Calificador de Prospectos Hipotecarios e Inversores en WhatsApp', qty: 1, price: 380 },
-      { name: 'Embudo de Seguimiento Automatizado y Conexión con CRM Inmobiliario', qty: 1, price: 220 }
+      { name: 'Catálogo Web de Inventario Inmobiliario con Fichas Técnicas', qty: 1, price: 450 },
+      { name: 'Agente IA de Filtrado Financiero y Agendamiento de Visitas', qty: 1, price: 380 },
+      { name: 'Integración de Pipeline Comercial y Seguimiento Automatizado', qty: 1, price: 220 }
     ];
   } else if (lower.includes('tienda') || lower.includes('ecommerce') || lower.includes('venta') || lower.includes('catálogo') || lower.includes('catalogo')) {
-    projectTitle = 'E-Commerce Automatizado + Pasarela de Cobro y Recuperación de Carritos';
+    projectTitle = 'Arquitectura E-Commerce Transaccional & Recuperación de Carritos';
     deliveryTime = '10 a 14 días hábiles';
     items = [
       { name: 'Desarrollo de Tienda Online Optimizada para Conversión Móvil', qty: 1, price: 480 },
-      { name: 'Configuración de Pagos con Tarjeta, Transferencia y Cálculo de Envíos', qty: 1, price: 260 },
-      { name: 'Automatización de Carritos Abandonados por WhatsApp y Correo', qty: 1, price: 180 }
+      { name: 'Integración de Pasarela Bancaria (Tarjeta / SPEI) y Reglas de Envío', qty: 1, price: 260 },
+      { name: 'Secuencia Automatizada de Recuperación de Carritos por WhatsApp', qty: 1, price: 180 }
     ];
   } else {
     items = [
-      { name: 'Arquitectura y Desarrollo de Solución Digital a Medida (' + brief.slice(0, 42) + '...)', qty: 1, price: 420 },
-      { name: 'Automatización de Flujo de Trabajo y Captura Inteligente de Clientes', qty: 1, price: 290 },
-      { name: 'Despliegue en Producción, Garantía Técnica y Capacitación', qty: 1, price: 160 }
+      { name: 'Ingeniería y Desarrollo de Solución Digital (' + brief.slice(0, 42) + ')', qty: 1, price: 420 },
+      { name: 'Automatización de Recepción Comercial y Enrutamiento de Prospectos', qty: 1, price: 290 },
+      { name: 'Despliegue en Servidor, Garantía Operativa y Capacitación', qty: 1, price: 160 }
     ];
   }
 
-  return {
-    projectTitle,
-    summary,
-    deliveryTime,
-    items
-  };
+  return { projectTitle, summary, deliveryTime, items };
 }
 
 function applyGeneratedProposal(data) {
@@ -600,7 +645,7 @@ function applyGeneratedProposal(data) {
   if (data.deliveryTime) document.getElementById('delivery-time').value = data.deliveryTime;
   if (Array.isArray(data.items) && data.items.length > 0) {
     state.lineItems = data.items.map(i => ({
-      name: String(i.name || 'Entregable'),
+      name: String(i.name || 'Partida'),
       qty: Number(i.qty) || 1,
       price: Number(i.price) || 150
     }));
@@ -609,13 +654,13 @@ function applyGeneratedProposal(data) {
   renderProposalPreview();
 }
 
-// Digital Signature Canvas Logic
+// Fountain-Pen Signature Pad
 function initSignatureCanvas() {
   const canvas = document.getElementById('signature-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  ctx.strokeStyle = '#1e1b4b';
-  ctx.lineWidth = 2.2;
+  ctx.strokeStyle = '#141413';
+  ctx.lineWidth = 2.0;
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
 
@@ -686,10 +731,10 @@ function clearSignature() {
   if (placeholder) placeholder.classList.remove('hidden');
 }
 
-// Export Proposal PDF (Checks Freemium Limit first!)
+// Export Official PDF
 function exportProposalPDF() {
   if (!state.isPro && state.freeUsed >= state.freeLimit) {
-    showToast('🔒 Límite de 3 cotizaciones gratis alcanzado. Desbloquea el Plan PRO.');
+    showToast('Has alcanzado los 3 dossiers de cortesía. Activa tu Pase Studio PRO.');
     openProModal();
     return;
   }
@@ -704,7 +749,6 @@ function exportProposalPDF() {
   window.print();
 }
 
-// Save Quote to LocalStorage & Python SQLite Backend
 async function saveCurrentQuote(silent = false) {
   const calc = getCalculatedTotals();
   const quoteRecord = {
@@ -718,7 +762,6 @@ async function saveCurrentQuote(silent = false) {
     items: state.lineItems
   };
 
-  // Update or insert
   const existingIdx = state.savedQuotes.findIndex(q => q.id === quoteRecord.id);
   if (existingIdx >= 0) {
     state.savedQuotes[existingIdx] = quoteRecord;
@@ -728,7 +771,6 @@ async function saveCurrentQuote(silent = false) {
 
   localStorage.setItem(STORAGE_KEYS.QUOTES, JSON.stringify(state.savedQuotes));
 
-  // Also send to Python server if active
   try {
     await fetch('/api/quotes', {
       method: 'POST',
@@ -738,51 +780,49 @@ async function saveCurrentQuote(silent = false) {
   } catch (_) {}
 
   if (!silent) {
-    showToast('💾 Cotización guardada en el CRM.');
+    showToast('Dossier archivado correctamente.');
   }
 }
 
-// WhatsApp Closer Pitch from Quote Builder
 function buildProposalPitchText() {
-  const clientName = document.getElementById('client-name')?.value || 'Hola';
-  const projectTitle = document.getElementById('project-title')?.value || 'tu proyecto';
+  const clientName = document.getElementById('client-name')?.value || 'Estimado equipo';
+  const projectTitle = document.getElementById('project-title')?.value || 'su proyecto';
   const deliveryTime = document.getElementById('delivery-time')?.value || '10 días hábiles';
   const calc = getCalculatedTotals();
 
   const itemsText = state.lineItems
-    .map(i => `✅ ${i.name} (${formatMoney(i.qty * i.price, calc.currency)})`)
+    .map((i, idx) => `${String(idx + 1).padStart(2, '0')}. ${i.name} — ${formatMoney(i.qty * i.price, calc.currency)}`)
     .join('\n');
 
-  return `Hola *${clientName}*, te comparto el resumen ejecutivo de la propuesta *${projectTitle}* (Folio ${state.quoteNumber}):
+  return `Estimado equipo de *${clientName}*, comparto el resumen ejecutivo del Dossier *${projectTitle}* (Folio ${state.quoteNumber}):
 
-*Entregables incluidos:*
+*Alcance y Partidas:*
 ${itemsText}
 
-💰 *Inversión Total:* ${formatMoney(calc.total, calc.currency)}
-🚀 *Para iniciar hoy (${calc.depositRate}% anticipo):* ${formatMoney(calc.depositAmount, calc.currency)}
-⏱️ *Tiempo de entrega:* ${deliveryTime}
+• *Inversión Total:* ${formatMoney(calc.total, calc.currency)}
+• *Condición de Apertura (${calc.depositRate}%):* ${formatMoney(calc.depositAmount, calc.currency)}
+• *Plazo de Ejecución:* ${deliveryTime}
 
-Quedo atento para enviarte los datos de inicio y arrancar esta misma semana.`;
+Quedo a su disposición para formalizar el inicio de actividades esta semana.`;
 }
 
 function sendWhatsAppPitch() {
   const text = buildProposalPitchText();
-  const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
-  window.open(url, '_blank');
+  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
 }
 
 function copyProposalSummary() {
   const text = buildProposalPitchText();
   navigator.clipboard.writeText(text).then(() => {
-    showToast('📋 Resumen de cierre copiado al portapapeles.');
+    showToast('Resumen ejecutivo copiado al portapapeles.');
   });
 }
 
-// ==========================================
-// TAB 2: B2B AUDITOR & WHATSAPP CLOSER LOGIC
-// ==========================================
+// ============================================================================
+// VIEW 02: B2B FINANCIAL LOSS AUDITOR & WHATSAPP CLOSER
+// ============================================================================
 function calculateB2BAudit() {
-  const businessName = document.getElementById('audit-business-name')?.value || 'Tu Negocio';
+  const businessName = document.getElementById('audit-business-name')?.value || 'Su Organización';
   const niche = document.getElementById('audit-niche')?.value || 'clinica';
   const leadsMonth = Math.max(1, parseFloat(document.getElementById('audit-leads-month')?.value) || 100);
   const ticketUsd = Math.max(1, parseFloat(document.getElementById('audit-ticket-usd')?.value) || 120);
@@ -791,7 +831,7 @@ function calculateB2BAudit() {
 
   document.getElementById('audit-loss-pct-label').textContent = `${lossPct}% de fuga`;
 
-  const lostClientsMonth = Math.round(leadsMonth * (lossPct / 100) * 0.35); // Conservative 35% close rate of lost leads
+  const lostClientsMonth = Math.round(leadsMonth * (lossPct / 100) * 0.35);
   const monthlyLoss = Math.max(ticketUsd, lostClientsMonth * ticketUsd);
   const yearlyLoss = monthlyLoss * 12;
   const roiMultiple = (monthlyLoss / yourPrice).toFixed(1);
@@ -799,31 +839,31 @@ function calculateB2BAudit() {
 
   document.getElementById('audit-monthly-loss').textContent = `$${monthlyLoss.toLocaleString('en-US')} USD`;
   document.getElementById('audit-yearly-loss').textContent = `$${yearlyLoss.toLocaleString('en-US')} USD`;
-  document.getElementById('audit-roi-multiple').textContent = `${roiMultiple}x en 30 días`;
+  document.getElementById('audit-roi-multiple').textContent = `${roiMultiple}x mes 1`;
   document.getElementById('audit-breakeven-clients').textContent = breakevenClients;
 
   const nichePainPoints = {
-    clinica: 'pacientes que escriben fuera de horario o tardan en recibir confirmación de cita',
-    inmobiliaria: 'compradores interesados que piden informes y se enfrían antes de agendar visita',
-    restaurante: 'pedidos y reservaciones que se pierden en horas pico o pagan hasta 30% en apps de reparto',
-    despacho: 'prospectos empresariales que solicitan asesoría y contratan al primero que les responde con claridad',
-    ecommerce: 'carritos abandonados y dudas por WhatsApp que no se responden en los primeros 5 minutos',
-    gimnasio: 'personas que piden informes de mensualidad y no reciben seguimiento automático'
+    clinica: 'pacientes que solicitan valoración fuera de horario o demoran en recibir confirmación de agenda',
+    inmobiliaria: 'inversionistas y compradores que solicitan fichas técnicas y pierden interés antes de agendar visita',
+    restaurante: 'órdenes directas y reservaciones no atendidas en horas pico o sujetas a comisiones del 30% en agregadores',
+    despacho: 'prospectos corporativos que requieren respuesta inmediata para formalizar iguala o representación',
+    ecommerce: 'carritos abandonados y consultas de compra por WhatsApp no atendidas en los primeros 5 minutos',
+    gimnasio: 'prospectos que solicitan planes de inscripción y no reciben seguimiento estructurado'
   };
 
-  const pain = nichePainPoints[niche] || 'prospectos que no reciben atención inmediata 24/7';
+  const pain = nichePainPoints[niche] || 'prospectos que no reciben atención inmediata las 24 horas';
 
-  const script = `Hola equipo de *${businessName}* 👋
+  const script = `Estimada dirección de *${businessName}*,
 
-Hice una breve auditoría del flujo de captación digital de su negocio y noté una oportunidad importante:
+Realicé un análisis preliminar sobre el flujo de recepción digital de su organización e identifiqué un área de oportunidad financiera relevante:
 
-Hoy en día, con un volumen aproximado de *${leadsMonth} prospectos al mes* y un ticket promedio de *$${ticketUsd} USD*, perder apenas el ${lossPct}% de atención inmediata en ${pain} representa una fuga aproximada de *$${monthlyLoss.toLocaleString('en-US')} USD al mes* ($${yearlyLoss.toLocaleString('en-US')} USD al año).
+Con un volumen estimado de *${leadsMonth} prospectos mensuales* y un ticket promedio de *$${ticketUsd} USD*, una merma del ${lossPct}% en ${pain} representa un lucro cesante aproximado de *$${monthlyLoss.toLocaleString('en-US')} USD mensuales* ($${yearlyLoss.toLocaleString('en-US')} USD al año).
 
-Me especializo en instalar un *Sistema Web + Asistente de IA en WhatsApp 24/7* que responde en 5 segundos, califica al cliente y agenda automáticamente.
+En nuestro estudio implementamos una *Arquitectura Web + Concierge IA en WhatsApp 24/7* que responde en menos de 5 segundos, pre-califica al interesado y agenda en automático.
 
-💡 *Lo mejor:* El proyecto completo tiene una inversión única de *$${yourPrice} USD*, lo que significa que *con solo ${breakevenClients} clientes recuperados el sistema se paga solo* (Retorno de ${roiMultiple}x desde el primer mes).
+• *Rentabilidad:* La implementación llave en mano requiere una inversión única de *$${yourPrice} USD*, por lo que *se amortiza por completo recuperando únicamente ${breakevenClients} clientes* (múltiplo de retorno de ${roiMultiple}x desde el primer mes).
 
-¿Te parece bien si te envío la propuesta formal en PDF para que la revises en 2 minutos?`;
+¿Me autoriza compartirle por esta vía el Dossier PDF formal con el desglose técnico y tiempos de entrega?`;
 
   const scriptEl = document.getElementById('audit-whatsapp-script');
   if (scriptEl) scriptEl.value = script;
@@ -833,7 +873,7 @@ function copyAuditPitch() {
   const scriptEl = document.getElementById('audit-whatsapp-script');
   if (!scriptEl) return;
   navigator.clipboard.writeText(scriptEl.value).then(() => {
-    showToast('📋 Guion de venta B2B copiado al portapapeles.');
+    showToast('Memorándum copiado al portapapeles.');
   });
 }
 
@@ -844,13 +884,13 @@ function sendAuditWhatsApp() {
 }
 
 function convertAuditToProposal() {
-  const businessName = document.getElementById('audit-business-name')?.value || 'Cliente B2B';
+  const businessName = document.getElementById('audit-business-name')?.value || 'Organización Cliente';
   const yourPrice = Math.max(50, parseFloat(document.getElementById('audit-your-price')?.value) || 650);
   const monthlyLossText = document.getElementById('audit-monthly-loss')?.textContent || '$3,000 USD';
 
   document.getElementById('client-name').value = businessName;
-  document.getElementById('project-title').value = `Sistema de Captación & Automatización IA para ${businessName}`;
-  document.getElementById('proposal-summary').value = `Implementación llave en mano diseñada para eliminar la fuga estimada de ${monthlyLossText}/mes en prospectos no atendidos, mediante una arquitectura web optimizada y un Agente Inteligente en WhatsApp activo 24/7.`;
+  document.getElementById('project-title').value = `Infraestructura de Captación & Concierge IA para ${businessName}`;
+  document.getElementById('proposal-summary').value = `Intervención tecnológica llave en mano diseñada para recuperar el lucro cesante estimado en ${monthlyLossText}/mes por prospectos no atendidos, mediante un portal de conversión rápida y un Agente IA en WhatsApp operativo 24/7.`;
   document.getElementById('currency-select').value = 'USD';
   document.getElementById('discount-rate').value = '0';
   document.getElementById('tax-rate').value = '0';
@@ -860,72 +900,75 @@ function convertAuditToProposal() {
   const p3 = yourPrice - p1 - p2;
 
   state.lineItems = [
-    { name: 'Portal / Embudo de Captación Digital Optimizado para Conversión', qty: 1, price: p1 },
-    { name: 'Configuración y Entrenamiento de Asistente IA 24/7 en WhatsApp', qty: 1, price: p2 },
-    { name: 'Integración de Agenda Automática, CRM y Garantía de 30 Días', qty: 1, price: p3 }
+    { name: 'Portal Digital de Captación Optimizado para Conversión Comercial', qty: 1, price: p1 },
+    { name: 'Entrenamiento e Integración de Concierge IA 24/7 en WhatsApp', qty: 1, price: p2 },
+    { name: 'Sincronización de Agenda, CRM y Póliza de Garantía de 30 Días', qty: 1, price: p3 }
   ];
 
   renderLineItemsEditor();
   renderProposalPreview();
   switchTab('builder');
-  showToast('🚀 Diagnóstico convertido en Cotización PDF lista para cerrar.');
+  showToast('Diagnóstico transferido al Dossier PDF.');
 }
 
-// ==========================================
-// TAB 3: AFFILIATE MARKETPLACE RENDERER
-// ==========================================
+// ============================================================================
+// VIEW 03: AFFILIATES & INFRASTRUCTURE PARTNERS
+// ============================================================================
 function renderAffiliateMarketplace() {
   const grid = document.getElementById('affiliate-marketplace-grid');
   if (!grid) return;
 
   const tools = [
     {
-      badge: 'Comisión: $60 - $150 USD / venta',
-      title: 'Hostinger Cloud & VPS Pro',
-      desc: 'El hosting de alta velocidad ideal para alojar las webs y sistemas de tus clientes con dominio gratis y SSL.',
-      url: state.config.affHosting || DEFAULT_CONFIG.affHosting,
-      cta: 'Abrir Enlace de Afiliado Hosting'
+      code: 'PARTNER 01 · INFRAESTRUCTURA',
+      commission: 'Comisión: $60 – $150 USD / alta',
+      title: 'Hostinger Cloud & Servidores VPS',
+      desc: 'Infraestructura de alojamiento de baja latencia con certificado SSL y dominio corporativo para desplegar los portales de tus clientes.',
+      url: state.config.affHosting || DEFAULT_CONFIG.affHosting
     },
     {
-      badge: 'Comisión Recurrente / Bounty',
-      title: 'Shopify & Infraestructura E-Commerce',
-      desc: 'Recomienda la plataforma líder de comercio electrónico a tus clientes de tiendas online y gana comisión de partner.',
-      url: state.config.affEcommerce || DEFAULT_CONFIG.affEcommerce,
-      cta: 'Abrir Enlace de Afiliado E-Commerce'
+      code: 'PARTNER 02 · COMERCIO ELECTRÓNICO',
+      commission: 'Comisión de Partner Oficial',
+      title: 'Shopify & Motor Transaccional',
+      desc: 'Especifica el estándar global de comercio electrónico en tus proyectos de retail y percibe comisiones recurrentes por referido.',
+      url: state.config.affEcommerce || DEFAULT_CONFIG.affEcommerce
     },
     {
-      badge: 'Comisión: 20% Recurrente por 12 meses',
-      title: 'Make.com & Automatización IA',
-      desc: 'Conecta WhatsApp, Google Sheets, OpenAI/Gemini y CRMs sin servidor. Gana ingresos pasivos cada mes que tu cliente lo use.',
-      url: state.config.affCrm || DEFAULT_CONFIG.affCrm,
-      cta: 'Abrir Enlace de Afiliado Automatización'
+      code: 'PARTNER 03 · ORQUESTACIÓN & IA',
+      commission: 'Comisión: 20% Recurrente (12 meses)',
+      title: 'Make.com & Automatización B2B',
+      desc: 'Interconecta WhatsApp Business, bases de datos, CRMs y modelos de lenguaje para tus clientes generando ingresos pasivos mensuales.',
+      url: state.config.affCrm || DEFAULT_CONFIG.affCrm
     }
   ];
 
   grid.innerHTML = tools.map(t => `
-    <div class="glass-panel glass-card-hover rounded-2xl p-5 flex flex-col justify-between border border-slate-800">
-      <div>
-        <span class="inline-block text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-          💰 ${escapeHtml(t.badge)}
-        </span>
-        <h3 class="text-base font-extrabold text-white mt-3">${escapeHtml(t.title)}</h3>
-        <p class="text-xs text-slate-300 mt-1.5 leading-relaxed">${escapeHtml(t.desc)}</p>
+    <div class="atelier-card atelier-card-interactive rounded-xl p-6 flex flex-col justify-between">
+      <div class="space-y-2.5">
+        <div class="flex items-center justify-between">
+          <span class="font-tabular text-[10px] uppercase tracking-widest text-[var(--ink-muted)]">${escapeHtml(t.code)}</span>
+          <span class="font-tabular text-[10px] font-semibold px-2 py-0.5 rounded bg-[var(--accent-forest-soft)] text-[var(--accent-forest)]">
+            ${escapeHtml(t.commission)}
+          </span>
+        </div>
+        <h3 class="font-editorial text-xl text-[var(--ink-primary)]">${escapeHtml(t.title)}</h3>
+        <p class="text-xs text-[var(--ink-secondary)] leading-relaxed">${escapeHtml(t.desc)}</p>
       </div>
-      <div class="mt-5 pt-3 border-t border-slate-800/80 flex items-center justify-between gap-2">
-        <a href="${escapeHtml(t.url)}" target="_blank" rel="noopener" class="flex-1 text-center py-2 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition">
-          ${escapeHtml(t.cta)} &rarr;
+      <div class="mt-6 pt-4 border-t border-[var(--border-hairline)] flex items-center gap-2">
+        <a href="${escapeHtml(t.url)}" target="_blank" rel="noopener" class="btn-obsidian flex-1 text-center py-2 px-3 text-xs">
+          Abrir Enlace de Partner &rarr;
         </a>
-        <button onclick="navigator.clipboard.writeText('${escapeHtml(t.url)}'); showToast('🔗 Link de afiliado copiado');" class="py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold">
-          Copiar
+        <button onclick="navigator.clipboard.writeText('${escapeHtml(t.url)}'); showToast('Enlace de partner copiado');" class="btn-outline py-2 px-3 text-xs">
+          Copiar URL
         </button>
       </div>
     </div>
   `).join('');
 }
 
-// ==========================================
-// TAB 4: OWNER / ADMIN CONTROL CENTER
-// ==========================================
+// ============================================================================
+// VIEW 04: OWNER ADMINISTRATION
+// ============================================================================
 function populateOwnerConfigInputs() {
   const c = state.config;
   const setVal = (id, val) => {
@@ -945,8 +988,8 @@ function populateOwnerConfigInputs() {
 async function saveOwnerConfig() {
   state.config = {
     geminiApiKey: document.getElementById('cfg-gemini-key')?.value.trim() || '',
-    stripeMonthlyUrl: document.getElementById('cfg-stripe-monthly')?.value.trim() || '',
-    stripeLifetimeUrl: document.getElementById('cfg-stripe-lifetime')?.value.trim() || '',
+    stripeMonthlyUrl: document.getElementById('cfg-stripe-monthly')?.value.trim() || DEFAULT_CONFIG.stripeMonthlyUrl,
+    stripeLifetimeUrl: document.getElementById('cfg-stripe-lifetime')?.value.trim() || DEFAULT_CONFIG.stripeLifetimeUrl,
     ownerWhatsapp: document.getElementById('cfg-owner-whatsapp')?.value.trim() || DEFAULT_CONFIG.ownerWhatsapp,
     bankInstructions: document.getElementById('cfg-bank-instructions')?.value.trim() || DEFAULT_CONFIG.bankInstructions,
     affHosting: document.getElementById('cfg-aff-hosting')?.value.trim() || DEFAULT_CONFIG.affHosting,
@@ -967,35 +1010,32 @@ async function saveOwnerConfig() {
   updatePlanUI();
   renderProposalPreview();
   renderAffiliateMarketplace();
-  showToast('✅ Configuración de pagos, IA y afiliados guardada.');
+  showToast('Parámetros del estudio actualizados.');
 }
 
 async function testGeminiConnection() {
   const key = document.getElementById('cfg-gemini-key')?.value.trim();
   if (!key) {
-    showToast('ℹ️ Sin API Key externa: usando el Motor IA Híbrido Local ($0 costo).');
+    showToast('Operando con el Motor Editorial Local ($0 costo).');
     return;
   }
   try {
     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(key)}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: 'Responde solo OK' }] }]
-      })
+      body: JSON.stringify({ contents: [{ parts: [{ text: 'OK' }] }] })
     });
     if (res.ok) {
       await saveOwnerConfig();
-      showToast('🟢 Conexión con Google Gemini API verificada correctamente.');
+      showToast('Conexión con Google Gemini verificada.');
     } else {
-      showToast('❌ La API Key de Gemini no es válida o no tiene permisos.');
+      showToast('No fue posible validar la clave proporcionada.');
     }
   } catch (e) {
-    showToast('❌ Error de red al verificar Gemini API.');
+    showToast('Error de red al consultar Google Gemini.');
   }
 }
 
-// Cryptographic-style License Key Generator for Selling Direct PRO Access
 function computeLicenseSignature(emailClean) {
   let hash = 2166136261;
   const seed = `COTIZAPRO-SECRET-2026:${emailClean.toLowerCase()}`;
@@ -1010,7 +1050,7 @@ async function generateClientLicenseKey() {
   const emailInput = document.getElementById('license-client-email');
   const email = (emailInput?.value || '').trim();
   if (!email || !email.includes('@')) {
-    showToast('⚠️ Ingresa el correo del cliente para generar su licencia PRO.');
+    showToast('Ingresa el correo electrónico del cliente para emitir su credencial.');
     return;
   }
 
@@ -1033,14 +1073,14 @@ async function generateClientLicenseKey() {
   document.getElementById('generated-license-code').textContent = licenseKey;
   document.getElementById('generated-license-box').classList.remove('hidden');
   renderAdminDashboard();
-  showToast(`🔑 Licencia PRO generada para ${email}`);
+  showToast(`Credencial emitida para ${email}`);
 }
 
 function copyGeneratedLicense() {
   const code = document.getElementById('generated-license-code')?.textContent;
   if (!code) return;
   navigator.clipboard.writeText(code).then(() => {
-    showToast('📋 Código de licencia copiado. Envíalo a tu cliente.');
+    showToast('Credencial copiada al portapapeles.');
   });
 }
 
@@ -1054,21 +1094,21 @@ function renderAdminDashboard() {
   if (!list) return;
 
   if (state.savedQuotes.length === 0) {
-    list.innerHTML = `<div class="p-4 rounded-xl bg-slate-950/60 border border-slate-800 text-slate-400 text-center">
-      Aún no has guardado cotizaciones. Ve al tab 1 y pulsa "Guardar" o "Descargar PDF".
+    list.innerHTML = `<div class="p-4 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-hairline)] text-[var(--ink-muted)] text-center">
+      Sin dossiers archivados aún.
     </div>`;
     return;
   }
 
   list.innerHTML = state.savedQuotes.map(q => `
-    <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center justify-between gap-2">
+    <div class="p-3 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-hairline)] flex items-center justify-between gap-2">
       <div>
-        <div class="font-bold text-white">${escapeHtml(q.clientName)} — <span class="text-indigo-400">${escapeHtml(q.id)}</span></div>
-        <div class="text-[11px] text-slate-400 truncate max-w-xs">${escapeHtml(q.projectTitle)}</div>
+        <div class="font-semibold text-[var(--ink-primary)]">${escapeHtml(q.clientName)} <span class="font-tabular text-[11px] text-[var(--ink-muted)]">· ${escapeHtml(q.id)}</span></div>
+        <div class="text-[11px] text-[var(--ink-secondary)] truncate max-w-xs">${escapeHtml(q.projectTitle)}</div>
       </div>
       <div class="text-right">
-        <div class="font-extrabold text-emerald-400">${formatMoney(q.total, q.currency)}</div>
-        <div class="text-[10px] text-slate-500">${new Date(q.date).toLocaleDateString()}</div>
+        <div class="font-tabular font-bold text-[var(--accent-forest)]">${formatMoney(q.total, q.currency)}</div>
+        <div class="font-tabular text-[10px] text-[var(--ink-muted)]">${new Date(q.date).toLocaleDateString()}</div>
       </div>
     </div>
   `).join('');
@@ -1083,13 +1123,13 @@ function exportCRMToJSON() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `cotizapro-crm-${new Date().toISOString().slice(0, 10)}.json`;
+  a.download = `cotizapro-archivo-${new Date().toISOString().slice(0, 10)}.json`;
   a.click();
 }
 
-// ==========================================
+// ============================================================================
 // PRO CHECKOUT MODAL & LICENSE ACTIVATION
-// ==========================================
+// ============================================================================
 function openProModal() {
   document.getElementById('pro-modal')?.classList.remove('hidden');
 }
@@ -1108,10 +1148,9 @@ function triggerPaymentCheckout(planType) {
     return;
   }
 
-  // Fallback to Direct WhatsApp Checkout with Owner so Daniel never loses a sale even before Stripe is linked!
-  const priceText = planType === 'monthly' ? '$9 USD/mes (Plan PRO Mensual)' : '$29 USD (Pase PRO Vitalicio)';
+  const priceText = planType === 'monthly' ? '$9 USD/mes (Membresía Mensual)' : '$29 USD (Pase Vitalicio)';
   const waNumber = (state.config.ownerWhatsapp || '').replace(/\D/g, '');
-  const msg = `Hola Daniel! Quiero adquirir mi licencia de *CotizaPro AI — ${priceText}*. ¿Me compartes el link de pago o datos de transferencia para recibir mi código de activación CPRO?`;
+  const msg = `Hola Daniel, deseo adquirir mi licencia de *CotizaPro Studio — ${priceText}*.`;
   const waUrl = waNumber
     ? `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`
     : `https://wa.me/?text=${encodeURIComponent(msg)}`;
@@ -1121,13 +1160,13 @@ function triggerPaymentCheckout(planType) {
 function activateProLicense() {
   const code = (document.getElementById('activate-license-input')?.value || '').trim().toUpperCase();
   if (!code) {
-    showToast('⚠️ Escribe un código de licencia.');
+    showToast('Ingresa una credencial de activación válida.');
     return;
   }
 
   const isValidFormat = code === 'CPRO-OWNER-PRO' || /^CPRO-2026-[A-Z0-9]{6}-\d{3}$/.test(code) || code.startsWith('CPRO-2026-VIP');
   if (!isValidFormat) {
-    showToast('❌ Código inválido. Verifica tu clave CPRO-2026-...');
+    showToast('Credencial no reconocida. Verifica el formato CPRO-2026-...');
     return;
   }
 
@@ -1135,7 +1174,7 @@ function activateProLicense() {
   localStorage.setItem(STORAGE_KEYS.PLAN, 'PRO');
   updatePlanUI();
   closeProModal();
-  showToast('🎉 ¡Plan PRO Ilimitado Activado! Marca de agua eliminada.');
+  showToast('Licencia Studio PRO activada. Colofón removido.');
 }
 
 function escapeHtml(str) {

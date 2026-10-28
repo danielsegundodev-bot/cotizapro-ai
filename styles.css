@@ -1,8 +1,48 @@
-/* CotizaPro AI - Micro-SaaS Styles & Print-Ready PDF Engine */
+/* ==========================================================================
+   CotizaPro Studio — Swiss Editorial & Financial Atelier Design System
+   Inspired by Stripe Press, Mercury, Linear & International Typographic Style
+   ========================================================================== */
+
 :root {
-  --brand-primary: #6366f1;
-  --brand-secondary: #10b981;
-  --brand-dark: #0f172a;
+  /* Warm Architectural Daylight Palette (Default) */
+  --bg-canvas: #F4F2EC;
+  --bg-surface: #FAF9F5;
+  --bg-elevated: #FFFFFF;
+  --bg-subtle: #EAE6DD;
+  --ink-primary: #141413;
+  --ink-secondary: #57544E;
+  --ink-muted: #8A857C;
+  --border-hairline: #DCD7CD;
+  --border-strong: #141413;
+
+  /* Signature Accents — Vermilion & Forest Financial Green (Zero AI Neon Purple) */
+  --accent-terracotta: #C84B31;
+  --accent-terracotta-hover: #AD3B23;
+  --accent-forest: #185C43;
+  --accent-forest-soft: #E5F0EC;
+  --accent-gold: #B7791F;
+  --accent-gold-soft: #FDF6E7;
+
+  /* Fonts */
+  --font-serif: 'Newsreader', 'Georgia', serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* Optional Carbon Obsidian Mode (Warm Carbon, Not Blue/Purple) */
+html.theme-carbon {
+  --bg-canvas: #111110;
+  --bg-surface: #181816;
+  --bg-elevated: #20201D;
+  --bg-subtle: #282724;
+  --ink-primary: #F3F1EC;
+  --ink-secondary: #A8A39A;
+  --ink-muted: #6E6A63;
+  --border-hairline: #2E2D29;
+  --border-strong: #E6E2D8;
+  --accent-forest: #34A87A;
+  --accent-forest-soft: rgba(52, 168, 122, 0.14);
+  --accent-gold-soft: rgba(217, 155, 67, 0.14);
 }
 
 * {
@@ -10,53 +50,151 @@
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: #0b0f19;
-  color: #f8fafc;
-  overflow-x: hidden;
+  font-family: var(--font-sans);
+  background-color: var(--bg-canvas);
+  color: var(--ink-primary);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: #0f172a;
-}
-::-webkit-scrollbar-thumb {
-  background: #334155;
-  border-radius: 9999px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+/* Typography Utilities */
+.font-editorial {
+  font-family: var(--font-serif);
 }
 
-/* Glassmorphism Cards */
-.glass-panel {
-  background: rgba(15, 23, 42, 0.78);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(148, 163, 184, 0.12);
+.font-tabular {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
-.glass-card-hover {
-  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.glass-card-hover:hover {
-  transform: translateY(-2px);
-  border-color: rgba(99, 102, 241, 0.45);
-  box-shadow: 0 12px 32px -8px rgba(99, 102, 241, 0.22);
+/* Architectural Surfaces & Borders */
+.atelier-surface {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
 }
 
-/* Proposal Document Preview Sheet */
-.proposal-sheet {
-  background: #ffffff;
-  color: #0f172a;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
-  border-radius: 12px;
+.atelier-card {
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border-hairline);
+  box-shadow: 0 1px 2px rgba(20, 20, 19, 0.04);
+  transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.atelier-card-interactive:hover {
+  border-color: var(--ink-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px -6px rgba(20, 20, 19, 0.08);
+}
+
+/* Inputs & Form Controls */
+.atelier-input {
+  width: 100%;
+  background-color: var(--bg-elevated);
+  color: var(--ink-primary);
+  border: 1px solid var(--border-hairline);
+  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.atelier-input:focus {
+  outline: none;
+  border-color: var(--ink-primary);
+  box-shadow: 0 0 0 2px rgba(20, 20, 19, 0.08);
+}
+
+.atelier-label {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-secondary);
+  margin-bottom: 0.3rem;
+}
+
+/* Buttons */
+.btn-obsidian {
+  background-color: var(--ink-primary);
+  color: var(--bg-canvas);
+  font-weight: 600;
+  border-radius: 8px;
+  transition: opacity 0.15s ease, transform 0.12s ease;
+}
+.btn-obsidian:hover {
+  opacity: 0.9;
+}
+.btn-obsidian:active {
+  transform: scale(0.99);
+}
+
+.btn-terracotta {
+  background-color: var(--accent-terracotta);
+  color: #FFFFFF;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: background-color 0.15s ease, transform 0.12s ease;
+}
+.btn-terracotta:hover {
+  background-color: var(--accent-terracotta-hover);
+}
+
+.btn-forest {
+  background-color: var(--accent-forest);
+  color: #FFFFFF;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: opacity 0.15s ease;
+}
+.btn-forest:hover {
+  opacity: 0.92;
+}
+
+.btn-outline {
+  background-color: var(--bg-elevated);
+  color: var(--ink-primary);
+  border: 1px solid var(--border-hairline);
+  font-weight: 600;
+  border-radius: 8px;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.btn-outline:hover {
+  border-color: var(--ink-primary);
+  background-color: var(--bg-subtle);
+}
+
+/* The Printable Editorial Dossier Sheet (Always Crisp Ivory/White Paper) */
+.dossier-paper {
+  background-color: #FFFFFF;
+  color: #141413;
+  border: 1px solid #D6D1C7;
+  box-shadow:
+    0 1px 1px rgba(20, 20, 19, 0.04),
+    0 12px 32px -8px rgba(20, 20, 19, 0.10),
+    0 32px 64px -16px rgba(20, 20, 19, 0.08);
+  border-radius: 4px;
   position: relative;
-  overflow: hidden;
+}
+
+/* Inline Editable Highlights on Dossier Paper */
+.inline-editable {
+  border-bottom: 1px dashed transparent;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+  cursor: text;
+}
+.inline-editable:hover {
+  border-bottom-color: #A8A29E;
+  background-color: rgba(200, 75, 49, 0.04);
+}
+.inline-editable:focus {
+  outline: none;
+  border-bottom-color: #C84B31;
+  background-color: rgba(200, 75, 49, 0.06);
 }
 
 /* Signature Canvas */
@@ -65,49 +203,42 @@ body {
   cursor: crosshair;
 }
 
-/* Pulse Glow for Revenue Badge */
-@keyframes pulse-emerald {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
-  }
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-hairline);
+  border-radius: 9999px;
 }
 
-.revenue-pulse {
-  animation: pulse-emerald 2.4s infinite;
-}
-
-/* Print-Specific Rules so PDF Export looks like a $1,000 Agency Proposal */
+/* Print Rules */
 @media print {
   body {
-    background: #ffffff !important;
-    color: #0f172a !important;
-    margin: 0 !important;
-    padding: 0 !important;
+    background: #FFFFFF !important;
+    color: #141413 !important;
   }
-
   .no-print {
     display: none !important;
   }
-
   .print-only-container {
-    width: 100% !important;
     max-width: 100% !important;
-    margin: 0 !important;
+    width: 100% !important;
     padding: 0 !important;
+    margin: 0 !important;
   }
-
-  .proposal-sheet {
+  .dossier-paper {
     box-shadow: none !important;
     border: none !important;
-    border-radius: 0 !important;
-    width: 100% !important;
+    padding: 0 !important;
     margin: 0 !important;
   }
-
-  .page-break-before {
-    page-break-before: always;
+  .inline-editable {
+    border-bottom: none !important;
+    background: transparent !important;
   }
 }

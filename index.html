@@ -1,739 +1,804 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CotizaPro AI — Plataforma de Propuestas Comerciales, Contratos y Auditoría B2B</title>
-  <meta name="description" content="Genera cotizaciones PDF de alta conversión, contratos legales listos para firmar y auditorías de ROI con Inteligencia Artificial en 30 segundos." />
+  <title>CotizaPro Studio — Atelier de Propuestas Comerciales, Contratos &amp; Diagnóstico B2B</title>
+  <meta name="description" content="Estudio editorial de propuestas comerciales, contratos legales y diagnóstico financiero B2B. Diseñado para cerrar acuerdos de alto valor." />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body class="min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+<body class="min-h-screen flex flex-col">
 
-  <!-- TOP ANNOUNCEMENT / MONETIZATION BAR -->
-  <div class="no-print bg-gradient-to-r from-indigo-950 via-slate-900 to-emerald-950 border-b border-indigo-500/20 px-4 py-2 text-xs">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
-      <div class="flex items-center gap-2">
-        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 font-semibold border border-emerald-500/30 revenue-pulse">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-          Triple Motor de Ingresos Activo
+  <!-- TOP EDITORIAL STATUS STRIP -->
+  <div class="no-print border-b border-[var(--border-hairline)] bg-[var(--bg-surface)] px-4 sm:px-8 py-2 text-xs">
+    <div class="max-w-[1380px] mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center gap-1.5 font-tabular text-[11px] uppercase tracking-wider px-2 py-0.5 rounded bg-[var(--accent-forest-soft)] text-[var(--accent-forest)] font-semibold">
+          <span class="w-1.5 h-1.5 rounded-full bg-[var(--accent-forest)]"></span>
+          Estudio Comercial Activo
         </span>
-        <span class="text-slate-300 hidden sm:inline">
-          1) Suscripciones SaaS PRO &bull; 2) Cierre de Servicios B2B ($300–$1,500 USD) &bull; 3) Comisiones de Afiliados en cada PDF
+        <span class="text-[var(--ink-secondary)] hidden md:inline">
+          Dossiers de inversión, contratos vinculantes y diagnóstico de rentabilidad B2B
         </span>
       </div>
-      <div class="flex items-center gap-3">
-        <span id="ai-engine-indicator" class="text-slate-400 flex items-center gap-1">
-          <span class="w-2 h-2 rounded-full bg-amber-400" id="ai-status-dot"></span>
-          <span id="ai-status-text">IA Híbrida Lista</span>
+      <div class="flex items-center gap-4">
+        <span id="ai-engine-indicator" class="flex items-center gap-1.5 text-[11px] font-tabular text-[var(--ink-secondary)]">
+          <span id="ai-status-dot" class="w-1.5 h-1.5 rounded-full bg-[var(--accent-terracotta)]"></span>
+          <span id="ai-status-text">Motor Editorial Listo</span>
         </span>
-        <button onclick="switchTab('admin')" class="text-indigo-300 hover:text-white underline font-medium">
-          Configurar Pagos &amp; APIs &rarr;
+        <button onclick="toggleAtelierTheme()" class="text-[11px] font-semibold text-[var(--ink-secondary)] hover:text-[var(--ink-primary)] flex items-center gap-1 transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/>
+          </svg>
+          <span id="theme-toggle-label">Modo Carbón</span>
         </button>
       </div>
     </div>
   </div>
 
-  <!-- MAIN NAVIGATION HEADER -->
-  <header class="no-print sticky top-0 z-30 glass-panel border-b border-slate-800/80">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-4">
-      <!-- Brand -->
-      <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('builder')">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center shadow-lg shadow-indigo-500/25 font-extrabold text-white text-lg">
-          CP
+  <!-- MAIN ARCHITECTURAL HEADER -->
+  <header class="no-print sticky top-0 z-30 bg-[var(--bg-canvas)]/95 backdrop-blur-md border-b border-[var(--border-hairline)]">
+    <div class="max-w-[1380px] mx-auto px-4 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+
+      <!-- Brand Mark -->
+      <div class="flex items-center gap-3.5 cursor-pointer" onclick="switchTab('builder')">
+        <div class="w-9 h-9 rounded-lg bg-[var(--ink-primary)] text-[var(--bg-canvas)] flex items-center justify-center font-editorial italic text-xl font-medium tracking-tight">
+          C
         </div>
         <div>
-          <div class="flex items-center gap-2">
-            <span class="font-extrabold text-lg tracking-tight text-white">CotizaPro <span class="text-indigo-400">AI</span></span>
-            <span id="plan-badge" class="text-[11px] font-bold uppercase px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700">
-              Plan Gratis (3/3)
+          <div class="flex items-center gap-2.5">
+            <span class="font-editorial text-xl font-medium tracking-tight text-[var(--ink-primary)]">CotizaPro <span class="italic font-normal text-[var(--accent-terracotta)]">Studio</span></span>
+            <span id="plan-badge" class="font-tabular text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded border border-[var(--border-hairline)] bg-[var(--bg-elevated)] text-[var(--ink-secondary)]">
+              Edición Base · 3/3
             </span>
           </div>
-          <p class="text-xs text-slate-400">Propuestas, Contratos &amp; Cierre de Ventas B2B</p>
+          <p class="text-[11px] text-[var(--ink-muted)] hidden sm:block">Arquitectura de propuestas comerciales y cierre de acuerdos</p>
         </div>
       </div>
 
-      <!-- Navigation Tabs -->
-      <nav class="flex items-center gap-1 sm:gap-2 bg-slate-900/90 p-1 rounded-xl border border-slate-800 overflow-x-auto max-w-full">
-        <button id="tab-btn-builder" onclick="switchTab('builder')" class="tab-btn px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-indigo-600 text-white shadow">
-          1. Cotizador &amp; Contrato IA
+      <!-- Segmented Studio Navigation -->
+      <nav class="flex items-center gap-1 p-1 rounded-lg bg-[var(--bg-subtle)] border border-[var(--border-hairline)] overflow-x-auto max-w-full">
+        <button id="tab-btn-builder" onclick="switchTab('builder')" class="tab-btn px-3.5 py-1.5 rounded-md text-xs font-semibold transition-all bg-[var(--bg-elevated)] text-[var(--ink-primary)] shadow-sm">
+          01 · Dossier &amp; Contrato
         </button>
-        <button id="tab-btn-auditor" onclick="switchTab('auditor')" class="tab-btn px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-white hover:bg-slate-800/60">
-          2. Auditor B2B &amp; WhatsApp Closer
+        <button id="tab-btn-auditor" onclick="switchTab('auditor')" class="tab-btn px-3.5 py-1.5 rounded-md text-xs font-medium transition-all text-[var(--ink-secondary)] hover:text-[var(--ink-primary)]">
+          02 · Diagnóstico ROI &amp; Cierre
         </button>
-        <button id="tab-btn-affiliates" onclick="switchTab('affiliates')" class="tab-btn px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-white hover:bg-slate-800/60">
-          3. Kit Afiliados ($)
+        <button id="tab-btn-affiliates" onclick="switchTab('affiliates')" class="tab-btn px-3.5 py-1.5 rounded-md text-xs font-medium transition-all text-[var(--ink-secondary)] hover:text-[var(--ink-primary)]">
+          03 · Alianzas &amp; Partners
         </button>
-        <button id="tab-btn-admin" onclick="switchTab('admin')" class="tab-btn px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-emerald-300 hover:text-white hover:bg-slate-800/60 flex items-center gap-1">
-          <span>⚙️ Panel Dueño</span>
+        <button id="tab-btn-admin" onclick="switchTab('admin')" class="tab-btn px-3.5 py-1.5 rounded-md text-xs font-medium transition-all text-[var(--ink-secondary)] hover:text-[var(--ink-primary)]">
+          04 · Administración
         </button>
       </nav>
 
-      <!-- Upgrade / Pro CTA -->
-      <div class="flex items-center gap-2">
-        <button id="upgrade-header-btn" onclick="openProModal()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-bold text-xs sm:text-sm shadow-lg shadow-amber-500/20 transition transform hover:-translate-y-0.5">
-          ⚡ Desbloquear PRO
+      <!-- Primary Actions -->
+      <div class="flex items-center gap-2.5">
+        <button id="upgrade-header-btn" onclick="openProModal()" class="btn-terracotta px-3.5 py-2 text-xs flex items-center gap-1.5 shadow-sm">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"/>
+          </svg>
+          <span>Activar Pase Studio PRO</span>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- MAIN WORKSPACE CONTAINER -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 print-only-container">
+  <!-- MAIN WORKSPACE -->
+  <main class="flex-1 max-w-[1380px] w-full mx-auto px-4 sm:px-8 py-7 print-only-container">
 
-    <!-- ==========================================
-         TAB 1: COTIZADOR, PROPUESTA & CONTRATO IA
-         ========================================== -->
+    <!-- ====================================================================
+         VIEW 01: DOSSIER BUILDER & INLINE EDITORIAL DOCUMENT
+         ==================================================================== -->
     <section id="tab-builder" class="space-y-6">
-      <!-- Quick Value Banner (No-Print) -->
-      <div class="no-print glass-panel rounded-2xl p-4 sm:p-5 border border-indigo-500/20 bg-gradient-to-r from-slate-900/90 via-indigo-950/30 to-slate-900/90 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+
+      <!-- Editorial Subheader & Preset Selector Bar (No-Print) -->
+      <div class="no-print flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-5 border-b border-[var(--border-hairline)]">
         <div>
-          <h1 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
-            <span>Generador Inteligente de Propuestas Comerciales y Contratos</span>
+          <span class="font-tabular text-[11px] uppercase tracking-widest text-[var(--accent-terracotta)] font-semibold">Mesa de Redacción Comercial</span>
+          <h1 class="font-editorial text-2xl sm:text-3xl font-normal text-[var(--ink-primary)] mt-0.5">
+            Dossier de Inversión &amp; Acuerdo de Servicios
           </h1>
-          <p class="text-xs sm:text-sm text-slate-300 mt-0.5">
-            Elige un paquete rentable de 1 clic o describe el proyecto para que la IA redacte el alcance, desglose precios, calcule el ROI y anexe el contrato legal.
-          </p>
         </div>
-        <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
-          <select id="preset-selector" onchange="loadPresetTemplate(this.value)" class="bg-slate-950 border border-slate-700 text-slate-200 text-xs sm:text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:border-indigo-500 flex-1 lg:flex-initial">
-            <option value="">✨ Cargar Plantilla de Alto Ticket...</option>
-            <option value="ai_automation">🤖 Automatización IA &amp; Chatbot WhatsApp ($850 USD)</option>
-            <option value="web_ecommerce">🛒 E-Commerce / Tienda Online Completa ($950 USD)</option>
-            <option value="landing_funnel">🚀 Landing Page + Embudo de Ventas ($450 USD)</option>
-            <option value="saas_mvp">💻 Desarrollo de App Web / Micro-SaaS ($1,800 USD)</option>
-            <option value="marketing_seo">📈 Agencia Marketing &amp; Posicionamiento SEO ($600/mes)</option>
-            <option value="branding_ui">🎨 Diseño de Marca &amp; UI/UX Pro ($550 USD)</option>
-            <option value="consulting_b2b">📊 Consultoría de Procesos &amp; Auditoría ($750 USD)</option>
-            <option value="technical_services">🛠️ Servicios Técnicos / Remodelación / Ingeniería ($1,200 USD)</option>
-          </select>
-          <button onclick="saveCurrentQuote()" class="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs sm:text-sm font-semibold border border-slate-700 transition">
-            💾 Guardar
+
+        <div class="flex flex-wrap items-center gap-2.5">
+          <div class="relative">
+            <select id="preset-selector" onchange="loadPresetTemplate(this.value)" class="atelier-input pr-8 font-medium min-w-[260px]">
+              <option value="">Cargar plantilla por industria...</option>
+              <option value="ai_automation">Automatización IA &amp; Concierge WhatsApp ($850 USD)</option>
+              <option value="web_ecommerce">Arquitectura E-Commerce &amp; Pagos ($950 USD)</option>
+              <option value="landing_funnel">Landing Page Editorial &amp; Embudo ($450 USD)</option>
+              <option value="saas_mvp">Ingeniería de Producto Web / SaaS ($1,800 USD)</option>
+              <option value="marketing_seo">Estrategia de Captación &amp; SEO Local ($600/mes)</option>
+              <option value="branding_ui">Dirección de Arte, Identidad &amp; UI/UX ($550 USD)</option>
+              <option value="consulting_b2b">Auditoría Operativa &amp; Procesos B2B ($750 USD)</option>
+              <option value="technical_services">Obra Civil, Ingeniería &amp; Servicios Técnicos ($1,200 USD)</option>
+            </select>
+          </div>
+
+          <button onclick="saveCurrentQuote()" class="btn-outline px-3.5 py-2 text-xs flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"/>
+            </svg>
+            <span>Guardar en Archivo</span>
           </button>
-          <button onclick="exportProposalPDF()" class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-bold shadow-lg shadow-indigo-600/30 transition">
-            🖨️ Descargar PDF
+
+          <button onclick="exportProposalPDF()" class="btn-obsidian px-4 py-2 text-xs flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z"/>
+            </svg>
+            <span>Emitir PDF Oficial</span>
           </button>
         </div>
       </div>
 
-      <!-- Builder 2-Column Grid -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <!-- TWO-COLUMN STUDIO LAYOUT -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
-        <!-- LEFT COLUMN: EDITOR CONTROLS (5 cols on lg) -->
-        <div class="no-print lg:col-span-5 space-y-5">
+        <!-- LEFT COLUMN: SEGMENTED INSPECTOR DOCK (5 COLS) -->
+        <aside class="no-print lg:col-span-5 space-y-4 lg:sticky lg:top-20">
 
-          <!-- AI Prompt Generator Box -->
-          <div class="glass-panel rounded-2xl p-4 sm:p-5 border border-indigo-500/30">
-            <div class="flex items-center justify-between mb-2">
-              <label class="text-xs font-bold uppercase tracking-wider text-indigo-400 flex items-center gap-1.5">
-                <span>✨ Redactor IA de Propuestas</span>
-              </label>
-              <span class="text-[11px] text-slate-400" id="ai-mode-badge">Motor Local + Gemini</span>
-            </div>
-            <textarea id="ai-brief-input" rows="2" placeholder="Ej: Necesito cotizar un sistema de reservas web y bot de WhatsApp para una clínica dental en Ciudad de México..." class="w-full rounded-xl bg-slate-950/90 border border-slate-800 focus:border-indigo-500 text-sm text-white p-3 placeholder-slate-500 focus:outline-none"></textarea>
-            <div class="mt-2.5 flex items-center justify-between gap-2">
-              <button onclick="generateProposalWithAI()" id="btn-generate-ai" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-xs sm:text-sm shadow-md shadow-indigo-600/20 transition flex items-center justify-center gap-2">
-                <span>⚡ Generar Alcance, Precios y Argumento de Venta con IA</span>
+          <!-- Inspector Step Switcher (Eliminates Endless Vertical Form Clutter) -->
+          <div class="grid grid-cols-3 gap-1 p-1 rounded-lg bg-[var(--bg-subtle)] border border-[var(--border-hairline)]">
+            <button id="step-btn-1" onclick="switchInspectorStep(1)" class="px-2.5 py-2 rounded-md text-xs font-semibold transition bg-[var(--bg-elevated)] text-[var(--ink-primary)] shadow-sm">
+              1. Contexto &amp; IA
+            </button>
+            <button id="step-btn-2" onclick="switchInspectorStep(2)" class="px-2.5 py-2 rounded-md text-xs font-medium transition text-[var(--ink-secondary)] hover:text-[var(--ink-primary)]">
+              2. Desglose ($)
+            </button>
+            <button id="step-btn-3" onclick="switchInspectorStep(3)" class="px-2.5 py-2 rounded-md text-xs font-medium transition text-[var(--ink-secondary)] hover:text-[var(--ink-primary)]">
+              3. Cierre &amp; Firma
+            </button>
+          </div>
+
+          <!-- INSPECTOR STEP 1: BRIEF IA & CLIENT METADATA -->
+          <div id="inspector-step-1" class="space-y-4">
+            <!-- AI Synthesis Atelier Card -->
+            <div class="atelier-card rounded-xl p-5 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="font-tabular text-[11px] uppercase tracking-wider font-semibold text-[var(--accent-terracotta)]">
+                  Síntesis Asistida por IA
+                </span>
+                <span class="text-[11px] text-[var(--ink-muted)]">Redacción ejecutiva</span>
+              </div>
+              <p class="text-xs text-[var(--ink-secondary)] leading-relaxed">
+                Describe en una frase el cliente y lo que necesita. El estudio estructurará el resumen ejecutivo, los entregables y la inversión sugerida.
+              </p>
+              <textarea id="ai-brief-input" rows="2" placeholder="Ej: Rediseño web y sistema de agendamiento automático por WhatsApp para clínica dermatológica en Monterrey..." class="atelier-input"></textarea>
+              <button onclick="generateProposalWithAI()" id="btn-generate-ai" class="btn-obsidian w-full py-2.5 px-4 text-xs flex items-center justify-center gap-2">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/>
+                </svg>
+                <span>Estructurar Propuesta y Alcance</span>
               </button>
             </div>
-          </div>
 
-          <!-- Emisor & Cliente Details -->
-          <div class="glass-panel rounded-2xl p-4 sm:p-5 space-y-4">
-            <h2 class="text-sm font-bold text-white border-b border-slate-800 pb-2">1. Datos de tu Marca y del Cliente</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Tu Nombre / Agencia</label>
-                <input id="sender-name" type="text" value="Daniel Segundo — Soluciones Digitales & IA" oninput="renderProposalPreview()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs sm:text-sm text-white focus:border-indigo-500 focus:outline-none" />
+            <!-- Parties & Scope Card -->
+            <div class="atelier-card rounded-xl p-5 space-y-4">
+              <div class="flex items-center justify-between border-b border-[var(--border-hairline)] pb-2.5">
+                <h2 class="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)]">Datos del Dossier</h2>
+                <span class="text-[11px] text-[var(--ink-muted)]">También puedes editar sobre el papel &rarr;</span>
               </div>
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Tu Email / WhatsApp</label>
-                <input id="sender-contact" type="text" value="daniel.segundo.dev@gmail.com" oninput="renderProposalPreview()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs sm:text-sm text-white focus:border-indigo-500 focus:outline-none" />
-              </div>
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Nombre del Cliente / Empresa</label>
-                <input id="client-name" type="text" value="Grupo Médico San Ángel" oninput="renderProposalPreview()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs sm:text-sm text-white focus:border-indigo-500 focus:outline-none" />
-              </div>
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Proyecto / Título</label>
-                <input id="project-title" type="text" value="Sistema Web de Captación + Asistente IA 24/7" oninput="renderProposalPreview()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs sm:text-sm text-white focus:border-indigo-500 focus:outline-none" />
-              </div>
-            </div>
 
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
-              <div>
-                <label class="block text-[11px] text-slate-400 mb-1">Moneda</label>
-                <select id="currency-select" onchange="renderProposalPreview()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-xs text-white focus:outline-none">
-                  <option value="USD">USD ($)</option>
-                  <option value="MXN">MXN ($)</option>
-                  <option value="EUR">EUR (€)</option>
-                  <option value="COP">COP ($)</option>
-                  <option value="ARS">ARS ($)</option>
-                  <option value="CLP">CLP ($)</option>
-                  <option value="PEN">PEN (S/)</option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-[11px] text-slate-400 mb-1">Impuesto (%)</label>
-                <input id="tax-rate" type="number" min="0" max="50" value="16" oninput="renderProposalPreview()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-xs text-white focus:outline-none" />
-              </div>
-              <div>
-                <label class="block text-[11px] text-slate-400 mb-1">Descuento (%)</label>
-                <input id="discount-rate" type="number" min="0" max="90" value="10" oninput="renderProposalPreview()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-xs text-white focus:outline-none" />
-              </div>
-              <div>
-                <label class="block text-[11px] text-slate-400 mb-1">Anticipo (%)</label>
-                <input id="deposit-rate" type="number" min="10" max="100" value="50" oninput="renderProposalPreview()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-xs text-white focus:outline-none" />
-              </div>
-            </div>
-          </div>
-
-          <!-- Executive Summary & Scope -->
-          <div class="glass-panel rounded-2xl p-4 sm:p-5 space-y-3">
-            <h2 class="text-sm font-bold text-white border-b border-slate-800 pb-2">2. Resumen Ejecutivo y Garantía de ROI</h2>
-            <div>
-              <label class="block text-xs text-slate-400 mb-1">Resumen del Problema y Solución Propuesta</label>
-              <textarea id="proposal-summary" rows="3" oninput="renderProposalPreview()" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs sm:text-sm text-white focus:border-indigo-500 focus:outline-none">Implementación de una arquitectura digital de alta conversión diseñada para automatizar la atención de prospectos 24/7 por WhatsApp y web, reduciendo el tiempo de respuesta de horas a menos de 10 segundos e incrementando el agendamiento de citas comerciales en un 35% a 50%.</textarea>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Tiempo de Entrega</label>
-                <input id="delivery-time" type="text" value="10 a 14 días hábiles" oninput="renderProposalPreview()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none" />
-              </div>
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Vigencia de la Oferta</label>
-                <input id="validity-days" type="text" value="7 días naturales" oninput="renderProposalPreview()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none" />
-              </div>
-            </div>
-          </div>
-
-          <!-- Line Items Editor -->
-          <div class="glass-panel rounded-2xl p-4 sm:p-5 space-y-3">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-              <h2 class="text-sm font-bold text-white">3. Conceptos y Entregables</h2>
-              <button onclick="addLineItem()" class="px-2.5 py-1 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 border border-indigo-500/30 text-xs font-semibold transition">
-                + Añadir Concepto
-              </button>
-            </div>
-            <div id="line-items-editor" class="space-y-2.5 max-h-72 overflow-y-auto pr-1">
-              <!-- Populated by app.js -->
-            </div>
-          </div>
-
-          <!-- Contract, Affiliates & Digital Signature Controls -->
-          <div class="glass-panel rounded-2xl p-4 sm:p-5 space-y-4">
-            <h2 class="text-sm font-bold text-white border-b border-slate-800 pb-2">4. Cierre Legal, Firma y Monetización Extra</h2>
-
-            <div class="space-y-2">
-              <label class="flex items-center justify-between p-2.5 rounded-xl bg-slate-950/70 border border-slate-800 cursor-pointer">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <span class="text-xs sm:text-sm font-semibold text-white block">Anexar Contrato Legal de Servicios</span>
-                  <span class="text-[11px] text-slate-400">Incluye cláusulas de alcance, pagos, propiedad intelectual y aceptación</span>
+                  <label class="atelier-label">Firma Emisora / Especialista</label>
+                  <input id="sender-name" type="text" value="Daniel Segundo — Consultoría & Ingeniería Digital" oninput="renderProposalPreview()" class="atelier-input" />
                 </div>
-                <input id="toggle-contract" type="checkbox" checked onchange="renderProposalPreview()" class="w-4 h-4 accent-indigo-500 rounded" />
+                <div>
+                  <label class="atelier-label">Contacto Oficial</label>
+                  <input id="sender-contact" type="text" value="daniel.segundo.dev@gmail.com" oninput="renderProposalPreview()" class="atelier-input" />
+                </div>
+                <div>
+                  <label class="atelier-label">Cliente / Organización</label>
+                  <input id="client-name" type="text" value="Grupo Médico San Ángel" oninput="renderProposalPreview()" class="atelier-input" />
+                </div>
+                <div>
+                  <label class="atelier-label">Título del Proyecto</label>
+                  <input id="project-title" type="text" value="Arquitectura Web de Captación & Concierge IA 24/7" oninput="renderProposalPreview()" class="atelier-input" />
+                </div>
+              </div>
+
+              <div>
+                <label class="atelier-label">Tesis del Proyecto &amp; Justificación de Retorno (ROI)</label>
+                <textarea id="proposal-summary" rows="3" oninput="renderProposalPreview()" class="atelier-input">Implementación de una infraestructura digital de respuesta inmediata diseñada para atender y calificar prospectos las 24 horas en WhatsApp y web, reduciendo la fuga de pacientes por demora de atención e incrementando la conversión de citas entre un 35% y 50% desde el primer mes.</textarea>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="atelier-label">Plazo de Ejecución</label>
+                  <input id="delivery-time" type="text" value="10 a 14 días hábiles" oninput="renderProposalPreview()" class="atelier-input" />
+                </div>
+                <div>
+                  <label class="atelier-label">Validez de Oferta</label>
+                  <input id="validity-days" type="text" value="7 días naturales" oninput="renderProposalPreview()" class="atelier-input" />
+                </div>
+              </div>
+
+              <div class="pt-1 flex justify-end">
+                <button onclick="switchInspectorStep(2)" class="btn-outline px-3.5 py-1.5 text-xs">
+                  Siguiente: Conceptos y Precios &rarr;
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- INSPECTOR STEP 2: LINE ITEMS & FINANCIAL PARAMETERS -->
+          <div id="inspector-step-2" class="hidden space-y-4">
+            <div class="atelier-card rounded-xl p-5 space-y-4">
+              <div class="flex items-center justify-between border-b border-[var(--border-hairline)] pb-2.5">
+                <div>
+                  <h2 class="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)]">Entregables &amp; Presupuesto</h2>
+                  <p class="text-[11px] text-[var(--ink-muted)]">Ajusta los alcances e importes unitarios</p>
+                </div>
+                <button onclick="addLineItem()" class="btn-outline px-2.5 py-1 text-xs">
+                  + Agregar Partida
+                </button>
+              </div>
+
+              <div id="line-items-editor" class="space-y-2.5 max-h-[340px] overflow-y-auto pr-1">
+                <!-- Populated dynamically by app.js -->
+              </div>
+
+              <!-- Currency, Tax, Discount, Deposit -->
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-3 border-t border-[var(--border-hairline)]">
+                <div>
+                  <label class="atelier-label">Divisa</label>
+                  <select id="currency-select" onchange="renderProposalPreview()" class="atelier-input font-tabular">
+                    <option value="USD">USD ($)</option>
+                    <option value="MXN">MXN ($)</option>
+                    <option value="EUR">EUR (€)</option>
+                    <option value="COP">COP ($)</option>
+                    <option value="ARS">ARS ($)</option>
+                    <option value="CLP">CLP ($)</option>
+                    <option value="PEN">PEN (S/)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="atelier-label">IVA (%)</label>
+                  <input id="tax-rate" type="number" min="0" max="50" value="16" oninput="renderProposalPreview()" class="atelier-input font-tabular" />
+                </div>
+                <div>
+                  <label class="atelier-label">Bonificación (%)</label>
+                  <input id="discount-rate" type="number" min="0" max="90" value="10" oninput="renderProposalPreview()" class="atelier-input font-tabular" />
+                </div>
+                <div>
+                  <label class="atelier-label">Anticipo (%)</label>
+                  <input id="deposit-rate" type="number" min="10" max="100" value="50" oninput="renderProposalPreview()" class="atelier-input font-tabular" />
+                </div>
+              </div>
+
+              <div class="pt-1 flex justify-between">
+                <button onclick="switchInspectorStep(1)" class="btn-outline px-3 py-1.5 text-xs">&larr; Anterior</button>
+                <button onclick="switchInspectorStep(3)" class="btn-outline px-3.5 py-1.5 text-xs">Siguiente: Contrato y Firma &rarr;</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- INSPECTOR STEP 3: LEGAL CONTRACT, AFFILIATES & DIGITAL SIGNATURE -->
+          <div id="inspector-step-3" class="hidden space-y-4">
+            <div class="atelier-card rounded-xl p-5 space-y-4">
+              <h2 class="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)] border-b border-[var(--border-hairline)] pb-2.5">
+                Blindaje Legal, Firma &amp; Partners
+              </h2>
+
+              <label class="flex items-start justify-between gap-3 p-3 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-hairline)] cursor-pointer">
+                <div>
+                  <span class="text-xs font-semibold text-[var(--ink-primary)] block">Incluir Cláusulas de Contrato Mercantil</span>
+                  <span class="text-[11px] text-[var(--ink-secondary)]">Anexa condiciones de alcance, propiedad intelectual, pagos y garantía.</span>
+                </div>
+                <input id="toggle-contract" type="checkbox" checked onchange="renderProposalPreview()" class="mt-0.5 w-4 h-4 accent-[#141413]" />
               </label>
 
-              <label class="flex items-center justify-between p-2.5 rounded-xl bg-slate-950/70 border border-slate-800 cursor-pointer">
+              <label class="flex items-start justify-between gap-3 p-3 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-hairline)] cursor-pointer">
                 <div>
-                  <span class="text-xs sm:text-sm font-semibold text-emerald-300 block">Incluir Bloque de Herramientas Afiliadas ($)</span>
-                  <span class="text-[11px] text-slate-400">Gana comisiones cuando tu cliente contrate su Hosting, Dominio o CRM desde tu PDF</span>
+                  <span class="text-xs font-semibold text-[var(--accent-forest)] block">Anexar Infraestructura Recomendada (Afiliados)</span>
+                  <span class="text-[11px] text-[var(--ink-secondary)]">Inserta tus enlaces de partner para Hosting, E-Commerce y Automatización.</span>
                 </div>
-                <input id="toggle-affiliates" type="checkbox" checked onchange="renderProposalPreview()" class="w-4 h-4 accent-emerald-500 rounded" />
+                <input id="toggle-affiliates" type="checkbox" checked onchange="renderProposalPreview()" class="mt-0.5 w-4 h-4 accent-[#185C43]" />
               </label>
-            </div>
 
-            <!-- Signature Pad -->
-            <div>
-              <div class="flex items-center justify-between mb-1">
-                <label class="text-xs font-semibold text-slate-300">Tu Firma Digital en el Documento</label>
-                <button onclick="clearSignature()" class="text-[11px] text-rose-400 hover:underline">Limpiar firma</button>
+              <!-- Tactile Fountain Pen Signature Pad -->
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <label class="atelier-label mb-0">Rúbrica Autógrafa del Emisor</label>
+                  <button onclick="clearSignature()" class="text-[11px] font-medium text-[var(--accent-terracotta)] hover:underline">
+                    Limpiar trazo
+                  </button>
+                </div>
+                <div class="rounded-lg bg-white border border-[#D6D1C7] p-1">
+                  <canvas id="signature-canvas" width="380" height="96" class="w-full h-[96px] rounded bg-white"></canvas>
+                </div>
+                <p class="text-[11px] text-[var(--ink-muted)]">
+                  Traza tu firma arriba; se estampa al instante en el bloque de autorización del documento.
+                </p>
               </div>
-              <div class="bg-white rounded-xl p-1 border border-slate-700">
-                <canvas id="signature-canvas" width="380" height="90" class="w-full h-[90px] rounded-lg bg-white"></canvas>
+
+              <div class="pt-2 flex justify-between items-center border-t border-[var(--border-hairline)]">
+                <button onclick="switchInspectorStep(2)" class="btn-outline px-3 py-1.5 text-xs">&larr; Anterior</button>
+                <button onclick="exportProposalPDF()" class="btn-obsidian px-4 py-2 text-xs">
+                  Emitir PDF Oficial &rarr;
+                </button>
               </div>
-              <p class="text-[11px] text-slate-400 mt-1">Dibuja tu firma arriba con el mouse o dedo. Se estampará en el PDF automáticamente.</p>
             </div>
           </div>
 
-        </div>
+        </aside>
 
-        <!-- RIGHT COLUMN: LIVE INTERACTIVE PDF PREVIEW & CLOSER BAR (7 cols on lg) -->
+        <!-- RIGHT COLUMN: THE SWISS EDITORIAL DOSSIER SHEET (7 COLS) -->
         <div class="lg:col-span-7 space-y-4">
 
-          <!-- Closer Action Bar (No-Print) -->
-          <div class="no-print glass-panel rounded-2xl p-3 sm:p-4 flex flex-wrap items-center justify-between gap-2 border border-emerald-500/25">
-            <div class="flex items-center gap-2">
-              <span class="text-xs font-bold uppercase px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-                Lista para Enviar
+          <!-- Floating Financial Summary & Dispatch Bar (No-Print) -->
+          <div class="no-print atelier-card rounded-xl px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <span class="font-tabular text-[11px] uppercase tracking-wider px-2 py-0.5 rounded bg-[var(--accent-forest-soft)] text-[var(--accent-forest)] font-semibold">
+                Total Dossier
               </span>
-              <span id="preview-quick-total" class="text-sm font-extrabold text-white">$0.00 USD</span>
+              <span id="preview-quick-total" class="font-tabular text-base font-bold text-[var(--ink-primary)]">$0.00 USD</span>
+              <span class="text-[11px] text-[var(--ink-muted)] hidden sm:inline">· Haz clic sobre cualquier título del papel para editar</span>
             </div>
+
             <div class="flex flex-wrap items-center gap-2">
-              <button onclick="sendWhatsAppPitch()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-emerald-600/20 transition">
-                <span>📲 Enviar por WhatsApp</span>
+              <button onclick="sendWhatsAppPitch()" class="btn-forest px-3.5 py-1.5 text-xs flex items-center gap-1.5">
+                <span>Enviar por WhatsApp</span>
               </button>
-              <button onclick="copyProposalSummary()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition">
-                📋 Copiar Pitch
-              </button>
-              <button onclick="exportProposalPDF()" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition">
-                🖨️ Exportar PDF
+              <button onclick="copyProposalSummary()" class="btn-outline px-3 py-1.5 text-xs">
+                Copiar Resumen
               </button>
             </div>
           </div>
 
-          <!-- THE PRINTABLE PROPOSAL DOCUMENT -->
-          <div id="proposal-document" class="proposal-sheet p-6 sm:p-10 space-y-6">
-            <!-- Header Banner -->
-            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b-2 border-slate-900 pb-6">
-              <div>
-                <div class="inline-block px-2.5 py-1 rounded-md bg-indigo-600 text-white text-[10px] font-extrabold uppercase tracking-widest mb-2">
-                  PROPUESTA COMERCIAL &amp; COTIZACIÓN
+          <!-- THE PRINTABLE EDITORIAL PAPER SHEET -->
+          <article id="proposal-document" class="dossier-paper p-7 sm:p-12 space-y-8">
+
+            <!-- Top Swiss Architectural Header -->
+            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-6 border-b-2 border-[#141413] pb-6">
+              <div class="space-y-2 max-w-xl">
+                <div class="flex items-center gap-2">
+                  <span class="font-tabular text-[10px] font-bold uppercase tracking-[0.14em] px-2 py-0.5 bg-[#141413] text-white">
+                    DOSSIER COMERCIAL &amp; PROPUESTA
+                  </span>
+                  <span class="font-tabular text-[10px] uppercase tracking-widest text-[#57544E]">
+                    CONFIDENCIAL
+                  </span>
                 </div>
-                <h2 id="doc-project-title" class="text-xl sm:text-2xl font-extrabold text-slate-900 leading-tight">
-                  Sistema Web de Captación + Asistente IA 24/7
+                <h2 id="doc-project-title" contenteditable="true" onblur="syncInlineEdit('project-title', this.innerText)" class="inline-editable font-editorial text-2xl sm:text-3xl font-normal text-[#141413] leading-tight">
+                  Arquitectura Web de Captación &amp; Concierge IA 24/7
                 </h2>
-                <p id="doc-sender-name" class="text-xs sm:text-sm font-semibold text-indigo-600 mt-1">
-                  Daniel Segundo — Soluciones Digitales &amp; IA
-                </p>
-                <p id="doc-sender-contact" class="text-xs text-slate-500">
-                  daniel.segundo.dev@gmail.com
-                </p>
+                <div class="pt-1 text-xs text-[#57544E] flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <span id="doc-sender-name" class="font-semibold text-[#141413]">Daniel Segundo — Consultoría &amp; Ingeniería Digital</span>
+                  <span>·</span>
+                  <span id="doc-sender-contact" class="font-tabular text-[11px]">daniel.segundo.dev@gmail.com</span>
+                </div>
               </div>
-              <div class="sm:text-right bg-slate-50 p-3.5 rounded-xl border border-slate-200 min-w-[200px]">
-                <div class="text-[11px] font-bold uppercase text-slate-400">Folio de Cotización</div>
-                <div id="doc-quote-number" class="text-sm font-extrabold text-slate-900">CP-2026-0842</div>
-                <div class="text-[11px] text-slate-500 mt-1">Fecha: <span id="doc-date"></span></div>
-                <div class="text-[11px] text-emerald-700 font-semibold">Vigencia: <span id="doc-validity">7 días naturales</span></div>
+
+              <!-- Tabular Folio Box -->
+              <div class="sm:text-right border border-[#D6D1C7] bg-[#FAF9F5] p-3.5 min-w-[205px] space-y-1">
+                <div class="font-tabular text-[10px] uppercase tracking-widest text-[#8A857C]">Folio de Registro</div>
+                <div id="doc-quote-number" class="font-tabular text-sm font-bold text-[#141413]">CP-2026-0842</div>
+                <div class="font-tabular text-[11px] text-[#57544E] pt-1 border-t border-[#E5E0D5]">
+                  Emisión: <span id="doc-date"></span>
+                </div>
+                <div class="font-tabular text-[11px] text-[#185C43] font-semibold">
+                  Validez: <span id="doc-validity">7 días naturales</span>
+                </div>
               </div>
             </div>
 
-            <!-- Client & Delivery Metadata -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs">
-              <div>
-                <span class="text-slate-400 font-semibold uppercase block text-[10px]">Preparado Para:</span>
-                <span id="doc-client-name" class="font-bold text-slate-900 text-sm">Grupo Médico San Ángel</span>
+            <!-- 3-Column Swiss Grid Metadata -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 border border-[#D6D1C7] divide-y sm:divide-y-0 sm:divide-x divide-[#D6D1C7] bg-[#FAF9F5] text-xs">
+              <div class="p-3.5">
+                <span class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C] block">Preparado Para</span>
+                <span id="doc-client-name" contenteditable="true" onblur="syncInlineEdit('client-name', this.innerText)" class="inline-editable font-semibold text-[#141413] text-sm mt-0.5 block">Grupo Médico San Ángel</span>
               </div>
-              <div>
-                <span class="text-slate-400 font-semibold uppercase block text-[10px]">Tiempo Estimado de Entrega:</span>
-                <span id="doc-delivery-time" class="font-bold text-slate-800">10 a 14 días hábiles</span>
+              <div class="p-3.5">
+                <span class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C] block">Plazo de Ejecución</span>
+                <span id="doc-delivery-time" class="font-semibold text-[#141413] mt-0.5 block">10 a 14 días hábiles</span>
               </div>
-              <div>
-                <span class="text-slate-400 font-semibold uppercase block text-[10px]">Condición de Inicio:</span>
-                <span id="doc-deposit-condition" class="font-bold text-indigo-700">50% Anticipo al Aprobar</span>
+              <div class="p-3.5">
+                <span class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C] block">Condición de Apertura</span>
+                <span id="doc-deposit-condition" class="font-tabular font-bold text-[#185C43] mt-0.5 block">50% Anticipo</span>
               </div>
             </div>
 
-            <!-- Executive Summary -->
-            <div>
-              <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-1.5">
-                Diagnóstico &amp; Objetivo del Proyecto
-              </h3>
-              <p id="doc-summary" class="text-xs sm:text-sm text-slate-700 leading-relaxed bg-indigo-50/50 border-l-4 border-indigo-600 p-3.5 rounded-r-xl">
+            <!-- Thesis / Executive Summary -->
+            <div class="space-y-2">
+              <div class="flex items-center gap-2">
+                <span class="font-tabular text-[10px] font-bold uppercase tracking-widest text-[#8A857C]">01 · Tesis Ejecutiva &amp; Objetivo Financiero</span>
+                <div class="flex-1 border-t border-[#E5E0D5]"></div>
+              </div>
+              <p id="doc-summary" contenteditable="true" onblur="syncInlineEdit('proposal-summary', this.innerText)" class="inline-editable text-xs sm:text-[13.5px] text-[#262624] leading-relaxed pl-3.5 border-l-2 border-[#C84B31] py-1">
               </p>
             </div>
 
-            <!-- Line Items Table -->
-            <div>
-              <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-2">
-                Desglose de Inversión y Entregables
-              </h3>
-              <div class="overflow-x-auto border border-slate-200 rounded-xl">
+            <!-- Itemized Deliverables Schedule -->
+            <div class="space-y-2.5">
+              <div class="flex items-center gap-2">
+                <span class="font-tabular text-[10px] font-bold uppercase tracking-widest text-[#8A857C]">02 · Cronograma de Entregables &amp; Presupuesto</span>
+                <div class="flex-1 border-t border-[#E5E0D5]"></div>
+              </div>
+
+              <div class="border border-[#D6D1C7]">
                 <table class="w-full text-left border-collapse">
                   <thead>
-                    <tr class="bg-slate-900 text-white text-[11px] uppercase tracking-wider">
-                      <th class="py-2.5 px-3">Concepto / Entregable</th>
-                      <th class="py-2.5 px-3 text-center w-20">Cant.</th>
-                      <th class="py-2.5 px-3 text-right w-28">Precio Unit.</th>
-                      <th class="py-2.5 px-3 text-right w-28">Subtotal</th>
+                    <tr class="border-b border-[#141413] bg-[#FAF9F5] font-tabular text-[10px] uppercase tracking-wider text-[#57544E]">
+                      <th class="py-2.5 px-3.5 w-10">#</th>
+                      <th class="py-2.5 px-3.5">Descripción del Alcance / Entregable</th>
+                      <th class="py-2.5 px-3.5 text-center w-16">Cant.</th>
+                      <th class="py-2.5 px-3.5 text-right w-28">Unitario</th>
+                      <th class="py-2.5 px-3.5 text-right w-28">Importe</th>
                     </tr>
                   </thead>
-                  <tbody id="doc-items-tbody" class="divide-y divide-slate-200 text-xs sm:text-sm">
+                  <tbody id="doc-items-tbody" class="divide-y divide-[#E5E0D5] text-xs sm:text-[13px]">
                     <!-- Populated dynamically -->
                   </tbody>
                 </table>
               </div>
             </div>
 
-            <!-- Totals & Deposit Breakdown -->
-            <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-start pt-2">
-              <div class="sm:col-span-6 bg-emerald-50 border border-emerald-200 rounded-xl p-4">
-                <div class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-700">
-                  💰 Plan de Pagos para Iniciar Hoy
-                </div>
-                <div class="mt-2 space-y-1 text-xs text-slate-700">
-                  <div class="flex justify-between font-bold text-emerald-900 text-sm">
-                    <span>1er Pago (Anticipo <span id="doc-deposit-pct">50</span>%):</span>
-                    <span id="doc-deposit-amount">$0.00</span>
+            <!-- Financial Summary & Payment Schedule -->
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-5 items-stretch pt-1">
+              <!-- Left: Milestone Payment Schedule -->
+              <div class="sm:col-span-6 border border-[#185C43]/30 bg-[#E5F0EC]/60 p-4 flex flex-col justify-between">
+                <div class="space-y-2">
+                  <div class="font-tabular text-[10px] font-bold uppercase tracking-wider text-[#185C43]">
+                    Calendario de Desembolso
                   </div>
-                  <div class="flex justify-between text-slate-600">
-                    <span>Liquidación contra entrega:</span>
-                    <span id="doc-balance-amount">$0.00</span>
+                  <div class="space-y-1 text-xs">
+                    <div class="flex justify-between font-bold text-[#141413]">
+                      <span>Apertura de Proyecto (<span id="doc-deposit-pct">50</span>%):</span>
+                      <span id="doc-deposit-amount" class="font-tabular text-[#185C43]">$0.00</span>
+                    </div>
+                    <div class="flex justify-between text-[#57544E]">
+                      <span>Liquidación contra entrega final:</span>
+                      <span id="doc-balance-amount" class="font-tabular">$0.00</span>
+                    </div>
                   </div>
                 </div>
-                <div id="doc-payment-instructions" class="mt-2.5 pt-2 border-t border-emerald-200/80 text-[11px] text-emerald-800">
-                  Aceptamos Transferencia Bancaria, Tarjeta de Crédito/Débito (Stripe / MercadoPago) o PayPal.
+                <div id="doc-payment-instructions" class="mt-3 pt-2.5 border-t border-[#185C43]/20 text-[11px] text-[#262624] leading-snug">
                 </div>
               </div>
 
-              <div class="sm:col-span-6 bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-1.5 text-xs">
-                <div class="flex justify-between text-slate-600">
-                  <span>Subtotal:</span>
-                  <span id="doc-subtotal" class="font-semibold text-slate-900">$0.00</span>
+              <!-- Right: Subtotals & Net Investment -->
+              <div class="sm:col-span-6 border border-[#D6D1C7] bg-[#FAF9F5] p-4 space-y-1.5 text-xs">
+                <div class="flex justify-between text-[#57544E]">
+                  <span>Subtotal de Partidas:</span>
+                  <span id="doc-subtotal" class="font-tabular font-medium text-[#141413]">$0.00</span>
                 </div>
-                <div id="doc-discount-row" class="flex justify-between text-emerald-700">
-                  <span>Descuento Especial (<span id="doc-discount-pct">10</span>%):</span>
-                  <span id="doc-discount-amount">-$0.00</span>
+                <div id="doc-discount-row" class="flex justify-between text-[#185C43]">
+                  <span>Bonificación Aplicada (<span id="doc-discount-pct">10</span>%):</span>
+                  <span id="doc-discount-amount" class="font-tabular">-$0.00</span>
                 </div>
-                <div id="doc-tax-row" class="flex justify-between text-slate-600">
+                <div id="doc-tax-row" class="flex justify-between text-[#57544E]">
                   <span>Impuestos / IVA (<span id="doc-tax-pct">16</span>%):</span>
-                  <span id="doc-tax-amount">$0.00</span>
+                  <span id="doc-tax-amount" class="font-tabular">$0.00</span>
                 </div>
-                <div class="border-t border-slate-300 pt-2 mt-2 flex justify-between items-baseline">
-                  <span class="font-extrabold text-slate-900 text-sm uppercase">Inversión Total:</span>
-                  <span id="doc-total" class="font-extrabold text-indigo-700 text-lg">$0.00 USD</span>
+                <div class="border-t-2 border-[#141413] pt-2.5 mt-2 flex justify-between items-baseline">
+                  <span class="font-tabular font-bold text-[#141413] text-xs uppercase tracking-wider">Inversión Total:</span>
+                  <span id="doc-total" class="font-tabular font-bold text-[#141413] text-lg">$0.00 USD</span>
                 </div>
               </div>
             </div>
 
-            <!-- Affiliate Recommended Infrastructure Block (Monetization Stream #3) -->
-            <div id="doc-affiliates-section" class="border border-indigo-200 bg-indigo-50/40 rounded-xl p-4 space-y-2">
+            <!-- Affiliate Recommended Tech Stack (Stream #3) -->
+            <div id="doc-affiliates-section" class="border border-[#D6D1C7] bg-[#FAF9F5] p-4 space-y-2.5">
               <div class="flex items-center justify-between">
-                <h4 class="text-xs font-extrabold uppercase tracking-wider text-indigo-900">
-                  ⚡ Infraestructura Oficial Recomendada para este Proyecto (Con Descuento)
-                </h4>
-                <span class="text-[10px] font-semibold text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded">Partners Oficiales</span>
+                <span class="font-tabular text-[10px] font-bold uppercase tracking-widest text-[#57544E]">
+                  03 · Infraestructura Técnica Sugerida para el Cliente
+                </span>
+                <span class="font-tabular text-[10px] text-[#C84B31] font-semibold">Convenio Corporativo</span>
               </div>
-              <p class="text-[11px] text-slate-600">
-                Para garantizar máxima velocidad, seguridad y propiedad total del cliente, recomendamos adquirir directamente los siguientes servicios con descuento corporativo:
-              </p>
-              <div id="doc-affiliates-list" class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 text-xs">
-                <!-- Populated dynamically with configured affiliate links -->
+              <div id="doc-affiliates-list" class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+                <!-- Populated dynamically -->
               </div>
             </div>
 
-            <!-- Legal Contract Section -->
-            <div id="doc-contract-section" class="border-t-2 border-slate-200 pt-5 space-y-2 text-[11px] text-slate-600 leading-relaxed">
-              <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-900">
-                Acuerdo de Prestación de Servicios Profesionales (Resumen Legal)
-              </h4>
-              <p>
-                <strong>1. Objeto y Alcance:</strong> El Proveedor (<span id="contract-sender"></span>) se compromete a desarrollar y entregar a favor de El Cliente (<span id="contract-client"></span>) los entregables descritos en la presente cotización dentro del plazo estimado de <span id="contract-delivery"></span>, contado a partir de la recepción del anticipo y los insumos requeridos.
-              </p>
-              <p>
-                <strong>2. Forma de Pago y Propiedad Intelectual:</strong> El proyecto inicia con el anticipo estipulado. Una vez liquidado el 100% de la inversión total (<span id="contract-total"></span>), El Cliente adquiere los derechos de uso y titularidad de los entregables finales.
-              </p>
-              <p>
-                <strong>3. Garantía y Ajustes:</strong> Incluye hasta 2 rondas de revisiones sobre el alcance aprobado y 30 días de soporte técnico post-entrega para garantizar su correcto funcionamiento.
-              </p>
-            </div>
-
-            <!-- Signatures Row -->
-            <div class="grid grid-cols-2 gap-6 pt-6 border-t border-slate-200">
-              <div class="text-center">
-                <div class="h-20 flex items-center justify-center border-b border-slate-400 mb-1.5">
-                  <img id="doc-signature-img" alt="Firma Proveedor" class="max-h-16 object-contain hidden" />
-                  <span id="doc-signature-placeholder" class="text-xs italic text-slate-400">Firma Digital del Emisor</span>
+            <!-- Legal Contract Clauses -->
+            <div id="doc-contract-section" class="space-y-2 pt-2">
+              <div class="flex items-center gap-2">
+                <span class="font-tabular text-[10px] font-bold uppercase tracking-widest text-[#8A857C]">04 · Marco Legal &amp; Condiciones de Prestación de Servicios</span>
+                <div class="flex-1 border-t border-[#E5E0D5]"></div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-[11px] text-[#57544E] leading-relaxed pt-1">
+                <div>
+                  <strong class="text-[#141413] block mb-0.5">I. Objeto y Plazo</strong>
+                  <span id="contract-sender"></span> ejecutará a favor de <span id="contract-client"></span> las partidas descritas en un plazo estimado de <span id="contract-delivery"></span> a partir del anticipo.
                 </div>
-                <p id="sig-sender-name" class="text-xs font-bold text-slate-800">Daniel Segundo</p>
-                <p class="text-[10px] text-slate-500">Proveedor / Especialista</p>
-              </div>
-              <div class="text-center">
-                <div class="h-20 flex items-end justify-center border-b border-slate-400 mb-1.5 pb-1">
-                  <span class="text-[11px] text-slate-400">Firma de Aceptación del Cliente</span>
+                <div>
+                  <strong class="text-[#141413] block mb-0.5">II. Propiedad Intelectual</strong>
+                  Contra la liquidación total (<span id="contract-total" class="font-tabular"></span>), el Cliente recibe la titularidad y derechos de explotación sobre los entregables finales.
                 </div>
-                <p id="sig-client-name" class="text-xs font-bold text-slate-800">Grupo Médico San Ángel</p>
-                <p class="text-[10px] text-slate-500">Acepto cotización y términos</p>
+                <div>
+                  <strong class="text-[#141413] block mb-0.5">III. Garantía Técnica</strong>
+                  Incluye 2 rondas de ajustes de refinamiento sobre el alcance aprobado y 30 días naturales de garantía operativa post-entrega.
+                </div>
               </div>
             </div>
 
-            <!-- Viral Freemium Footer Watermark (Removed automatically on PRO Plan) -->
-            <div id="doc-viral-watermark" class="pt-4 border-t border-dashed border-slate-200 flex items-center justify-between text-[11px] text-slate-400">
-              <span>Documento generado con <strong>CotizaPro AI</strong> — Propuestas Inteligentes que Cierran Ventas</span>
-              <span class="text-indigo-600 font-semibold">Quitar marca de agua con Plan PRO ($9/mes)</span>
+            <!-- Dual Signatures Block -->
+            <div class="grid grid-cols-2 gap-8 pt-6 border-t border-[#D6D1C7]">
+              <div>
+                <div class="h-20 flex items-center justify-start border-b border-[#141413] mb-2">
+                  <img id="doc-signature-img" alt="Rúbrica Emisor" class="max-h-16 object-contain hidden" />
+                  <span id="doc-signature-placeholder" class="font-editorial italic text-sm text-[#8A857C]">Espacio para rúbrica del especialista</span>
+                </div>
+                <p id="sig-sender-name" class="text-xs font-bold text-[#141413]">Daniel Segundo</p>
+                <p class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C]">Firma Emisora Autorizada</p>
+              </div>
+              <div>
+                <div class="h-20 flex items-end justify-start border-b border-[#141413] mb-2 pb-1">
+                  <span class="font-editorial italic text-sm text-[#8A857C]">Firma de conformidad y aceptación</span>
+                </div>
+                <p id="sig-client-name" class="text-xs font-bold text-[#141413]">Grupo Médico San Ángel</p>
+                <p class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C]">Cliente / Representante Legal</p>
+              </div>
             </div>
-          </div>
 
+            <!-- Subtle Editorial Colophon (Removed in PRO) -->
+            <div id="doc-viral-watermark" class="pt-3 border-t border-dashed border-[#E5E0D5] flex flex-wrap items-center justify-between gap-2 font-tabular text-[10px] text-[#8A857C]">
+              <span>DOSSIER EMITIDO CON COTIZAPRO STUDIO · ARQUITECTURA DE PROPUESTAS COMERCIALES</span>
+              <span class="text-[#C84B31] font-semibold cursor-pointer" onclick="openProModal()">Remover colofón con Pase Studio PRO &rarr;</span>
+            </div>
+
+          </article>
         </div>
       </div>
     </section>
 
-    <!-- ==========================================
-         TAB 2: AUDITOR B2B & WHATSAPP CLOSER
-         ========================================== -->
+    <!-- ====================================================================
+         VIEW 02: B2B FINANCIAL LOSS AUDITOR & WHATSAPP CLOSER
+         ==================================================================== -->
     <section id="tab-auditor" class="hidden no-print space-y-6">
-      <div class="glass-panel rounded-2xl p-5 sm:p-6 border border-emerald-500/25">
-        <div class="max-w-3xl">
-          <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Motor de Ingresos #2 — Venta de Servicios High-Ticket</span>
-          <h2 class="text-xl sm:text-2xl font-extrabold text-white mt-1">
-            Auditor de Pérdidas B2B &amp; Generador de Cierres por WhatsApp
+      <div class="pb-5 border-b border-[var(--border-hairline)]">
+        <span class="font-tabular text-[11px] uppercase tracking-widest text-[var(--accent-forest)] font-semibold">Motor de Prospección &amp; Venta Consultiva</span>
+        <h2 class="font-editorial text-2xl sm:text-3xl text-[var(--ink-primary)] mt-0.5">
+          Calculadora de Fuga Financiera B2B &amp; Cierre por WhatsApp
+        </h2>
+        <p class="text-xs sm:text-sm text-[var(--ink-secondary)] mt-1 max-w-3xl">
+          Cuantifica cuánto capital pierde un negocio local cada mes por demoras en atención digital, redacta el diagnóstico ejecutivo para WhatsApp y conviértelo en un Dossier PDF de alto ticket en un clic.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <!-- Left Inputs -->
+        <div class="lg:col-span-5 atelier-card rounded-xl p-6 space-y-4">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)] border-b border-[var(--border-hairline)] pb-2.5">
+            Parámetros de la Empresa Auditada
+          </h3>
+
+          <div>
+            <label class="atelier-label">Nombre Comercial del Prospecto</label>
+            <input id="audit-business-name" type="text" value="Clínica Dermatológica Lumina" oninput="calculateB2BAudit()" class="atelier-input" />
+          </div>
+
+          <div>
+            <label class="atelier-label">Sector / Vertical</label>
+            <select id="audit-niche" onchange="calculateB2BAudit()" class="atelier-input">
+              <option value="clinica">Salud — Clínica Médica, Dental o Especialidades</option>
+              <option value="inmobiliaria">Real Estate — Agencia o Desarrolladora Inmobiliaria</option>
+              <option value="restaurante">Hospitalidad — Restaurante, Dark Kitchen o Cafetería</option>
+              <option value="despacho">Servicios Profesionales — Firma Legal, Contable o Consultora</option>
+              <option value="ecommerce">Comercio — Retail Especializado o Tienda Online</option>
+              <option value="gimnasio">Fitness &amp; Educación — Centro Deportivo o Academia</option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="atelier-label">Prospectos / Mes</label>
+              <input id="audit-leads-month" type="number" value="120" min="5" oninput="calculateB2BAudit()" class="atelier-input font-tabular" />
+            </div>
+            <div>
+              <label class="atelier-label">Ticket Promedio ($ USD)</label>
+              <input id="audit-ticket-usd" type="number" value="150" min="5" oninput="calculateB2BAudit()" class="atelier-input font-tabular" />
+            </div>
+          </div>
+
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <label class="atelier-label mb-0">% Estimado de Fuga por Demora de Atención</label>
+              <span id="audit-loss-pct-label" class="font-tabular text-xs font-bold text-[var(--accent-terracotta)]">25% de fuga</span>
+            </div>
+            <input id="audit-loss-pct" type="range" min="10" max="60" value="25" oninput="calculateB2BAudit()" class="w-full accent-[#C84B31]" />
+          </div>
+
+          <div>
+            <label class="atelier-label">Honorarios de tu Propuesta de Solución ($ USD)</label>
+            <input id="audit-your-price" type="number" value="650" min="50" oninput="calculateB2BAudit()" class="atelier-input font-tabular font-bold text-[var(--accent-forest)]" />
+          </div>
+
+          <button onclick="convertAuditToProposal()" class="btn-obsidian w-full py-3 px-4 text-xs flex items-center justify-center gap-2">
+            <span>Generar Dossier PDF Formal con este Diagnóstico &rarr;</span>
+          </button>
+        </div>
+
+        <!-- Right Financial Diagnosis & Script -->
+        <div class="lg:col-span-7 space-y-5">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="atelier-card rounded-xl p-5 border-l-4 border-l-[#C84B31]">
+              <span class="font-tabular text-[10px] uppercase tracking-wider text-[var(--ink-secondary)]">Lucro Cesante Mensual</span>
+              <div id="audit-monthly-loss" class="font-tabular text-2xl font-bold text-[var(--ink-primary)] mt-1">$4,500 USD</div>
+              <span class="text-[11px] text-[var(--ink-muted)]">Ingresos no capturados cada 30 días</span>
+            </div>
+
+            <div class="atelier-card rounded-xl p-5">
+              <span class="font-tabular text-[10px] uppercase tracking-wider text-[var(--ink-secondary)]">Impacto Anualizado</span>
+              <div id="audit-yearly-loss" class="font-tabular text-2xl font-bold text-[var(--ink-primary)] mt-1">$54,000 USD</div>
+              <span class="text-[11px] text-[var(--ink-muted)]">Fuga proyectada a 12 meses</span>
+            </div>
+
+            <div class="atelier-card rounded-xl p-5 border-l-4 border-l-[#185C43]">
+              <span class="font-tabular text-[10px] uppercase tracking-wider text-[var(--accent-forest)] font-semibold">Múltiplo de Retorno (ROI)</span>
+              <div id="audit-roi-multiple" class="font-tabular text-2xl font-bold text-[var(--accent-forest)] mt-1">6.9x mes 1</div>
+              <span class="text-[11px] text-[var(--ink-muted)]">Se amortiza con <span id="audit-breakeven-clients" class="font-tabular font-bold">5</span> clientes</span>
+            </div>
+          </div>
+
+          <div class="atelier-card rounded-xl p-6 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)]">Memorándum de Contacto Ejecutivo (WhatsApp / Email)</h4>
+                <p class="text-[11px] text-[var(--ink-muted)]">Redactado con enfoque consultivo financiero, sin lenguaje agresivo de spam</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="copyAuditPitch()" class="btn-outline px-3 py-1.5 text-xs">Copiar Texto</button>
+                <button onclick="sendAuditWhatsApp()" class="btn-forest px-3.5 py-1.5 text-xs">Abrir en WhatsApp &rarr;</button>
+              </div>
+            </div>
+            <textarea id="audit-whatsapp-script" rows="8" class="atelier-input font-tabular text-xs leading-relaxed"></textarea>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         VIEW 03: AFFILIATES & INFRASTRUCTURE PARTNERS
+         ==================================================================== -->
+    <section id="tab-affiliates" class="hidden no-print space-y-6">
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-5 border-b border-[var(--border-hairline)]">
+        <div>
+          <span class="font-tabular text-[11px] uppercase tracking-widest text-[var(--accent-forest)] font-semibold">Comisiones por Especificación Técnica</span>
+          <h2 class="font-editorial text-2xl sm:text-3xl text-[var(--ink-primary)] mt-0.5">
+            Directorio de Alianzas Tecnológicas &amp; Referidos
           </h2>
-          <p class="text-xs sm:text-sm text-slate-300 mt-1">
-            Los negocios locales (clínicas, restaurantes, inmobiliarias, despachos, gimnasios) no compran "código": compran <strong>dejar de perder clientes</strong>. Calcula en 15 segundos cuánto dinero pierde un negocio al mes, genera el mensaje de WhatsApp y conviértelo en una cotización de $450 a $1,200 USD con 1 clic.
+          <p class="text-xs sm:text-sm text-[var(--ink-secondary)] mt-1 max-w-3xl">
+            Todo proyecto aprobado requiere servidor, pasarela de comercio o motor de automatización. Estos enlaces se anexan en tus dossiers PDF para generar comisiones adicionales por cada implementación.
           </p>
         </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
-          <!-- Audit Inputs -->
-          <div class="lg:col-span-5 bg-slate-950/80 p-5 rounded-2xl border border-slate-800 space-y-4">
-            <h3 class="text-sm font-bold text-white border-b border-slate-800 pb-2">Datos del Prospecto a Auditar</h3>
-
-            <div>
-              <label class="block text-xs text-slate-400 mb-1">Nombre del Negocio / Prospecto</label>
-              <input id="audit-business-name" type="text" value="Clínica Dental Sonrisa Perfecta" oninput="calculateB2BAudit()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-emerald-500 focus:outline-none" />
-            </div>
-
-            <div>
-              <label class="block text-xs text-slate-400 mb-1">Giro / Industria</label>
-              <select id="audit-niche" onchange="calculateB2BAudit()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none">
-                <option value="clinica">🦷 Clínica Médica / Dental / Estética</option>
-                <option value="inmobiliaria">🏠 Agencia Inmobiliaria / Desarrolladora</option>
-                <option value="restaurante">🍔 Restaurante / Cafetería / Dark Kitchen</option>
-                <option value="despacho">⚖️ Despacho Contable / Jurídico / Consultoría</option>
-                <option value="ecommerce">🛍️ Tienda Local / E-Commerce / Mayorista</option>
-                <option value="gimnasio">🏋️ Gimnasio / Centro Deportivo / Academia</option>
-              </select>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Prospectos / Mes</label>
-                <input id="audit-leads-month" type="number" value="120" min="5" oninput="calculateB2BAudit()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none" />
-              </div>
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Ticket Promedio ($ USD)</label>
-                <input id="audit-ticket-usd" type="number" value="150" min="5" oninput="calculateB2BAudit()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none" />
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-xs text-slate-400 mb-1">% Estimado de Prospectos Perdidos por falta de automatización / web rápida</label>
-              <input id="audit-loss-pct" type="range" min="10" max="60" value="25" oninput="calculateB2BAudit()" class="w-full accent-emerald-500" />
-              <div class="flex justify-between text-[11px] text-slate-400">
-                <span>Conservador (10%)</span>
-                <span id="audit-loss-pct-label" class="text-emerald-400 font-bold">25% de fuga</span>
-                <span>Crítico (60%)</span>
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-xs text-slate-400 mb-1">Precio que tú le cobrarás por la Solución ($ USD)</label>
-              <input id="audit-your-price" type="number" value="650" min="50" oninput="calculateB2BAudit()" class="w-full bg-slate-900 border border-emerald-500/50 rounded-xl px-3 py-2 text-sm font-bold text-emerald-300 focus:outline-none" />
-            </div>
-
-            <button onclick="convertAuditToProposal()" class="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-emerald-600 hover:from-indigo-500 hover:to-emerald-500 text-white font-bold text-xs sm:text-sm shadow-lg transition">
-              🚀 Convertir este Diagnóstico en Cotización PDF Lista para Firmar &rarr;
-            </button>
-          </div>
-
-          <!-- Audit Results & WhatsApp Closer Scripts -->
-          <div class="lg:col-span-7 space-y-4">
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div class="bg-rose-950/40 border border-rose-500/30 rounded-2xl p-4">
-                <span class="text-xs font-semibold text-rose-300">Dinero Perdido / Mes</span>
-                <div id="audit-monthly-loss" class="text-2xl font-extrabold text-white mt-1">$4,500 USD</div>
-                <span class="text-[11px] text-rose-300/80">Por responder tarde o sin embudo</span>
-              </div>
-              <div class="bg-amber-950/40 border border-amber-500/30 rounded-2xl p-4">
-                <span class="text-xs font-semibold text-amber-300">Pérdida Anual Acumulada</span>
-                <div id="audit-yearly-loss" class="text-2xl font-extrabold text-white mt-1">$54,000 USD</div>
-                <span class="text-[11px] text-amber-300/80">Dinero que se va a la competencia</span>
-              </div>
-              <div class="bg-emerald-950/40 border border-emerald-500/30 rounded-2xl p-4">
-                <span class="text-xs font-semibold text-emerald-300">Retorno (ROI) para el Cliente</span>
-                <div id="audit-roi-multiple" class="text-2xl font-extrabold text-emerald-300 mt-1">6.9x en 30 días</div>
-                <span class="text-[11px] text-emerald-300/80">Recupera tu cobro con <span id="audit-breakeven-clients">5</span> clientes</span>
-              </div>
-            </div>
-
-            <!-- Ready-to-Send WhatsApp Pitch -->
-            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5 space-y-3">
-              <div class="flex flex-wrap items-center justify-between gap-2">
-                <h4 class="text-sm font-bold text-white flex items-center gap-2">
-                  <span>📲 Guion de Venta Directa por WhatsApp (Listo para Copiar y Enviar)</span>
-                </h4>
-                <div class="flex items-center gap-2">
-                  <button onclick="copyAuditPitch()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white border border-slate-700">
-                    📋 Copiar Mensaje
-                  </button>
-                  <button onclick="sendAuditWhatsApp()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white">
-                    Enviar por WhatsApp &rarr;
-                  </button>
-                </div>
-              </div>
-              <textarea id="audit-whatsapp-script" rows="7" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl p-3.5 text-xs sm:text-sm text-slate-200 font-mono leading-relaxed focus:outline-none"></textarea>
-            </div>
-          </div>
+        <div class="atelier-card rounded-xl px-5 py-3.5">
+          <div class="font-tabular text-[10px] uppercase tracking-wider text-[var(--ink-secondary)]">Ingreso Complementario / Proyecto</div>
+          <div class="font-tabular text-xl font-bold text-[var(--accent-forest)] mt-0.5">+$65 a $180 USD</div>
         </div>
+      </div>
+
+      <div id="affiliate-marketplace-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Populated dynamically -->
       </div>
     </section>
 
-    <!-- ==========================================
-         TAB 3: MARKETPLACE DE AFILIADOS B2B
-         ========================================== -->
-    <section id="tab-affiliates" class="hidden no-print space-y-6">
-      <div class="glass-panel rounded-2xl p-5 sm:p-6 border border-indigo-500/25">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-800 pb-5">
-          <div>
-            <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Motor de Ingresos #3 — Comisiones Recurrentes y por Venta</span>
-            <h2 class="text-xl sm:text-2xl font-extrabold text-white mt-1">
-              Hub de Herramientas Recomendadas &amp; Comisiones de Afiliado
-            </h2>
-            <p class="text-xs sm:text-sm text-slate-300 mt-1 max-w-3xl">
-              Cada vez que un cliente aprueba tu cotización (o cuando un usuario usa esta app), necesita contratar su Hosting, Dominio, Tienda o CRM. Tus enlaces de referido se insertan automáticamente aquí y en cada PDF exportado.
-            </p>
-          </div>
-          <div class="bg-emerald-950/50 border border-emerald-500/30 rounded-2xl p-4 min-w-[250px]">
-            <div class="text-xs text-emerald-300 font-semibold">Comisión Extra Estimada por Proyecto</div>
-            <div class="text-2xl font-extrabold text-white mt-0.5">+$65 a $180 USD</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">Adicionales a lo que cobras por tu servicio</div>
-          </div>
-        </div>
-
-        <div id="affiliate-marketplace-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-          <!-- Populated dynamically by app.js -->
-        </div>
-      </div>
-    </section>
-
-    <!-- ==========================================
-         TAB 4: PANEL DE DUEÑO (ADMIN & MONETIZACIÓN)
-         ========================================== -->
+    <!-- ====================================================================
+         VIEW 04: OWNER ADMINISTRATION, STRIPE & LICENSE ENGINE
+         ==================================================================== -->
     <section id="tab-admin" class="hidden no-print space-y-6">
-      <!-- Top Revenue Metrics Row -->
+      <div class="pb-5 border-b border-[var(--border-hairline)]">
+        <span class="font-tabular text-[11px] uppercase tracking-widest text-[var(--accent-terracotta)] font-semibold">Dirección &amp; Monetización</span>
+        <h2 class="font-editorial text-2xl sm:text-3xl text-[var(--ink-primary)] mt-0.5">
+          Panel de Control del Propietario
+        </h2>
+      </div>
+
+      <!-- KPIs -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="glass-panel rounded-2xl p-4 border border-emerald-500/30">
-          <span class="text-xs font-semibold text-slate-400">Valor Total Cotizado en tu App</span>
-          <div id="stat-total-quoted" class="text-2xl font-extrabold text-emerald-400 mt-1">$0.00 USD</div>
-          <span class="text-[11px] text-slate-400">Suma de propuestas en el CRM</span>
+        <div class="atelier-card rounded-xl p-4">
+          <span class="font-tabular text-[10px] uppercase tracking-wider text-[var(--ink-secondary)]">Volumen Total Cotizado</span>
+          <div id="stat-total-quoted" class="font-tabular text-2xl font-bold text-[var(--accent-forest)] mt-1">$0.00 USD</div>
         </div>
-        <div class="glass-panel rounded-2xl p-4 border border-indigo-500/30">
-          <span class="text-xs font-semibold text-slate-400">Cotizaciones Guardadas</span>
-          <div id="stat-quotes-count" class="text-2xl font-extrabold text-white mt-1">0</div>
-          <span class="text-[11px] text-slate-400">Almacenadas en SQLite / LocalStorage</span>
+        <div class="atelier-card rounded-xl p-4">
+          <span class="font-tabular text-[10px] uppercase tracking-wider text-[var(--ink-secondary)]">Dossiers en Archivo</span>
+          <div id="stat-quotes-count" class="font-tabular text-2xl font-bold text-[var(--ink-primary)] mt-1">0</div>
         </div>
-        <div class="glass-panel rounded-2xl p-4 border border-amber-500/30">
-          <span class="text-xs font-semibold text-slate-400">Licencias PRO Generadas</span>
-          <div id="stat-licenses-count" class="text-2xl font-extrabold text-amber-400 mt-1">0</div>
-          <span class="text-[11px] text-slate-400">Para vender a $9/mes o $29 Lifetime</span>
+        <div class="atelier-card rounded-xl p-4">
+          <span class="font-tabular text-[10px] uppercase tracking-wider text-[var(--ink-secondary)]">Licencias Emitidas</span>
+          <div id="stat-licenses-count" class="font-tabular text-2xl font-bold text-[var(--accent-terracotta)] mt-1">0</div>
         </div>
-        <div class="glass-panel rounded-2xl p-4 border border-slate-800">
-          <span class="text-xs font-semibold text-slate-400">Cuenta GitHub Configurada</span>
-          <div class="text-base font-extrabold text-indigo-300 mt-1 truncate">danielsegundodev-bot</div>
-          <span class="text-[11px] text-emerald-400">Lista para GitHub Pages ($0/mes hosting)</span>
+        <div class="atelier-card rounded-xl p-4">
+          <span class="font-tabular text-[10px] uppercase tracking-wider text-[var(--ink-secondary)]">Pasarela Conectada</span>
+          <div class="font-tabular text-sm font-bold text-[var(--ink-primary)] mt-1 truncate">Stripe Checkout Activo</div>
+          <span class="font-tabular text-[10px] text-[var(--accent-forest)]">buy.stripe.com/4gM6oA...</span>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <!-- Payment Links & API Keys Config -->
-        <div class="lg:col-span-7 glass-panel rounded-2xl p-5 sm:p-6 space-y-5">
-          <div>
-            <h2 class="text-lg font-extrabold text-white">⚙️ Configuración de Cobros, IA y Enlaces de Afiliado</h2>
-            <p class="text-xs text-slate-400 mt-0.5">
-              Todo lo que configures aquí actualiza el Checkout PRO de la aplicación, el motor de IA y los enlaces que ven los usuarios.
-            </p>
-          </div>
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- Settings Form -->
+        <div class="lg:col-span-7 atelier-card rounded-xl p-6 space-y-5">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)] border-b border-[var(--border-hairline)] pb-2.5">
+            Configuración de Pasarela Stripe, IA y Referidos
+          </h3>
 
           <div class="space-y-4">
-            <div class="p-4 rounded-xl bg-slate-950/90 border border-indigo-500/30 space-y-3">
-              <h3 class="text-xs font-bold uppercase tracking-wider text-indigo-400">1. Cerebro IA (Google Gemini API Key — Gratis en Google AI Studio)</h3>
+            <div>
+              <label class="atelier-label">Google Gemini API Key (Opcional — potencia la síntesis IA en vivo)</label>
+              <div class="flex gap-2">
+                <input id="cfg-gemini-key" type="password" placeholder="AIzaSy..." class="atelier-input font-tabular flex-1" />
+                <button onclick="testGeminiConnection()" class="btn-outline px-3.5 py-2 text-xs">Verificar Key</button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-[var(--border-hairline)]">
               <div>
-                <label class="block text-xs text-slate-300 mb-1">Tu Gemini API Key (opcional: si está vacía usa el motor inteligente integrado sin costo)</label>
-                <div class="flex gap-2">
-                  <input id="cfg-gemini-key" type="password" placeholder="AIzaSy..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500 focus:outline-none" />
-                  <button onclick="testGeminiConnection()" class="px-3 py-2 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-200 border border-indigo-500/40 text-xs font-semibold">
-                    Probar IA
-                  </button>
-                </div>
+                <label class="atelier-label">Enlace de Pago Stripe (Plan Mensual)</label>
+                <input id="cfg-stripe-monthly" type="text" class="atelier-input font-tabular" />
+              </div>
+              <div>
+                <label class="atelier-label">Enlace de Pago Stripe (Pase Vitalicio)</label>
+                <input id="cfg-stripe-lifetime" type="text" class="atelier-input font-tabular" />
+              </div>
+              <div>
+                <label class="atelier-label">WhatsApp de Atención Directa</label>
+                <input id="cfg-owner-whatsapp" type="text" placeholder="52155..." class="atelier-input font-tabular" />
+              </div>
+              <div>
+                <label class="atelier-label">Instrucciones de Pago en pie de PDF</label>
+                <input id="cfg-bank-instructions" type="text" class="atelier-input" />
               </div>
             </div>
 
-            <div class="p-4 rounded-xl bg-slate-950/90 border border-emerald-500/30 space-y-3">
-              <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-400">2. Pasarelas de Cobro (Dónde recibes el dinero de planes PRO y Clientes)</h3>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label class="block text-xs text-slate-400 mb-1">Link de Pago Plan PRO Mensual ($9 USD)</label>
-                  <input id="cfg-stripe-monthly" type="text" placeholder="https://buy.stripe.com/... o MercadoPago" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none" />
-                </div>
-                <div>
-                  <label class="block text-xs text-slate-400 mb-1">Link de Pago PRO Lifetime ($29 USD)</label>
-                  <input id="cfg-stripe-lifetime" type="text" placeholder="https://buy.stripe.com/... o PayPal.me" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none" />
-                </div>
-                <div>
-                  <label class="block text-xs text-slate-400 mb-1">Tu WhatsApp para Cobro Directo (con código de país)</label>
-                  <input id="cfg-owner-whatsapp" type="text" placeholder="Ej: 5215512345678" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none" />
-                </div>
-                <div>
-                  <label class="block text-xs text-slate-400 mb-1">Datos Bancarios / CLABE / PayPal en PDF</label>
-                  <input id="cfg-bank-instructions" type="text" placeholder="Transferencia SPEI / PayPal: daniel.segundo.dev@gmail.com" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none" />
-                </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-[var(--border-hairline)]">
+              <div>
+                <label class="atelier-label">URL Partner Hosting</label>
+                <input id="cfg-aff-hosting" type="text" class="atelier-input font-tabular" />
+              </div>
+              <div>
+                <label class="atelier-label">URL Partner E-Commerce</label>
+                <input id="cfg-aff-ecommerce" type="text" class="atelier-input font-tabular" />
+              </div>
+              <div>
+                <label class="atelier-label">URL Partner Automatización</label>
+                <input id="cfg-aff-crm" type="text" class="atelier-input font-tabular" />
               </div>
             </div>
 
-            <div class="p-4 rounded-xl bg-slate-950/90 border border-amber-500/30 space-y-3">
-              <h3 class="text-xs font-bold uppercase tracking-wider text-amber-400">3. Tus Enlaces de Afiliado (Comisiones Automáticas en cada PDF)</h3>
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div>
-                  <label class="block text-xs text-slate-400 mb-1">Link Afiliado Hosting (Hostinger/Cloudways)</label>
-                  <input id="cfg-aff-hosting" type="text" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none" />
-                </div>
-                <div>
-                  <label class="block text-xs text-slate-400 mb-1">Link Afiliado E-Commerce (Shopify/Tiendanube)</label>
-                  <input id="cfg-aff-ecommerce" type="text" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none" />
-                </div>
-                <div>
-                  <label class="block text-xs text-slate-400 mb-1">Link Afiliado CRM / Automatización (Make/ManyChat)</label>
-                  <input id="cfg-aff-crm" type="text" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none" />
-                </div>
-              </div>
-            </div>
-
-            <button onclick="saveOwnerConfig()" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg shadow-emerald-600/20 transition">
-              💾 Guardar Configuración de Monetización
+            <button onclick="saveOwnerConfig()" class="btn-obsidian w-full py-2.5 text-xs">
+              Guardar Parámetros del Estudio
             </button>
           </div>
         </div>
 
-        <!-- License Key Generator & Saved Quotes CRM -->
+        <!-- License Generator & Archive -->
         <div class="lg:col-span-5 space-y-6">
-          <!-- License Generator -->
-          <div class="glass-panel rounded-2xl p-5 border border-amber-500/30 space-y-4">
+          <div class="atelier-card rounded-xl p-6 space-y-4">
             <div>
-              <span class="text-[11px] font-bold uppercase px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">100% de Ganancia para Ti</span>
-              <h3 class="text-base font-extrabold text-white mt-1">🔑 Generador de Licencias PRO para Clientes</h3>
-              <p class="text-xs text-slate-300 mt-0.5">
-                ¿Un cliente te pagó $9 o $29 USD por transferencia, MercadoPago, PayPal o WhatsApp? Escribe su correo, genera su código `CPRO-...` y envíaselo para desbloquear su cuenta al instante.
+              <span class="font-tabular text-[10px] uppercase tracking-wider text-[var(--accent-terracotta)] font-semibold">Emisión de Credenciales</span>
+              <h3 class="font-editorial text-xl text-[var(--ink-primary)] mt-0.5">Generador de Licencias Studio PRO</h3>
+              <p class="text-xs text-[var(--ink-secondary)] mt-1">
+                Emite claves de activación individuales para clientes que liquiden mediante transferencia directa o Stripe.
               </p>
             </div>
 
             <div class="flex gap-2">
-              <input id="license-client-email" type="email" placeholder="cliente@empresa.com" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none" />
-              <button onclick="generateClientLicenseKey()" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition">
-                Generar Key
-              </button>
+              <input id="license-client-email" type="email" placeholder="cliente@organizacion.com" class="atelier-input flex-1" />
+              <button onclick="generateClientLicenseKey()" class="btn-terracotta px-4 py-2 text-xs">Emitir Clave</button>
             </div>
 
-            <div id="generated-license-box" class="hidden bg-slate-950 border border-amber-500/40 rounded-xl p-3 flex items-center justify-between">
+            <div id="generated-license-box" class="hidden p-3.5 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-hairline)] flex items-center justify-between">
               <div>
-                <div class="text-[10px] uppercase text-slate-400">Clave de Activación Generada:</div>
-                <div id="generated-license-code" class="text-sm font-mono font-extrabold text-amber-300">CPRO-2026-XXXX</div>
+                <div class="font-tabular text-[10px] uppercase text-[var(--ink-muted)]">Credencial Generada</div>
+                <div id="generated-license-code" class="font-tabular text-sm font-bold text-[var(--ink-primary)]">CPRO-2026-XXXX</div>
               </div>
-              <button onclick="copyGeneratedLicense()" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-white">
-                Copiar
-              </button>
+              <button onclick="copyGeneratedLicense()" class="btn-outline px-3 py-1 text-xs">Copiar</button>
             </div>
           </div>
 
-          <!-- CRM / Saved Proposals List -->
-          <div class="glass-panel rounded-2xl p-5 space-y-3">
+          <div class="atelier-card rounded-xl p-6 space-y-3">
             <div class="flex items-center justify-between">
-              <h3 class="text-sm font-bold text-white">📂 Historial de Cotizaciones &amp; Leads</h3>
-              <button onclick="exportCRMToJSON()" class="text-xs text-indigo-400 hover:underline">Exportar JSON</button>
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)]">Archivo de Dossiers Emitidos</h3>
+              <button onclick="exportCRMToJSON()" class="font-tabular text-[11px] text-[var(--accent-terracotta)] hover:underline">Exportar JSON</button>
             </div>
-            <div id="crm-quotes-list" class="space-y-2 max-h-64 overflow-y-auto pr-1 text-xs">
-              <!-- Populated dynamically -->
+            <div id="crm-quotes-list" class="space-y-2 max-h-60 overflow-y-auto pr-1 text-xs">
             </div>
           </div>
         </div>
@@ -742,83 +807,74 @@
 
   </main>
 
-  <!-- ==========================================
-       MODAL: CHECKOUT & ACTIVACIÓN PLAN PRO
-       ========================================== -->
-  <div id="pro-modal" class="no-print fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="glass-panel max-w-lg w-full rounded-3xl p-6 sm:p-7 border border-indigo-500/40 shadow-2xl space-y-5 relative">
-      <button onclick="closeProModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm font-bold">
+  <!-- ====================================================================
+       MODAL: STUDIO PRO CHECKOUT & LICENSE ACTIVATION
+       ==================================================================== -->
+  <div id="pro-modal" class="no-print fixed inset-0 z-50 hidden bg-[#141413]/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="atelier-card max-w-lg w-full rounded-2xl p-7 space-y-6 relative">
+      <button onclick="closeProModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full border border-[var(--border-hairline)] text-[var(--ink-secondary)] hover:text-[var(--ink-primary)] flex items-center justify-center text-xs">
         ✕
       </button>
 
-      <div>
-        <span class="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-bold border border-amber-500/30">
-          ⚡ CotizaPro AI — Edición Ilimitada
+      <div class="space-y-1.5">
+        <span class="font-tabular text-[10px] uppercase tracking-widest text-[var(--accent-terracotta)] font-semibold">
+          Licencia Profesional Sin Restricciones
         </span>
-        <h3 class="text-xl sm:text-2xl font-extrabold text-white mt-2">
-          Cierra Más Clientes sin Límites ni Marca de Agua
+        <h3 class="font-editorial text-2xl sm:text-3xl text-[var(--ink-primary)]">
+          CotizaPro <span class="italic font-normal">Studio PRO</span>
         </h3>
-        <p class="text-xs sm:text-sm text-slate-300 mt-1">
-          Desbloquea cotizaciones ilimitadas, elimina la marca de agua del pie de página, activa contratos personalizados y accede al generador IA sin restricciones.
+        <p class="text-xs sm:text-sm text-[var(--ink-secondary)] leading-relaxed">
+          Emite dossiers y contratos ilimitados, remueve el colofón promocional del pie de página en todos tus PDFs y desbloquea la suite completa de diagnóstico B2B.
         </p>
       </div>
 
-      <!-- Pricing Cards -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-700 flex flex-col justify-between">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="p-5 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-hairline)] flex flex-col justify-between">
           <div>
-            <div class="text-xs font-bold text-slate-400 uppercase">Suscripción Mensual</div>
-            <div class="text-2xl font-extrabold text-white mt-1">$9 <span class="text-xs font-normal text-slate-400">USD / mes</span></div>
-            <ul class="mt-3 space-y-1.5 text-xs text-slate-300">
-              <li>✓ Cotizaciones PDF ilimitadas</li>
-              <li>✓ Sin marca de agua de CotizaPro</li>
-              <li>✓ Contratos legales y Firma Digital</li>
+            <div class="font-tabular text-[10px] uppercase tracking-wider text-[var(--ink-secondary)]">Membresía Mensual</div>
+            <div class="font-tabular text-2xl font-bold text-[var(--ink-primary)] mt-1">$9 <span class="text-xs font-normal text-[var(--ink-muted)]">USD / mes</span></div>
+            <ul class="mt-3 space-y-1.5 text-xs text-[var(--ink-secondary)]">
+              <li>· Emisión ilimitada de PDFs</li>
+              <li>· Documentos limpios sin marca</li>
+              <li>· Contratos mercantiles y rúbrica</li>
             </ul>
           </div>
-          <button onclick="triggerPaymentCheckout('monthly')" class="mt-4 w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition">
-            Adquirir Plan Mensual &rarr;
+          <button onclick="triggerPaymentCheckout('monthly')" class="btn-outline mt-5 w-full py-2.5 text-xs">
+            Continuar en Stripe &rarr;
           </button>
         </div>
 
-        <div class="p-4 rounded-2xl bg-gradient-to-b from-indigo-950/90 to-slate-900 border-2 border-amber-400/60 flex flex-col justify-between relative">
-          <span class="absolute -top-2.5 right-3 px-2 py-0.5 rounded bg-amber-400 text-slate-950 font-extrabold text-[10px] uppercase">
-            Más Rentable
+        <div class="p-5 rounded-xl bg-[var(--bg-elevated)] border-2 border-[var(--ink-primary)] flex flex-col justify-between relative">
+          <span class="font-tabular absolute -top-2.5 right-3 px-2 py-0.5 bg-[var(--accent-terracotta)] text-white text-[9px] font-bold uppercase tracking-wider">
+            Edición Vitalicia
           </span>
           <div>
-            <div class="text-xs font-bold text-amber-300 uppercase">Pase Vitalicio (Lifetime)</div>
-            <div class="text-2xl font-extrabold text-white mt-1">$29 <span class="text-xs font-normal text-slate-400">USD pago único</span></div>
-            <ul class="mt-3 space-y-1.5 text-xs text-slate-200">
-              <li>✓ Acceso de por vida sin mensualidades</li>
-              <li>✓ Auditor B2B + Guiones WhatsApp</li>
-              <li>✓ Licencia Comercial para Agencia</li>
+            <div class="font-tabular text-[10px] uppercase tracking-wider text-[var(--accent-terracotta)] font-semibold">Pago Único</div>
+            <div class="font-tabular text-2xl font-bold text-[var(--ink-primary)] mt-1">$29 <span class="text-xs font-normal text-[var(--ink-muted)]">USD total</span></div>
+            <ul class="mt-3 space-y-1.5 text-xs text-[var(--ink-secondary)]">
+              <li>· Acceso permanente sin cargos</li>
+              <li>· Calculadora B2B &amp; Memorándums</li>
+              <li>· Uso comercial para tu estudio</li>
             </ul>
           </div>
-          <button onclick="triggerPaymentCheckout('lifetime')" class="mt-4 w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-orange-400 hover:from-amber-300 hover:to-orange-300 text-slate-950 font-extrabold text-xs transition">
-            Desbloquear de por Vida &rarr;
+          <button onclick="triggerPaymentCheckout('lifetime')" class="btn-obsidian mt-5 w-full py-2.5 text-xs">
+            Adquirir Pase en Stripe &rarr;
           </button>
         </div>
       </div>
 
-      <!-- License Activation Input -->
-      <div class="pt-3 border-t border-slate-800 space-y-2">
-        <label class="block text-xs font-semibold text-slate-300">
-          ¿Ya tienes un Código de Licencia PRO? Actívalo aquí:
-        </label>
+      <div class="pt-4 border-t border-[var(--border-hairline)] space-y-2">
+        <label class="atelier-label">¿Cuentas con una credencial de activación?</label>
         <div class="flex gap-2">
-          <input id="activate-license-input" type="text" placeholder="Ej: CPRO-2026-VIP o código recibido" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono uppercase focus:border-amber-400 focus:outline-none" />
-          <button onclick="activateProLicense()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition">
-            Activar PRO
-          </button>
+          <input id="activate-license-input" type="text" placeholder="CPRO-2026-..." class="atelier-input font-tabular uppercase flex-1" />
+          <button onclick="activateProLicense()" class="btn-forest px-4 py-2 text-xs">Activar</button>
         </div>
-        <p class="text-[11px] text-slate-400">
-          💡 <em>Tip para Daniel (Dueño): Puedes usar la clave maestra <code class="text-amber-300">CPRO-OWNER-PRO</code> o generar claves para tus clientes en el Panel Dueño.</em>
-        </p>
       </div>
     </div>
   </div>
 
-  <!-- Toast Notification -->
-  <div id="toast-notification" class="no-print fixed bottom-5 right-5 z-50 hidden px-4 py-3 rounded-xl bg-slate-900 border border-indigo-500/40 text-white text-xs sm:text-sm font-semibold shadow-2xl">
+  <!-- Editorial Toast Notification -->
+  <div id="toast-notification" class="no-print fixed bottom-6 right-6 z-50 hidden px-4 py-3 rounded-lg bg-[#141413] text-[#F4F2EC] text-xs font-medium shadow-xl border border-[#2E2D29]">
   </div>
 
   <script src="app.js"></script>
