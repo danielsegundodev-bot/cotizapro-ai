@@ -17,8 +17,8 @@ const STORAGE_KEYS = {
 // Configuración oficial conectada a tus dos productos en Stripe
 const DEFAULT_CONFIG = {
   aiEnabled: false,
-  stripeMonthlyUrl: 'https://buy.stripe.com/6oUaEQ9No5Qe6Qe9Cxbsc02',
-  stripeLifetimeUrl: 'https://buy.stripe.com/eVq9AM1gS92qfmK5mhbsc01',
+  stripeMonthlyUrl: 'https://buy.stripe.com/eVq3co9No92q3E2g0Vbsc04',
+  stripeLifetimeUrl: 'https://buy.stripe.com/eVq28kaRs92qfmK3e9bsc03',
   ownerWhatsapp: '5215500000000'
 };
 
@@ -299,15 +299,13 @@ async function initApp() {
     const savedCfg = localStorage.getItem(STORAGE_KEYS.CONFIG);
     if (savedCfg) {
       const parsedCfg = JSON.parse(savedCfg);
-      const isOldLink = (u) => !u || u.includes('4gM6oA2kWceC4I6g0Vbsc00');
-      // Versiones anteriores guardaban la API key de Gemini en el navegador: se elimina
+      // Versiones anteriores guardaban la API key de Gemini en el navegador: se elimina.
+      // Los links de pago cacheados se ignoran: solo valen los de este código o los del servidor,
+      // así un link viejo (sin redirección de vuelta a la app) nunca se reutiliza.
       delete parsedCfg.geminiApiKey;
-      state.config = {
-        ...DEFAULT_CONFIG,
-        ...parsedCfg,
-        stripeMonthlyUrl: isOldLink(parsedCfg.stripeMonthlyUrl) ? DEFAULT_CONFIG.stripeMonthlyUrl : parsedCfg.stripeMonthlyUrl,
-        stripeLifetimeUrl: isOldLink(parsedCfg.stripeLifetimeUrl) ? DEFAULT_CONFIG.stripeLifetimeUrl : parsedCfg.stripeLifetimeUrl
-      };
+      delete parsedCfg.stripeMonthlyUrl;
+      delete parsedCfg.stripeLifetimeUrl;
+      state.config = { ...DEFAULT_CONFIG, ...parsedCfg };
       localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify(state.config));
     }
 
