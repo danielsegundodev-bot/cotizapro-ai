@@ -11,6 +11,9 @@ import sys
 import urllib.error
 import urllib.request
 
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 GITHUB_USER = "danielsegundodev-bot"
 REPO_NAME = "cotizapro-ai"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
