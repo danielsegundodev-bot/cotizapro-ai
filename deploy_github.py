@@ -1,9 +1,11 @@
 """
 Script Automatizado de Publicación en GitHub + GitHub Pages para danielsegundodev-bot
 Uso:
-  python deploy_github.py <TU_GITHUB_TOKEN>
+  export GITHUB_TOKEN=...   # o defínelo en .env; nunca lo pases como argumento (queda en el historial y en `ps`)
+  python deploy_github.py
 """
 
+import base64
 import json
 import os
 import subprocess
@@ -33,10 +35,13 @@ def github_api(method, path, token, payload=None):
 
 
 def main():
-    token = sys.argv[1] if len(sys.argv) > 1 else os.environ.get("GITHUB_TOKEN", "").strip()
+    token = os.environ.get("GITHUB_TOKEN", "").strip()
+    if len(sys.argv) > 1:
+        print("Por seguridad el token ya no se acepta como argumento. Usa la variable de entorno GITHUB_TOKEN.")
+        sys.exit(1)
     if not token:
         print("Para desplegar automáticamente en tu cuenta 'danielsegundodev-bot',")
-        print("ejecuta: python deploy_github.py <TU_GITHUB_PERSONAL_ACCESS_TOKEN>")
+        print("ejecuta: GITHUB_TOKEN=<TU_TOKEN> python deploy_github.py")
         sys.exit(1)
 
     print(f"1. Creando o verificando repositorio {GITHUB_USER}/{REPO_NAME} en GitHub...")
@@ -55,15 +60,19 @@ def main():
             raise
 
     print("2. Subiendo código fuente a la rama main...")
-    remote_url = f"https://{GITHUB_USER}:{token}@github.com/{GITHUB_USER}/{REPO_NAME}.git"
-    subprocess.run(["git", "branch", "-M", "main"], cwd=BASE_DIR, check=True)
-    subprocess.run(["git", "remote", "remove", "origin"], cwd=BASE_DIR, stderr=subprocess.DEVNULL)
-    subprocess.run(["git", "remote", "add", "origin", remote_url], cwd=BASE_DIR, check=True)
-    subprocess.run(["git", "push", "-u", "origin", "main", "--force"], cwd=BASE_DIR, check=True)
-
-    # Reset remote URL to clean URL without token stored in .git/config
+    # The token travels in an HTTP header passed through the environment: it is never written to
+    # .git/config, never appears in the remote URL / error messages, and is not visible in `ps`.
+    # No --force: a push that would overwrite remote history fails instead of destroying it.
     clean_url = f"https://github.com/{GITHUB_USER}/{REPO_NAME}.git"
-    subprocess.run(["git", "remote", "set-url", "origin", clean_url], cwd=BASE_DIR, check=True)
+    basic = base64.b64encode(f"x-access-token:{token}".encode("utf-8")).decode("ascii")
+    git_env = {
+        **os.environ,
+        "GIT_CONFIG_COUNT": "1",
+        "GIT_CONFIG_KEY_0": "http.https://github.com/.extraheader",
+        "GIT_CONFIG_VALUE_0": f"Authorization: Basic {basic}",
+        "GIT_TERMINAL_PROMPT": "0",
+    }
+    subprocess.run(["git", "push", clean_url, "HEAD:main"], cwd=BASE_DIR, env=git_env, check=True)
 
     print("3. Activando GitHub Pages ($0/mes de hosting)...")
     try:
