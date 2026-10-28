@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CotizaPro Studio — Atelier de Propuestas Comerciales, Contratos &amp; Diagnóstico B2B</title>
-  <meta name="description" content="Estudio editorial de propuestas comerciales, contratos legales y diagnóstico financiero B2B. Diseñado para cerrar acuerdos de alto valor." />
+  <title>CotizaPro Studio — Cotizaciones Comerciales &amp; Contratos Listos para Firmar</title>
+  <meta name="description" content="Crea cotizaciones profesionales en PDF, desglosa presupuestos y anexa contratos legales con firma digital en 30 segundos." />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,34 +13,7 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-  <!-- TOP EDITORIAL STATUS STRIP -->
-  <div class="no-print border-b border-[var(--border-hairline)] bg-[var(--bg-surface)] px-4 sm:px-8 py-2 text-xs">
-    <div class="max-w-[1380px] mx-auto flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center gap-3">
-        <span class="inline-flex items-center gap-1.5 font-tabular text-[11px] uppercase tracking-wider px-2 py-0.5 rounded bg-[var(--accent-forest-soft)] text-[var(--accent-forest)] font-semibold">
-          <span class="w-1.5 h-1.5 rounded-full bg-[var(--accent-forest)]"></span>
-          Estudio Comercial Activo
-        </span>
-        <span class="text-[var(--ink-secondary)] hidden md:inline">
-          Dossiers de inversión, contratos vinculantes y diagnóstico de rentabilidad B2B
-        </span>
-      </div>
-      <div class="flex items-center gap-4">
-        <span id="ai-engine-indicator" class="flex items-center gap-1.5 text-[11px] font-tabular text-[var(--ink-secondary)]">
-          <span id="ai-status-dot" class="w-1.5 h-1.5 rounded-full bg-[var(--accent-terracotta)]"></span>
-          <span id="ai-status-text">Motor Editorial Listo</span>
-        </span>
-        <button onclick="toggleAtelierTheme()" class="text-[11px] font-semibold text-[var(--ink-secondary)] hover:text-[var(--ink-primary)] flex items-center gap-1 transition">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/>
-          </svg>
-          <span id="theme-toggle-label">Modo Carbón</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MAIN ARCHITECTURAL HEADER -->
+  <!-- CLEAN, FOCUSED HEADER FOR CUSTOMERS -->
   <header class="no-print sticky top-0 z-30 bg-[var(--bg-canvas)]/95 backdrop-blur-md border-b border-[var(--border-hairline)]">
     <div class="max-w-[1380px] mx-auto px-4 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
 
@@ -53,36 +26,45 @@
           <div class="flex items-center gap-2.5">
             <span class="font-editorial text-xl font-medium tracking-tight text-[var(--ink-primary)]">CotizaPro <span class="italic font-normal text-[var(--accent-terracotta)]">Studio</span></span>
             <span id="plan-badge" class="font-tabular text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded border border-[var(--border-hairline)] bg-[var(--bg-elevated)] text-[var(--ink-secondary)]">
-              Edición Base · 3/3
+              3 Cotizaciones Gratis
             </span>
           </div>
-          <p class="text-[11px] text-[var(--ink-muted)] hidden sm:block">Arquitectura de propuestas comerciales y cierre de acuerdos</p>
+          <p class="text-[11px] text-[var(--ink-muted)] hidden sm:block">Cotizaciones profesionales, presupuestos y contratos con firma digital</p>
         </div>
       </div>
 
-      <!-- Segmented Studio Navigation -->
-      <nav class="flex items-center gap-1 p-1 rounded-lg bg-[var(--bg-subtle)] border border-[var(--border-hairline)] overflow-x-auto max-w-full">
-        <button id="tab-btn-builder" onclick="switchTab('builder')" class="tab-btn px-3.5 py-1.5 rounded-md text-xs font-semibold transition-all bg-[var(--bg-elevated)] text-[var(--ink-primary)] shadow-sm">
-          01 · Dossier &amp; Contrato
+      <!-- Focused Customer Navigation: ONLY Quotes & Saved History (Owner tab hidden unless unlocked) -->
+      <nav class="flex items-center gap-1 p-1 rounded-lg bg-[var(--bg-subtle)] border border-[var(--border-hairline)]">
+        <button id="tab-btn-builder" onclick="switchTab('builder')" class="tab-btn px-4 py-1.5 rounded-md text-xs font-semibold transition-all bg-[var(--bg-elevated)] text-[var(--ink-primary)] shadow-sm">
+          Crear Cotización
         </button>
-        <button id="tab-btn-auditor" onclick="switchTab('auditor')" class="tab-btn px-3.5 py-1.5 rounded-md text-xs font-medium transition-all text-[var(--ink-secondary)] hover:text-[var(--ink-primary)]">
-          02 · Diagnóstico ROI &amp; Cierre
+        <button id="tab-btn-history" onclick="switchTab('history')" class="tab-btn px-4 py-1.5 rounded-md text-xs font-medium transition-all text-[var(--ink-secondary)] hover:text-[var(--ink-primary)] flex items-center gap-1.5">
+          <span>Mis Cotizaciones</span>
+          <span id="nav-quotes-counter" class="font-tabular text-[10px] px-1.5 py-0.2 rounded bg-[var(--bg-canvas)] text-[var(--ink-secondary)]">0</span>
         </button>
-        <button id="tab-btn-affiliates" onclick="switchTab('affiliates')" class="tab-btn px-3.5 py-1.5 rounded-md text-xs font-medium transition-all text-[var(--ink-secondary)] hover:text-[var(--ink-primary)]">
-          03 · Alianzas &amp; Partners
+        <button id="tab-btn-calculator" onclick="switchTab('calculator')" class="tab-btn px-4 py-1.5 rounded-md text-xs font-medium transition-all text-[var(--ink-secondary)] hover:text-[var(--ink-primary)]">
+          Calculadora de Precio &amp; ROI
         </button>
-        <button id="tab-btn-admin" onclick="switchTab('admin')" class="tab-btn px-3.5 py-1.5 rounded-md text-xs font-medium transition-all text-[var(--ink-secondary)] hover:text-[var(--ink-primary)]">
-          04 · Administración
+        <!-- Hidden by default for regular visitors; visible only when Daniel opens ?admin=daniel or unlocks Owner Mode -->
+        <button id="tab-btn-admin" onclick="switchTab('admin')" class="hidden tab-btn px-3.5 py-1.5 rounded-md text-xs font-semibold transition-all text-[var(--accent-terracotta)]">
+          Panel Propietario
         </button>
       </nav>
 
-      <!-- Primary Actions -->
-      <div class="flex items-center gap-2.5">
-        <button id="upgrade-header-btn" onclick="openProModal()" class="btn-terracotta px-3.5 py-2 text-xs flex items-center gap-1.5 shadow-sm">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"/>
+      <!-- Right Actions: Theme + Upgrade PRO -->
+      <div class="flex items-center gap-3">
+        <button onclick="toggleAtelierTheme()" class="text-xs font-medium text-[var(--ink-secondary)] hover:text-[var(--ink-primary)] flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-transparent hover:border-[var(--border-hairline)] transition" title="Cambiar apariencia">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/>
           </svg>
-          <span>Activar Pase Studio PRO</span>
+          <span id="theme-toggle-label" class="hidden sm:inline">Modo Carbón</span>
+        </button>
+
+        <button id="upgrade-header-btn" onclick="openProModal()" class="btn-terracotta px-4 py-2 text-xs flex items-center gap-1.5 shadow-sm">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/>
+          </svg>
+          <span>Obtener PRO Ilimitado</span>
         </button>
       </div>
     </div>
@@ -92,162 +74,163 @@
   <main class="flex-1 max-w-[1380px] w-full mx-auto px-4 sm:px-8 py-7 print-only-container">
 
     <!-- ====================================================================
-         VIEW 01: DOSSIER BUILDER & INLINE EDITORIAL DOCUMENT
+         VIEW 01: CREAR COTIZACIÓN (THE CORE PRODUCT)
          ==================================================================== -->
     <section id="tab-builder" class="space-y-6">
 
-      <!-- Editorial Subheader & Preset Selector Bar (No-Print) -->
+      <!-- Top Action Bar -->
       <div class="no-print flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-5 border-b border-[var(--border-hairline)]">
         <div>
-          <span class="font-tabular text-[11px] uppercase tracking-widest text-[var(--accent-terracotta)] font-semibold">Mesa de Redacción Comercial</span>
+          <span class="font-tabular text-[11px] uppercase tracking-widest text-[var(--accent-terracotta)] font-semibold">Generador de Cotizaciones &amp; Contratos</span>
           <h1 class="font-editorial text-2xl sm:text-3xl font-normal text-[var(--ink-primary)] mt-0.5">
-            Dossier de Inversión &amp; Acuerdo de Servicios
+            Prepara tu Propuesta Comercial en Segundos
           </h1>
         </div>
 
         <div class="flex flex-wrap items-center gap-2.5">
-          <div class="relative">
-            <select id="preset-selector" onchange="loadPresetTemplate(this.value)" class="atelier-input pr-8 font-medium min-w-[260px]">
-              <option value="">Cargar plantilla por industria...</option>
-              <option value="ai_automation">Automatización IA &amp; Concierge WhatsApp ($850 USD)</option>
-              <option value="web_ecommerce">Arquitectura E-Commerce &amp; Pagos ($950 USD)</option>
-              <option value="landing_funnel">Landing Page Editorial &amp; Embudo ($450 USD)</option>
-              <option value="saas_mvp">Ingeniería de Producto Web / SaaS ($1,800 USD)</option>
-              <option value="marketing_seo">Estrategia de Captación &amp; SEO Local ($600/mes)</option>
-              <option value="branding_ui">Dirección de Arte, Identidad &amp; UI/UX ($550 USD)</option>
-              <option value="consulting_b2b">Auditoría Operativa &amp; Procesos B2B ($750 USD)</option>
-              <option value="technical_services">Obra Civil, Ingeniería &amp; Servicios Técnicos ($1,200 USD)</option>
-            </select>
-          </div>
+          <select id="preset-selector" onchange="loadPresetTemplate(this.value)" class="atelier-input pr-8 font-medium min-w-[250px]">
+            <option value="">Usar plantilla de ejemplo por giro...</option>
+            <option value="web_ecommerce">Desarrollo Web / Tienda Online</option>
+            <option value="ai_automation">Automatización &amp; Chatbot WhatsApp</option>
+            <option value="landing_funnel">Landing Page &amp; Embudo de Ventas</option>
+            <option value="saas_mvp">Desarrollo de Software / App a Medida</option>
+            <option value="marketing_seo">Agencia de Marketing &amp; SEO Mensual</option>
+            <option value="branding_ui">Diseño Gráfico, Branding &amp; UI/UX</option>
+            <option value="consulting_b2b">Consultoría, Contabilidad o Asesoría</option>
+            <option value="technical_services">Arquitectura, Remodelación o Servicios Técnicos</option>
+          </select>
+
+          <button onclick="resetNewQuote()" class="btn-outline px-3 py-2 text-xs">
+            + Nueva en Blanco
+          </button>
 
           <button onclick="saveCurrentQuote()" class="btn-outline px-3.5 py-2 text-xs flex items-center gap-1.5">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"/>
             </svg>
-            <span>Guardar en Archivo</span>
+            <span>Guardar</span>
           </button>
 
           <button onclick="exportProposalPDF()" class="btn-obsidian px-4 py-2 text-xs flex items-center gap-1.5">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z"/>
             </svg>
-            <span>Emitir PDF Oficial</span>
+            <span>Descargar Cotización PDF</span>
           </button>
         </div>
       </div>
 
-      <!-- TWO-COLUMN STUDIO LAYOUT -->
+      <!-- TWO-COLUMN WORKSPACE: LEFT STEPS + RIGHT LIVE PAPER -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
-        <!-- LEFT COLUMN: SEGMENTED INSPECTOR DOCK (5 COLS) -->
+        <!-- LEFT COLUMN: 3 SIMPLE STEPS TO BUILD THE QUOTE (5 COLS) -->
         <aside class="no-print lg:col-span-5 space-y-4 lg:sticky lg:top-20">
 
-          <!-- Inspector Step Switcher (Eliminates Endless Vertical Form Clutter) -->
+          <!-- 3-Step Selector -->
           <div class="grid grid-cols-3 gap-1 p-1 rounded-lg bg-[var(--bg-subtle)] border border-[var(--border-hairline)]">
             <button id="step-btn-1" onclick="switchInspectorStep(1)" class="px-2.5 py-2 rounded-md text-xs font-semibold transition bg-[var(--bg-elevated)] text-[var(--ink-primary)] shadow-sm">
-              1. Contexto &amp; IA
+              1. Datos &amp; IA
             </button>
             <button id="step-btn-2" onclick="switchInspectorStep(2)" class="px-2.5 py-2 rounded-md text-xs font-medium transition text-[var(--ink-secondary)] hover:text-[var(--ink-primary)]">
-              2. Desglose ($)
+              2. Conceptos ($)
             </button>
             <button id="step-btn-3" onclick="switchInspectorStep(3)" class="px-2.5 py-2 rounded-md text-xs font-medium transition text-[var(--ink-secondary)] hover:text-[var(--ink-primary)]">
-              3. Cierre &amp; Firma
+              3. Firma &amp; Contrato
             </button>
           </div>
 
-          <!-- INSPECTOR STEP 1: BRIEF IA & CLIENT METADATA -->
+          <!-- STEP 1: AI AUTOCOMPLETE & CLIENT INFO -->
           <div id="inspector-step-1" class="space-y-4">
-            <!-- AI Synthesis Atelier Card -->
+            <!-- AI Quick Generator -->
             <div class="atelier-card rounded-xl p-5 space-y-3">
               <div class="flex items-center justify-between">
                 <span class="font-tabular text-[11px] uppercase tracking-wider font-semibold text-[var(--accent-terracotta)]">
-                  Síntesis Asistida por IA
+                  Autocompletar con Inteligencia Artificial
                 </span>
-                <span class="text-[11px] text-[var(--ink-muted)]">Redacción ejecutiva</span>
+                <span id="ai-status-text" class="text-[11px] text-[var(--ink-muted)]">Listo</span>
               </div>
               <p class="text-xs text-[var(--ink-secondary)] leading-relaxed">
-                Describe en una frase el cliente y lo que necesita. El estudio estructurará el resumen ejecutivo, los entregables y la inversión sugerida.
+                Escribe qué trabajo vas a cotizar y la IA redactará el resumen, los conceptos sugeridos y precios base por ti.
               </p>
-              <textarea id="ai-brief-input" rows="2" placeholder="Ej: Rediseño web y sistema de agendamiento automático por WhatsApp para clínica dermatológica en Monterrey..." class="atelier-input"></textarea>
+              <textarea id="ai-brief-input" rows="2" placeholder="Ej: Cotización para remodelación de oficinas o creación de página web para clínica dental..." class="atelier-input"></textarea>
               <button onclick="generateProposalWithAI()" id="btn-generate-ai" class="btn-obsidian w-full py-2.5 px-4 text-xs flex items-center justify-center gap-2">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/>
                 </svg>
-                <span>Estructurar Propuesta y Alcance</span>
+                <span>Redactar Cotización con IA</span>
               </button>
             </div>
 
-            <!-- Parties & Scope Card -->
+            <!-- Client & Sender Info -->
             <div class="atelier-card rounded-xl p-5 space-y-4">
               <div class="flex items-center justify-between border-b border-[var(--border-hairline)] pb-2.5">
-                <h2 class="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)]">Datos del Dossier</h2>
-                <span class="text-[11px] text-[var(--ink-muted)]">También puedes editar sobre el papel &rarr;</span>
+                <h2 class="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)]">Quién Cotiza y Para Quién</h2>
+                <span class="text-[11px] text-[var(--ink-muted)]">O edita directo en la hoja &rarr;</span>
               </div>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label class="atelier-label">Firma Emisora / Especialista</label>
-                  <input id="sender-name" type="text" value="Daniel Segundo — Consultoría & Ingeniería Digital" oninput="renderProposalPreview()" class="atelier-input" />
+                  <label class="atelier-label">Tu Nombre o Empresa</label>
+                  <input id="sender-name" type="text" value="Daniel Segundo — Soluciones Digitales" oninput="renderProposalPreview()" class="atelier-input" />
                 </div>
                 <div>
-                  <label class="atelier-label">Contacto Oficial</label>
+                  <label class="atelier-label">Tu Correo o Teléfono</label>
                   <input id="sender-contact" type="text" value="daniel.segundo.dev@gmail.com" oninput="renderProposalPreview()" class="atelier-input" />
                 </div>
                 <div>
-                  <label class="atelier-label">Cliente / Organización</label>
+                  <label class="atelier-label">Nombre de tu Cliente</label>
                   <input id="client-name" type="text" value="Grupo Médico San Ángel" oninput="renderProposalPreview()" class="atelier-input" />
                 </div>
                 <div>
-                  <label class="atelier-label">Título del Proyecto</label>
-                  <input id="project-title" type="text" value="Arquitectura Web de Captación & Concierge IA 24/7" oninput="renderProposalPreview()" class="atelier-input" />
+                  <label class="atelier-label">Título del Proyecto / Trabajo</label>
+                  <input id="project-title" type="text" value="Desarrollo de Portal Web & Automatización de Citas" oninput="renderProposalPreview()" class="atelier-input" />
                 </div>
               </div>
 
               <div>
-                <label class="atelier-label">Tesis del Proyecto &amp; Justificación de Retorno (ROI)</label>
-                <textarea id="proposal-summary" rows="3" oninput="renderProposalPreview()" class="atelier-input">Implementación de una infraestructura digital de respuesta inmediata diseñada para atender y calificar prospectos las 24 horas en WhatsApp y web, reduciendo la fuga de pacientes por demora de atención e incrementando la conversión de citas entre un 35% y 50% desde el primer mes.</textarea>
+                <label class="atelier-label">Descripción General de la Propuesta</label>
+                <textarea id="proposal-summary" rows="3" oninput="renderProposalPreview()" class="atelier-input">Propuesta integral para el diseño, desarrollo y puesta en marcha de su plataforma digital de captación de clientes y agendamiento automático, optimizada para incrementar sus ventas y reducir tiempos operativos.</textarea>
               </div>
 
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label class="atelier-label">Plazo de Ejecución</label>
+                  <label class="atelier-label">Tiempo de Entrega</label>
                   <input id="delivery-time" type="text" value="10 a 14 días hábiles" oninput="renderProposalPreview()" class="atelier-input" />
                 </div>
                 <div>
-                  <label class="atelier-label">Validez de Oferta</label>
+                  <label class="atelier-label">Vigencia de la Cotización</label>
                   <input id="validity-days" type="text" value="7 días naturales" oninput="renderProposalPreview()" class="atelier-input" />
                 </div>
               </div>
 
               <div class="pt-1 flex justify-end">
-                <button onclick="switchInspectorStep(2)" class="btn-outline px-3.5 py-1.5 text-xs">
+                <button onclick="switchInspectorStep(2)" class="btn-obsidian px-4 py-2 text-xs">
                   Siguiente: Conceptos y Precios &rarr;
                 </button>
               </div>
             </div>
           </div>
 
-          <!-- INSPECTOR STEP 2: LINE ITEMS & FINANCIAL PARAMETERS -->
+          <!-- STEP 2: ITEMS & PRICES -->
           <div id="inspector-step-2" class="hidden space-y-4">
             <div class="atelier-card rounded-xl p-5 space-y-4">
               <div class="flex items-center justify-between border-b border-[var(--border-hairline)] pb-2.5">
                 <div>
-                  <h2 class="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)]">Entregables &amp; Presupuesto</h2>
-                  <p class="text-[11px] text-[var(--ink-muted)]">Ajusta los alcances e importes unitarios</p>
+                  <h2 class="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)]">Conceptos a Cobrar</h2>
+                  <p class="text-[11px] text-[var(--ink-muted)]">Agrega o edita cada servicio o producto</p>
                 </div>
                 <button onclick="addLineItem()" class="btn-outline px-2.5 py-1 text-xs">
-                  + Agregar Partida
+                  + Agregar Concepto
                 </button>
               </div>
 
               <div id="line-items-editor" class="space-y-2.5 max-h-[340px] overflow-y-auto pr-1">
-                <!-- Populated dynamically by app.js -->
               </div>
 
               <!-- Currency, Tax, Discount, Deposit -->
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-3 border-t border-[var(--border-hairline)]">
                 <div>
-                  <label class="atelier-label">Divisa</label>
+                  <label class="atelier-label">Moneda</label>
                   <select id="currency-select" onchange="renderProposalPreview()" class="atelier-input font-tabular">
                     <option value="USD">USD ($)</option>
                     <option value="MXN">MXN ($)</option>
@@ -263,65 +246,62 @@
                   <input id="tax-rate" type="number" min="0" max="50" value="16" oninput="renderProposalPreview()" class="atelier-input font-tabular" />
                 </div>
                 <div>
-                  <label class="atelier-label">Bonificación (%)</label>
-                  <input id="discount-rate" type="number" min="0" max="90" value="10" oninput="renderProposalPreview()" class="atelier-input font-tabular" />
+                  <label class="atelier-label">Descuento (%)</label>
+                  <input id="discount-rate" type="number" min="0" max="90" value="0" oninput="renderProposalPreview()" class="atelier-input font-tabular" />
                 </div>
                 <div>
-                  <label class="atelier-label">Anticipo (%)</label>
+                  <label class="atelier-label">% Anticipo</label>
                   <input id="deposit-rate" type="number" min="10" max="100" value="50" oninput="renderProposalPreview()" class="atelier-input font-tabular" />
                 </div>
               </div>
 
               <div class="pt-1 flex justify-between">
-                <button onclick="switchInspectorStep(1)" class="btn-outline px-3 py-1.5 text-xs">&larr; Anterior</button>
-                <button onclick="switchInspectorStep(3)" class="btn-outline px-3.5 py-1.5 text-xs">Siguiente: Contrato y Firma &rarr;</button>
+                <button onclick="switchInspectorStep(1)" class="btn-outline px-3 py-1.5 text-xs">&larr; Paso 1</button>
+                <button onclick="switchInspectorStep(3)" class="btn-obsidian px-4 py-2 text-xs">Siguiente: Firma y Contrato &rarr;</button>
               </div>
             </div>
           </div>
 
-          <!-- INSPECTOR STEP 3: LEGAL CONTRACT, AFFILIATES & DIGITAL SIGNATURE -->
+          <!-- STEP 3: CONTRACT & DIGITAL SIGNATURE -->
           <div id="inspector-step-3" class="hidden space-y-4">
             <div class="atelier-card rounded-xl p-5 space-y-4">
               <h2 class="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)] border-b border-[var(--border-hairline)] pb-2.5">
-                Blindaje Legal, Firma &amp; Partners
+                Condiciones de Pago, Contrato y Firma
               </h2>
+
+              <div>
+                <label class="atelier-label">Tus Datos de Pago o Cuenta Bancaria (Se muestran en la cotización)</label>
+                <input id="payment-methods-note" type="text" value="Transferencia bancaria, Tarjeta de crédito/débito o PayPal." oninput="renderProposalPreview()" class="atelier-input" />
+              </div>
 
               <label class="flex items-start justify-between gap-3 p-3 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-hairline)] cursor-pointer">
                 <div>
-                  <span class="text-xs font-semibold text-[var(--ink-primary)] block">Incluir Cláusulas de Contrato Mercantil</span>
-                  <span class="text-[11px] text-[var(--ink-secondary)]">Anexa condiciones de alcance, propiedad intelectual, pagos y garantía.</span>
+                  <span class="text-xs font-semibold text-[var(--ink-primary)] block">Incluir Contrato de Prestación de Servicios</span>
+                  <span class="text-[11px] text-[var(--ink-secondary)]">Agrega cláusulas legales de alcance, propiedad, tiempos y garantía al pie del PDF.</span>
                 </div>
                 <input id="toggle-contract" type="checkbox" checked onchange="renderProposalPreview()" class="mt-0.5 w-4 h-4 accent-[#141413]" />
               </label>
 
-              <label class="flex items-start justify-between gap-3 p-3 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-hairline)] cursor-pointer">
-                <div>
-                  <span class="text-xs font-semibold text-[var(--accent-forest)] block">Anexar Infraestructura Recomendada (Afiliados)</span>
-                  <span class="text-[11px] text-[var(--ink-secondary)]">Inserta tus enlaces de partner para Hosting, E-Commerce y Automatización.</span>
-                </div>
-                <input id="toggle-affiliates" type="checkbox" checked onchange="renderProposalPreview()" class="mt-0.5 w-4 h-4 accent-[#185C43]" />
-              </label>
-
-              <!-- Tactile Fountain Pen Signature Pad -->
+              <!-- Digital Signature Pad -->
               <div class="space-y-1.5">
                 <div class="flex items-center justify-between">
-                  <label class="atelier-label mb-0">Rúbrica Autógrafa del Emisor</label>
+                  <label class="atelier-label mb-0">Tu Firma Digital (Dibuja con el mouse o tu dedo)</label>
                   <button onclick="clearSignature()" class="text-[11px] font-medium text-[var(--accent-terracotta)] hover:underline">
-                    Limpiar trazo
+                    Borrar firma
                   </button>
                 </div>
                 <div class="rounded-lg bg-white border border-[#D6D1C7] p-1">
                   <canvas id="signature-canvas" width="380" height="96" class="w-full h-[96px] rounded bg-white"></canvas>
                 </div>
                 <p class="text-[11px] text-[var(--ink-muted)]">
-                  Traza tu firma arriba; se estampa al instante en el bloque de autorización del documento.
+                  Tu firma aparece automáticamente al final de la cotización lista para imprimir en PDF.
                 </p>
               </div>
 
               <div class="pt-2 flex justify-between items-center border-t border-[var(--border-hairline)]">
-                <button onclick="switchInspectorStep(2)" class="btn-outline px-3 py-1.5 text-xs">&larr; Anterior</button>
+                <button onclick="switchInspectorStep(2)" class="btn-outline px-3 py-1.5 text-xs">&larr; Paso 2</button>
                 <button onclick="exportProposalPDF()" class="btn-obsidian px-4 py-2 text-xs">
-                  Emitir PDF Oficial &rarr;
+                  Descargar Cotización PDF &rarr;
                 </button>
               </div>
             </div>
@@ -329,96 +309,93 @@
 
         </aside>
 
-        <!-- RIGHT COLUMN: THE SWISS EDITORIAL DOSSIER SHEET (7 COLS) -->
+        <!-- RIGHT COLUMN: LIVE PRINT-READY QUOTE SHEET (7 COLS) -->
         <div class="lg:col-span-7 space-y-4">
 
-          <!-- Floating Financial Summary & Dispatch Bar (No-Print) -->
+          <!-- Quick Action Bar Above the Paper -->
           <div class="no-print atelier-card rounded-xl px-4 py-3 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-3">
               <span class="font-tabular text-[11px] uppercase tracking-wider px-2 py-0.5 rounded bg-[var(--accent-forest-soft)] text-[var(--accent-forest)] font-semibold">
-                Total Dossier
+                Total Cotizado
               </span>
               <span id="preview-quick-total" class="font-tabular text-base font-bold text-[var(--ink-primary)]">$0.00 USD</span>
-              <span class="text-[11px] text-[var(--ink-muted)] hidden sm:inline">· Haz clic sobre cualquier título del papel para editar</span>
+              <span class="text-[11px] text-[var(--ink-muted)] hidden sm:inline">· Puedes hacer clic sobre los textos de la hoja para editarlos</span>
             </div>
 
             <div class="flex flex-wrap items-center gap-2">
               <button onclick="sendWhatsAppPitch()" class="btn-forest px-3.5 py-1.5 text-xs flex items-center gap-1.5">
-                <span>Enviar por WhatsApp</span>
+                <span>Enviar Cotización por WhatsApp</span>
               </button>
               <button onclick="copyProposalSummary()" class="btn-outline px-3 py-1.5 text-xs">
-                Copiar Resumen
+                Copiar Texto
               </button>
             </div>
           </div>
 
-          <!-- THE PRINTABLE EDITORIAL PAPER SHEET -->
+          <!-- THE PRINTABLE QUOTE PAPER SHEET -->
           <article id="proposal-document" class="dossier-paper p-7 sm:p-12 space-y-8">
 
-            <!-- Top Swiss Architectural Header -->
+            <!-- Header -->
             <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-6 border-b-2 border-[#141413] pb-6">
               <div class="space-y-2 max-w-xl">
                 <div class="flex items-center gap-2">
                   <span class="font-tabular text-[10px] font-bold uppercase tracking-[0.14em] px-2 py-0.5 bg-[#141413] text-white">
-                    DOSSIER COMERCIAL &amp; PROPUESTA
-                  </span>
-                  <span class="font-tabular text-[10px] uppercase tracking-widest text-[#57544E]">
-                    CONFIDENCIAL
+                    COTIZACIÓN &amp; PROPUESTA DE SERVICIOS
                   </span>
                 </div>
                 <h2 id="doc-project-title" contenteditable="true" onblur="syncInlineEdit('project-title', this.innerText)" class="inline-editable font-editorial text-2xl sm:text-3xl font-normal text-[#141413] leading-tight">
-                  Arquitectura Web de Captación &amp; Concierge IA 24/7
+                  Desarrollo de Portal Web &amp; Automatización de Citas
                 </h2>
                 <div class="pt-1 text-xs text-[#57544E] flex flex-wrap items-center gap-x-3 gap-y-1">
-                  <span id="doc-sender-name" class="font-semibold text-[#141413]">Daniel Segundo — Consultoría &amp; Ingeniería Digital</span>
+                  <span id="doc-sender-name" class="font-semibold text-[#141413]">Daniel Segundo — Soluciones Digitales</span>
                   <span>·</span>
                   <span id="doc-sender-contact" class="font-tabular text-[11px]">daniel.segundo.dev@gmail.com</span>
                 </div>
               </div>
 
-              <!-- Tabular Folio Box -->
+              <!-- Folio Box -->
               <div class="sm:text-right border border-[#D6D1C7] bg-[#FAF9F5] p-3.5 min-w-[205px] space-y-1">
-                <div class="font-tabular text-[10px] uppercase tracking-widest text-[#8A857C]">Folio de Registro</div>
+                <div class="font-tabular text-[10px] uppercase tracking-widest text-[#8A857C]">Folio de Cotización</div>
                 <div id="doc-quote-number" class="font-tabular text-sm font-bold text-[#141413]">CP-2026-0842</div>
                 <div class="font-tabular text-[11px] text-[#57544E] pt-1 border-t border-[#E5E0D5]">
-                  Emisión: <span id="doc-date"></span>
+                  Fecha: <span id="doc-date"></span>
                 </div>
                 <div class="font-tabular text-[11px] text-[#185C43] font-semibold">
-                  Validez: <span id="doc-validity">7 días naturales</span>
+                  Vigencia: <span id="doc-validity">7 días naturales</span>
                 </div>
               </div>
             </div>
 
-            <!-- 3-Column Swiss Grid Metadata -->
+            <!-- 3-Column Client Metadata -->
             <div class="grid grid-cols-1 sm:grid-cols-3 border border-[#D6D1C7] divide-y sm:divide-y-0 sm:divide-x divide-[#D6D1C7] bg-[#FAF9F5] text-xs">
               <div class="p-3.5">
-                <span class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C] block">Preparado Para</span>
+                <span class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C] block">Cliente / Destinatario</span>
                 <span id="doc-client-name" contenteditable="true" onblur="syncInlineEdit('client-name', this.innerText)" class="inline-editable font-semibold text-[#141413] text-sm mt-0.5 block">Grupo Médico San Ángel</span>
               </div>
               <div class="p-3.5">
-                <span class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C] block">Plazo de Ejecución</span>
+                <span class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C] block">Tiempo de Entrega</span>
                 <span id="doc-delivery-time" class="font-semibold text-[#141413] mt-0.5 block">10 a 14 días hábiles</span>
               </div>
               <div class="p-3.5">
-                <span class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C] block">Condición de Apertura</span>
+                <span class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C] block">Condición de Inicio</span>
                 <span id="doc-deposit-condition" class="font-tabular font-bold text-[#185C43] mt-0.5 block">50% Anticipo</span>
               </div>
             </div>
 
-            <!-- Thesis / Executive Summary -->
+            <!-- Summary -->
             <div class="space-y-2">
               <div class="flex items-center gap-2">
-                <span class="font-tabular text-[10px] font-bold uppercase tracking-widest text-[#8A857C]">01 · Tesis Ejecutiva &amp; Objetivo Financiero</span>
+                <span class="font-tabular text-[10px] font-bold uppercase tracking-widest text-[#8A857C]">01 · Descripción &amp; Alcance del Proyecto</span>
                 <div class="flex-1 border-t border-[#E5E0D5]"></div>
               </div>
               <p id="doc-summary" contenteditable="true" onblur="syncInlineEdit('proposal-summary', this.innerText)" class="inline-editable text-xs sm:text-[13.5px] text-[#262624] leading-relaxed pl-3.5 border-l-2 border-[#C84B31] py-1">
               </p>
             </div>
 
-            <!-- Itemized Deliverables Schedule -->
+            <!-- Items Table -->
             <div class="space-y-2.5">
               <div class="flex items-center gap-2">
-                <span class="font-tabular text-[10px] font-bold uppercase tracking-widest text-[#8A857C]">02 · Cronograma de Entregables &amp; Presupuesto</span>
+                <span class="font-tabular text-[10px] font-bold uppercase tracking-widest text-[#8A857C]">02 · Desglose de Conceptos e Inversión</span>
                 <div class="flex-1 border-t border-[#E5E0D5]"></div>
               </div>
 
@@ -427,34 +404,32 @@
                   <thead>
                     <tr class="border-b border-[#141413] bg-[#FAF9F5] font-tabular text-[10px] uppercase tracking-wider text-[#57544E]">
                       <th class="py-2.5 px-3.5 w-10">#</th>
-                      <th class="py-2.5 px-3.5">Descripción del Alcance / Entregable</th>
+                      <th class="py-2.5 px-3.5">Concepto / Entregable</th>
                       <th class="py-2.5 px-3.5 text-center w-16">Cant.</th>
-                      <th class="py-2.5 px-3.5 text-right w-28">Unitario</th>
-                      <th class="py-2.5 px-3.5 text-right w-28">Importe</th>
+                      <th class="py-2.5 px-3.5 text-right w-28">Precio Unit.</th>
+                      <th class="py-2.5 px-3.5 text-right w-28">Subtotal</th>
                     </tr>
                   </thead>
                   <tbody id="doc-items-tbody" class="divide-y divide-[#E5E0D5] text-xs sm:text-[13px]">
-                    <!-- Populated dynamically -->
                   </tbody>
                 </table>
               </div>
             </div>
 
-            <!-- Financial Summary & Payment Schedule -->
+            <!-- Totals & Deposit Breakdown -->
             <div class="grid grid-cols-1 sm:grid-cols-12 gap-5 items-stretch pt-1">
-              <!-- Left: Milestone Payment Schedule -->
               <div class="sm:col-span-6 border border-[#185C43]/30 bg-[#E5F0EC]/60 p-4 flex flex-col justify-between">
                 <div class="space-y-2">
                   <div class="font-tabular text-[10px] font-bold uppercase tracking-wider text-[#185C43]">
-                    Calendario de Desembolso
+                    Plan de Pagos para Iniciar
                   </div>
                   <div class="space-y-1 text-xs">
                     <div class="flex justify-between font-bold text-[#141413]">
-                      <span>Apertura de Proyecto (<span id="doc-deposit-pct">50</span>%):</span>
+                      <span>1er Pago · Anticipo (<span id="doc-deposit-pct">50</span>%):</span>
                       <span id="doc-deposit-amount" class="font-tabular text-[#185C43]">$0.00</span>
                     </div>
                     <div class="flex justify-between text-[#57544E]">
-                      <span>Liquidación contra entrega final:</span>
+                      <span>Liquidación contra entrega:</span>
                       <span id="doc-balance-amount" class="font-tabular">$0.00</span>
                     </div>
                   </div>
@@ -463,58 +438,44 @@
                 </div>
               </div>
 
-              <!-- Right: Subtotals & Net Investment -->
               <div class="sm:col-span-6 border border-[#D6D1C7] bg-[#FAF9F5] p-4 space-y-1.5 text-xs">
                 <div class="flex justify-between text-[#57544E]">
-                  <span>Subtotal de Partidas:</span>
+                  <span>Subtotal:</span>
                   <span id="doc-subtotal" class="font-tabular font-medium text-[#141413]">$0.00</span>
                 </div>
                 <div id="doc-discount-row" class="flex justify-between text-[#185C43]">
-                  <span>Bonificación Aplicada (<span id="doc-discount-pct">10</span>%):</span>
+                  <span>Descuento (<span id="doc-discount-pct">0</span>%):</span>
                   <span id="doc-discount-amount" class="font-tabular">-$0.00</span>
                 </div>
                 <div id="doc-tax-row" class="flex justify-between text-[#57544E]">
-                  <span>Impuestos / IVA (<span id="doc-tax-pct">16</span>%):</span>
+                  <span>IVA (<span id="doc-tax-pct">16</span>%):</span>
                   <span id="doc-tax-amount" class="font-tabular">$0.00</span>
                 </div>
                 <div class="border-t-2 border-[#141413] pt-2.5 mt-2 flex justify-between items-baseline">
-                  <span class="font-tabular font-bold text-[#141413] text-xs uppercase tracking-wider">Inversión Total:</span>
+                  <span class="font-tabular font-bold text-[#141413] text-xs uppercase tracking-wider">Total:</span>
                   <span id="doc-total" class="font-tabular font-bold text-[#141413] text-lg">$0.00 USD</span>
                 </div>
-              </div>
-            </div>
-
-            <!-- Affiliate Recommended Tech Stack (Stream #3) -->
-            <div id="doc-affiliates-section" class="border border-[#D6D1C7] bg-[#FAF9F5] p-4 space-y-2.5">
-              <div class="flex items-center justify-between">
-                <span class="font-tabular text-[10px] font-bold uppercase tracking-widest text-[#57544E]">
-                  03 · Infraestructura Técnica Sugerida para el Cliente
-                </span>
-                <span class="font-tabular text-[10px] text-[#C84B31] font-semibold">Convenio Corporativo</span>
-              </div>
-              <div id="doc-affiliates-list" class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
-                <!-- Populated dynamically -->
               </div>
             </div>
 
             <!-- Legal Contract Clauses -->
             <div id="doc-contract-section" class="space-y-2 pt-2">
               <div class="flex items-center gap-2">
-                <span class="font-tabular text-[10px] font-bold uppercase tracking-widest text-[#8A857C]">04 · Marco Legal &amp; Condiciones de Prestación de Servicios</span>
+                <span class="font-tabular text-[10px] font-bold uppercase tracking-widest text-[#8A857C]">03 · Términos y Condiciones de Servicio</span>
                 <div class="flex-1 border-t border-[#E5E0D5]"></div>
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-[11px] text-[#57544E] leading-relaxed pt-1">
                 <div>
-                  <strong class="text-[#141413] block mb-0.5">I. Objeto y Plazo</strong>
-                  <span id="contract-sender"></span> ejecutará a favor de <span id="contract-client"></span> las partidas descritas en un plazo estimado de <span id="contract-delivery"></span> a partir del anticipo.
+                  <strong class="text-[#141413] block mb-0.5">I. Alcance y Entrega</strong>
+                  <span id="contract-sender"></span> realizará a favor de <span id="contract-client"></span> los conceptos descritos en un plazo estimado de <span id="contract-delivery"></span> a partir de la recepción del anticipo.
                 </div>
                 <div>
-                  <strong class="text-[#141413] block mb-0.5">II. Propiedad Intelectual</strong>
-                  Contra la liquidación total (<span id="contract-total" class="font-tabular"></span>), el Cliente recibe la titularidad y derechos de explotación sobre los entregables finales.
+                  <strong class="text-[#141413] block mb-0.5">II. Liquidación y Propiedad</strong>
+                  Una vez cubierto el 100% del total (<span id="contract-total" class="font-tabular"></span>), el Cliente recibe la titularidad total sobre los entregables acordados.
                 </div>
                 <div>
-                  <strong class="text-[#141413] block mb-0.5">III. Garantía Técnica</strong>
-                  Incluye 2 rondas de ajustes de refinamiento sobre el alcance aprobado y 30 días naturales de garantía operativa post-entrega.
+                  <strong class="text-[#141413] block mb-0.5">III. Garantía</strong>
+                  Incluye hasta 2 revisiones de ajustes sobre el alcance aprobado y 30 días naturales de garantía técnica posterior a la entrega.
                 </div>
               </div>
             </div>
@@ -523,25 +484,25 @@
             <div class="grid grid-cols-2 gap-8 pt-6 border-t border-[#D6D1C7]">
               <div>
                 <div class="h-20 flex items-center justify-start border-b border-[#141413] mb-2">
-                  <img id="doc-signature-img" alt="Rúbrica Emisor" class="max-h-16 object-contain hidden" />
-                  <span id="doc-signature-placeholder" class="font-editorial italic text-sm text-[#8A857C]">Espacio para rúbrica del especialista</span>
+                  <img id="doc-signature-img" alt="Firma Emisor" class="max-h-16 object-contain hidden" />
+                  <span id="doc-signature-placeholder" class="font-editorial italic text-sm text-[#8A857C]">Firma del emisor</span>
                 </div>
                 <p id="sig-sender-name" class="text-xs font-bold text-[#141413]">Daniel Segundo</p>
-                <p class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C]">Firma Emisora Autorizada</p>
+                <p class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C]">Proveedor / Especialista</p>
               </div>
               <div>
                 <div class="h-20 flex items-end justify-start border-b border-[#141413] mb-2 pb-1">
-                  <span class="font-editorial italic text-sm text-[#8A857C]">Firma de conformidad y aceptación</span>
+                  <span class="font-editorial italic text-sm text-[#8A857C]">Firma de aceptación del cliente</span>
                 </div>
                 <p id="sig-client-name" class="text-xs font-bold text-[#141413]">Grupo Médico San Ángel</p>
-                <p class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C]">Cliente / Representante Legal</p>
+                <p class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C]">Cliente · Acepto cotización</p>
               </div>
             </div>
 
-            <!-- Subtle Editorial Colophon (Removed in PRO) -->
+            <!-- Subtle Freemium Colophon (Removed in PRO) -->
             <div id="doc-viral-watermark" class="pt-3 border-t border-dashed border-[#E5E0D5] flex flex-wrap items-center justify-between gap-2 font-tabular text-[10px] text-[#8A857C]">
-              <span>DOSSIER EMITIDO CON COTIZAPRO STUDIO · ARQUITECTURA DE PROPUESTAS COMERCIALES</span>
-              <span class="text-[#C84B31] font-semibold cursor-pointer" onclick="openProModal()">Remover colofón con Pase Studio PRO &rarr;</span>
+              <span>COTIZACIÓN GENERADA CON COTIZAPRO STUDIO</span>
+              <span class="text-[#C84B31] font-semibold cursor-pointer" onclick="openProModal()">Quitar marca de agua con Pase PRO &rarr;</span>
             </div>
 
           </article>
@@ -550,181 +511,167 @@
     </section>
 
     <!-- ====================================================================
-         VIEW 02: B2B FINANCIAL LOSS AUDITOR & WHATSAPP CLOSER
+         VIEW 02: MIS COTIZACIONES GUARDADAS (CUSTOMER QUOTE HISTORY)
          ==================================================================== -->
-    <section id="tab-auditor" class="hidden no-print space-y-6">
+    <section id="tab-history" class="hidden no-print space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-5 border-b border-[var(--border-hairline)]">
+        <div>
+          <span class="font-tabular text-[11px] uppercase tracking-widest text-[var(--accent-terracotta)] font-semibold">Archivo Personal</span>
+          <h2 class="font-editorial text-2xl sm:text-3xl text-[var(--ink-primary)] mt-0.5">
+            Mis Cotizaciones Guardadas
+          </h2>
+          <p class="text-xs sm:text-sm text-[var(--ink-secondary)] mt-1">
+            Consulta el historial de tus propuestas, vuelve a abrirlas para editarlas o descárgalas nuevamente en PDF.
+          </p>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="atelier-card rounded-xl px-4 py-2.5 text-right">
+            <span class="font-tabular text-[10px] uppercase tracking-wider text-[var(--ink-secondary)] block">Total Acumulado</span>
+            <span id="history-total-amount" class="font-tabular text-base font-bold text-[var(--accent-forest)]">$0.00 USD</span>
+          </div>
+          <button onclick="switchTab('builder'); resetNewQuote();" class="btn-obsidian px-4 py-2.5 text-xs">
+            + Crear Nueva Cotización
+          </button>
+        </div>
+      </div>
+
+      <div id="customer-quotes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Populated dynamically with Load / Duplicate / Delete buttons -->
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         VIEW 03: CALCULADORA DE PRECIO & ROI PARA TU CLIENTE
+         ==================================================================== -->
+    <section id="tab-calculator" class="hidden no-print space-y-6">
       <div class="pb-5 border-b border-[var(--border-hairline)]">
-        <span class="font-tabular text-[11px] uppercase tracking-widest text-[var(--accent-forest)] font-semibold">Motor de Prospección &amp; Venta Consultiva</span>
+        <span class="font-tabular text-[11px] uppercase tracking-widest text-[var(--accent-forest)] font-semibold">Herramienta de Apoyo al Cotizar</span>
         <h2 class="font-editorial text-2xl sm:text-3xl text-[var(--ink-primary)] mt-0.5">
-          Calculadora de Fuga Financiera B2B &amp; Cierre por WhatsApp
+          ¿Cuánto Cobrar y Cómo Justificar tu Precio ante el Cliente?
         </h2>
         <p class="text-xs sm:text-sm text-[var(--ink-secondary)] mt-1 max-w-3xl">
-          Cuantifica cuánto capital pierde un negocio local cada mes por demoras en atención digital, redacta el diagnóstico ejecutivo para WhatsApp y conviértelo en un Dossier PDF de alto ticket en un clic.
+          Si no estás seguro de cuánto cobrar por un proyecto o quieres demostrarle a tu cliente que tu servicio se paga solo, calcula aquí el retorno de inversión (ROI) y pásalo directo a tu cotización PDF.
         </p>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        <!-- Left Inputs -->
         <div class="lg:col-span-5 atelier-card rounded-xl p-6 space-y-4">
           <h3 class="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)] border-b border-[var(--border-hairline)] pb-2.5">
-            Parámetros de la Empresa Auditada
+            Datos del Proyecto de tu Cliente
           </h3>
 
           <div>
-            <label class="atelier-label">Nombre Comercial del Prospecto</label>
-            <input id="audit-business-name" type="text" value="Clínica Dermatológica Lumina" oninput="calculateB2BAudit()" class="atelier-input" />
+            <label class="atelier-label">Nombre de tu Cliente</label>
+            <input id="audit-business-name" type="text" value="Clínica Dental Sonrisa" oninput="calculateB2BAudit()" class="atelier-input" />
           </div>
 
           <div>
-            <label class="atelier-label">Sector / Vertical</label>
+            <label class="atelier-label">Giro del Cliente</label>
             <select id="audit-niche" onchange="calculateB2BAudit()" class="atelier-input">
-              <option value="clinica">Salud — Clínica Médica, Dental o Especialidades</option>
-              <option value="inmobiliaria">Real Estate — Agencia o Desarrolladora Inmobiliaria</option>
-              <option value="restaurante">Hospitalidad — Restaurante, Dark Kitchen o Cafetería</option>
-              <option value="despacho">Servicios Profesionales — Firma Legal, Contable o Consultora</option>
-              <option value="ecommerce">Comercio — Retail Especializado o Tienda Online</option>
-              <option value="gimnasio">Fitness &amp; Educación — Centro Deportivo o Academia</option>
+              <option value="clinica">Salud / Consultorio / Clínica</option>
+              <option value="inmobiliaria">Inmobiliaria / Bienes Raíces</option>
+              <option value="restaurante">Restaurante / Cafetería / Alimentos</option>
+              <option value="despacho">Despacho Contable, Legal o Consultoría</option>
+              <option value="ecommerce">Tienda / Comercio / E-Commerce</option>
+              <option value="gimnasio">Gimnasio / Academia / Servicios</option>
             </select>
           </div>
 
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="atelier-label">Prospectos / Mes</label>
+              <label class="atelier-label">Clientes / Mes</label>
               <input id="audit-leads-month" type="number" value="120" min="5" oninput="calculateB2BAudit()" class="atelier-input font-tabular" />
             </div>
             <div>
-              <label class="atelier-label">Ticket Promedio ($ USD)</label>
+              <label class="atelier-label">Venta Promedio ($)</label>
               <input id="audit-ticket-usd" type="number" value="150" min="5" oninput="calculateB2BAudit()" class="atelier-input font-tabular" />
             </div>
           </div>
 
           <div>
             <div class="flex justify-between items-center mb-1">
-              <label class="atelier-label mb-0">% Estimado de Fuga por Demora de Atención</label>
-              <span id="audit-loss-pct-label" class="font-tabular text-xs font-bold text-[var(--accent-terracotta)]">25% de fuga</span>
+              <label class="atelier-label mb-0">% de Mejora o Clientes Recuperados con tu Trabajo</label>
+              <span id="audit-loss-pct-label" class="font-tabular text-xs font-bold text-[var(--accent-terracotta)]">25%</span>
             </div>
             <input id="audit-loss-pct" type="range" min="10" max="60" value="25" oninput="calculateB2BAudit()" class="w-full accent-[#C84B31]" />
           </div>
 
           <div>
-            <label class="atelier-label">Honorarios de tu Propuesta de Solución ($ USD)</label>
+            <label class="atelier-label">Precio que Piensas Cobrarle ($ USD)</label>
             <input id="audit-your-price" type="number" value="650" min="50" oninput="calculateB2BAudit()" class="atelier-input font-tabular font-bold text-[var(--accent-forest)]" />
           </div>
 
-          <button onclick="convertAuditToProposal()" class="btn-obsidian w-full py-3 px-4 text-xs flex items-center justify-center gap-2">
-            <span>Generar Dossier PDF Formal con este Diagnóstico &rarr;</span>
+          <button onclick="convertAuditToProposal()" class="btn-obsidian w-full py-3 px-4 text-xs">
+            Pasar estos Datos a mi Cotización PDF &rarr;
           </button>
         </div>
 
-        <!-- Right Financial Diagnosis & Script -->
         <div class="lg:col-span-7 space-y-5">
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div class="atelier-card rounded-xl p-5 border-l-4 border-l-[#C84B31]">
-              <span class="font-tabular text-[10px] uppercase tracking-wider text-[var(--ink-secondary)]">Lucro Cesante Mensual</span>
+              <span class="font-tabular text-[10px] uppercase tracking-wider text-[var(--ink-secondary)]">Beneficio Mensual para tu Cliente</span>
               <div id="audit-monthly-loss" class="font-tabular text-2xl font-bold text-[var(--ink-primary)] mt-1">$4,500 USD</div>
-              <span class="text-[11px] text-[var(--ink-muted)]">Ingresos no capturados cada 30 días</span>
+              <span class="text-[11px] text-[var(--ink-muted)]">Valor que le generas cada mes</span>
             </div>
 
             <div class="atelier-card rounded-xl p-5">
-              <span class="font-tabular text-[10px] uppercase tracking-wider text-[var(--ink-secondary)]">Impacto Anualizado</span>
+              <span class="font-tabular text-[10px] uppercase tracking-wider text-[var(--ink-secondary)]">Beneficio al Año</span>
               <div id="audit-yearly-loss" class="font-tabular text-2xl font-bold text-[var(--ink-primary)] mt-1">$54,000 USD</div>
-              <span class="text-[11px] text-[var(--ink-muted)]">Fuga proyectada a 12 meses</span>
+              <span class="text-[11px] text-[var(--ink-muted)]">Impacto en 12 meses</span>
             </div>
 
             <div class="atelier-card rounded-xl p-5 border-l-4 border-l-[#185C43]">
-              <span class="font-tabular text-[10px] uppercase tracking-wider text-[var(--accent-forest)] font-semibold">Múltiplo de Retorno (ROI)</span>
+              <span class="font-tabular text-[10px] uppercase tracking-wider text-[var(--accent-forest)] font-semibold">Retorno de su Inversión</span>
               <div id="audit-roi-multiple" class="font-tabular text-2xl font-bold text-[var(--accent-forest)] mt-1">6.9x mes 1</div>
-              <span class="text-[11px] text-[var(--ink-muted)]">Se amortiza con <span id="audit-breakeven-clients" class="font-tabular font-bold">5</span> clientes</span>
+              <span class="text-[11px] text-[var(--ink-muted)]">Se paga solo con <span id="audit-breakeven-clients" class="font-tabular font-bold">5</span> ventas</span>
             </div>
           </div>
 
           <div class="atelier-card rounded-xl p-6 space-y-3">
             <div class="flex flex-wrap items-center justify-between gap-2">
               <div>
-                <h4 class="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)]">Memorándum de Contacto Ejecutivo (WhatsApp / Email)</h4>
-                <p class="text-[11px] text-[var(--ink-muted)]">Redactado con enfoque consultivo financiero, sin lenguaje agresivo de spam</p>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)]">Mensaje Sugerido para Enviarle tu Cotización por WhatsApp</h4>
+                <p class="text-[11px] text-[var(--ink-muted)]">Úsalo para acompañar tu archivo PDF cuando se lo mandes a tu cliente</p>
               </div>
               <div class="flex items-center gap-2">
-                <button onclick="copyAuditPitch()" class="btn-outline px-3 py-1.5 text-xs">Copiar Texto</button>
-                <button onclick="sendAuditWhatsApp()" class="btn-forest px-3.5 py-1.5 text-xs">Abrir en WhatsApp &rarr;</button>
+                <button onclick="copyAuditPitch()" class="btn-outline px-3 py-1.5 text-xs">Copiar Mensaje</button>
+                <button onclick="sendAuditWhatsApp()" class="btn-forest px-3.5 py-1.5 text-xs">Enviar por WhatsApp &rarr;</button>
               </div>
             </div>
-            <textarea id="audit-whatsapp-script" rows="8" class="atelier-input font-tabular text-xs leading-relaxed"></textarea>
+            <textarea id="audit-whatsapp-script" rows="7" class="atelier-input font-tabular text-xs leading-relaxed"></textarea>
           </div>
         </div>
       </div>
     </section>
 
     <!-- ====================================================================
-         VIEW 03: AFFILIATES & INFRASTRUCTURE PARTNERS
-         ==================================================================== -->
-    <section id="tab-affiliates" class="hidden no-print space-y-6">
-      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-5 border-b border-[var(--border-hairline)]">
-        <div>
-          <span class="font-tabular text-[11px] uppercase tracking-widest text-[var(--accent-forest)] font-semibold">Comisiones por Especificación Técnica</span>
-          <h2 class="font-editorial text-2xl sm:text-3xl text-[var(--ink-primary)] mt-0.5">
-            Directorio de Alianzas Tecnológicas &amp; Referidos
-          </h2>
-          <p class="text-xs sm:text-sm text-[var(--ink-secondary)] mt-1 max-w-3xl">
-            Todo proyecto aprobado requiere servidor, pasarela de comercio o motor de automatización. Estos enlaces se anexan en tus dossiers PDF para generar comisiones adicionales por cada implementación.
-          </p>
-        </div>
-        <div class="atelier-card rounded-xl px-5 py-3.5">
-          <div class="font-tabular text-[10px] uppercase tracking-wider text-[var(--ink-secondary)]">Ingreso Complementario / Proyecto</div>
-          <div class="font-tabular text-xl font-bold text-[var(--accent-forest)] mt-0.5">+$65 a $180 USD</div>
-        </div>
-      </div>
-
-      <div id="affiliate-marketplace-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Populated dynamically -->
-      </div>
-    </section>
-
-    <!-- ====================================================================
-         VIEW 04: OWNER ADMINISTRATION, STRIPE & LICENSE ENGINE
+         VIEW 04: PRIVATE OWNER ADMIN PANEL (HIDDEN FROM CUSTOMERS!)
+         Only accessible to Daniel via ?admin=daniel or footer PIN
          ==================================================================== -->
     <section id="tab-admin" class="hidden no-print space-y-6">
-      <div class="pb-5 border-b border-[var(--border-hairline)]">
-        <span class="font-tabular text-[11px] uppercase tracking-widest text-[var(--accent-terracotta)] font-semibold">Dirección &amp; Monetización</span>
-        <h2 class="font-editorial text-2xl sm:text-3xl text-[var(--ink-primary)] mt-0.5">
-          Panel de Control del Propietario
-        </h2>
-      </div>
-
-      <!-- KPIs -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="atelier-card rounded-xl p-4">
-          <span class="font-tabular text-[10px] uppercase tracking-wider text-[var(--ink-secondary)]">Volumen Total Cotizado</span>
-          <div id="stat-total-quoted" class="font-tabular text-2xl font-bold text-[var(--accent-forest)] mt-1">$0.00 USD</div>
+      <div class="pb-5 border-b border-[var(--border-hairline)] flex items-center justify-between">
+        <div>
+          <span class="font-tabular text-[11px] uppercase tracking-widest text-[var(--accent-terracotta)] font-semibold">Modo Privado del Propietario (Oculto para visitantes)</span>
+          <h2 class="font-editorial text-2xl sm:text-3xl text-[var(--ink-primary)] mt-0.5">
+            Administración de Stripe, IA y Licencias PRO
+          </h2>
         </div>
-        <div class="atelier-card rounded-xl p-4">
-          <span class="font-tabular text-[10px] uppercase tracking-wider text-[var(--ink-secondary)]">Dossiers en Archivo</span>
-          <div id="stat-quotes-count" class="font-tabular text-2xl font-bold text-[var(--ink-primary)] mt-1">0</div>
-        </div>
-        <div class="atelier-card rounded-xl p-4">
-          <span class="font-tabular text-[10px] uppercase tracking-wider text-[var(--ink-secondary)]">Licencias Emitidas</span>
-          <div id="stat-licenses-count" class="font-tabular text-2xl font-bold text-[var(--accent-terracotta)] mt-1">0</div>
-        </div>
-        <div class="atelier-card rounded-xl p-4">
-          <span class="font-tabular text-[10px] uppercase tracking-wider text-[var(--ink-secondary)]">Pasarela Conectada</span>
-          <div class="font-tabular text-sm font-bold text-[var(--ink-primary)] mt-1 truncate">Stripe Checkout Activo</div>
-          <span class="font-tabular text-[10px] text-[var(--accent-forest)]">buy.stripe.com/4gM6oA...</span>
-        </div>
+        <button onclick="switchTab('builder')" class="btn-outline px-3.5 py-2 text-xs">Volver al Cotizador</button>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <!-- Settings Form -->
         <div class="lg:col-span-7 atelier-card rounded-xl p-6 space-y-5">
           <h3 class="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)] border-b border-[var(--border-hairline)] pb-2.5">
-            Configuración de Pasarela Stripe, IA y Referidos
+            Tus Pasarelas y API Keys
           </h3>
 
           <div class="space-y-4">
             <div>
-              <label class="atelier-label">Google Gemini API Key (Opcional — potencia la síntesis IA en vivo)</label>
+              <label class="atelier-label">Google Gemini API Key (Opcional)</label>
               <div class="flex gap-2">
                 <input id="cfg-gemini-key" type="password" placeholder="AIzaSy..." class="atelier-input font-tabular flex-1" />
-                <button onclick="testGeminiConnection()" class="btn-outline px-3.5 py-2 text-xs">Verificar Key</button>
+                <button onclick="testGeminiConnection()" class="btn-outline px-3.5 py-2 text-xs">Probar Key</button>
               </div>
             </div>
 
@@ -738,67 +685,39 @@
                 <input id="cfg-stripe-lifetime" type="text" class="atelier-input font-tabular" />
               </div>
               <div>
-                <label class="atelier-label">WhatsApp de Atención Directa</label>
+                <label class="atelier-label">Tu WhatsApp de Soporte / Ventas</label>
                 <input id="cfg-owner-whatsapp" type="text" placeholder="52155..." class="atelier-input font-tabular" />
-              </div>
-              <div>
-                <label class="atelier-label">Instrucciones de Pago en pie de PDF</label>
-                <input id="cfg-bank-instructions" type="text" class="atelier-input" />
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-[var(--border-hairline)]">
-              <div>
-                <label class="atelier-label">URL Partner Hosting</label>
-                <input id="cfg-aff-hosting" type="text" class="atelier-input font-tabular" />
-              </div>
-              <div>
-                <label class="atelier-label">URL Partner E-Commerce</label>
-                <input id="cfg-aff-ecommerce" type="text" class="atelier-input font-tabular" />
-              </div>
-              <div>
-                <label class="atelier-label">URL Partner Automatización</label>
-                <input id="cfg-aff-crm" type="text" class="atelier-input font-tabular" />
               </div>
             </div>
 
             <button onclick="saveOwnerConfig()" class="btn-obsidian w-full py-2.5 text-xs">
-              Guardar Parámetros del Estudio
+              Guardar Configuración
             </button>
           </div>
         </div>
 
-        <!-- License Generator & Archive -->
+        <!-- License Generator -->
         <div class="lg:col-span-5 space-y-6">
           <div class="atelier-card rounded-xl p-6 space-y-4">
             <div>
-              <span class="font-tabular text-[10px] uppercase tracking-wider text-[var(--accent-terracotta)] font-semibold">Emisión de Credenciales</span>
-              <h3 class="font-editorial text-xl text-[var(--ink-primary)] mt-0.5">Generador de Licencias Studio PRO</h3>
+              <span class="font-tabular text-[10px] uppercase tracking-wider text-[var(--accent-terracotta)] font-semibold">Generador de Accesos</span>
+              <h3 class="font-editorial text-xl text-[var(--ink-primary)] mt-0.5">Crear Código PRO para un Cliente</h3>
               <p class="text-xs text-[var(--ink-secondary)] mt-1">
-                Emite claves de activación individuales para clientes que liquiden mediante transferencia directa o Stripe.
+                Si un usuario te compra el acceso PRO por fuera de Stripe, genera aquí su clave de desbloqueo.
               </p>
             </div>
 
             <div class="flex gap-2">
-              <input id="license-client-email" type="email" placeholder="cliente@organizacion.com" class="atelier-input flex-1" />
-              <button onclick="generateClientLicenseKey()" class="btn-terracotta px-4 py-2 text-xs">Emitir Clave</button>
+              <input id="license-client-email" type="email" placeholder="cliente@correo.com" class="atelier-input flex-1" />
+              <button onclick="generateClientLicenseKey()" class="btn-terracotta px-4 py-2 text-xs">Generar</button>
             </div>
 
             <div id="generated-license-box" class="hidden p-3.5 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-hairline)] flex items-center justify-between">
               <div>
-                <div class="font-tabular text-[10px] uppercase text-[var(--ink-muted)]">Credencial Generada</div>
+                <div class="font-tabular text-[10px] uppercase text-[var(--ink-muted)]">Clave Generada</div>
                 <div id="generated-license-code" class="font-tabular text-sm font-bold text-[var(--ink-primary)]">CPRO-2026-XXXX</div>
               </div>
               <button onclick="copyGeneratedLicense()" class="btn-outline px-3 py-1 text-xs">Copiar</button>
-            </div>
-          </div>
-
-          <div class="atelier-card rounded-xl p-6 space-y-3">
-            <div class="flex items-center justify-between">
-              <h3 class="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)]">Archivo de Dossiers Emitidos</h3>
-              <button onclick="exportCRMToJSON()" class="font-tabular text-[11px] text-[var(--accent-terracotta)] hover:underline">Exportar JSON</button>
-            </div>
-            <div id="crm-quotes-list" class="space-y-2 max-h-60 overflow-y-auto pr-1 text-xs">
             </div>
           </div>
         </div>
@@ -807,8 +726,16 @@
 
   </main>
 
+  <!-- SUBTLE FOOTER -->
+  <footer class="no-print border-t border-[var(--border-hairline)] py-4 px-4 sm:px-8 mt-12 text-[11px] text-[var(--ink-muted)]">
+    <div class="max-w-[1380px] mx-auto flex flex-wrap items-center justify-between gap-2">
+      <span>CotizaPro Studio — Plataforma de Cotizaciones Comerciales y Contratos</span>
+      <button onclick="promptOwnerAccess()" class="hover:text-[var(--ink-primary)] transition">Acceso Propietario</button>
+    </div>
+  </footer>
+
   <!-- ====================================================================
-       MODAL: STUDIO PRO CHECKOUT & LICENSE ACTIVATION
+       MODAL: STUDIO PRO CHECKOUT & LICENSE ACTIVATION (CUSTOMER FACING)
        ==================================================================== -->
   <div id="pro-modal" class="no-print fixed inset-0 z-50 hidden bg-[#141413]/70 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="atelier-card max-w-lg w-full rounded-2xl p-7 space-y-6 relative">
@@ -818,62 +745,62 @@
 
       <div class="space-y-1.5">
         <span class="font-tabular text-[10px] uppercase tracking-widest text-[var(--accent-terracotta)] font-semibold">
-          Licencia Profesional Sin Restricciones
+          Cuenta Profesional Ilimitada
         </span>
         <h3 class="font-editorial text-2xl sm:text-3xl text-[var(--ink-primary)]">
-          CotizaPro <span class="italic font-normal">Studio PRO</span>
+          Desbloquea CotizaPro <span class="italic font-normal">Studio PRO</span>
         </h3>
         <p class="text-xs sm:text-sm text-[var(--ink-secondary)] leading-relaxed">
-          Emite dossiers y contratos ilimitados, remueve el colofón promocional del pie de página en todos tus PDFs y desbloquea la suite completa de diagnóstico B2B.
+          Crea y descarga cotizaciones PDF sin límite, elimina la marca de agua de CotizaPro Studio de tus documentos y guarda todo tu historial de clientes.
         </p>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div class="p-5 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-hairline)] flex flex-col justify-between">
           <div>
-            <div class="font-tabular text-[10px] uppercase tracking-wider text-[var(--ink-secondary)]">Membresía Mensual</div>
+            <div class="font-tabular text-[10px] uppercase tracking-wider text-[var(--ink-secondary)]">Plan Mensual</div>
             <div class="font-tabular text-2xl font-bold text-[var(--ink-primary)] mt-1">$9 <span class="text-xs font-normal text-[var(--ink-muted)]">USD / mes</span></div>
             <ul class="mt-3 space-y-1.5 text-xs text-[var(--ink-secondary)]">
-              <li>· Emisión ilimitada de PDFs</li>
-              <li>· Documentos limpios sin marca</li>
-              <li>· Contratos mercantiles y rúbrica</li>
+              <li>· Cotizaciones PDF ilimitadas</li>
+              <li>· Sin marca de agua al pie</li>
+              <li>· Contratos legales y Firma Digital</li>
             </ul>
           </div>
           <button onclick="triggerPaymentCheckout('monthly')" class="btn-outline mt-5 w-full py-2.5 text-xs">
-            Continuar en Stripe &rarr;
+            Suscribirme en Stripe &rarr;
           </button>
         </div>
 
         <div class="p-5 rounded-xl bg-[var(--bg-elevated)] border-2 border-[var(--ink-primary)] flex flex-col justify-between relative">
           <span class="font-tabular absolute -top-2.5 right-3 px-2 py-0.5 bg-[var(--accent-terracotta)] text-white text-[9px] font-bold uppercase tracking-wider">
-            Edición Vitalicia
+            Más Elegido
           </span>
           <div>
-            <div class="font-tabular text-[10px] uppercase tracking-wider text-[var(--accent-terracotta)] font-semibold">Pago Único</div>
-            <div class="font-tabular text-2xl font-bold text-[var(--ink-primary)] mt-1">$29 <span class="text-xs font-normal text-[var(--ink-muted)]">USD total</span></div>
+            <div class="font-tabular text-[10px] uppercase tracking-wider text-[var(--accent-terracotta)] font-semibold">Un Solo Pago</div>
+            <div class="font-tabular text-2xl font-bold text-[var(--ink-primary)] mt-1">$29 <span class="text-xs font-normal text-[var(--ink-muted)]">USD de por vida</span></div>
             <ul class="mt-3 space-y-1.5 text-xs text-[var(--ink-secondary)]">
-              <li>· Acceso permanente sin cargos</li>
-              <li>· Calculadora B2B &amp; Memorándums</li>
-              <li>· Uso comercial para tu estudio</li>
+              <li>· Acceso vitalicio sin mensualidades</li>
+              <li>· Cotizaciones y clientes ilimitados</li>
+              <li>· Uso comercial para tu negocio</li>
             </ul>
           </div>
           <button onclick="triggerPaymentCheckout('lifetime')" class="btn-obsidian mt-5 w-full py-2.5 text-xs">
-            Adquirir Pase en Stripe &rarr;
+            Comprar Pase en Stripe &rarr;
           </button>
         </div>
       </div>
 
       <div class="pt-4 border-t border-[var(--border-hairline)] space-y-2">
-        <label class="atelier-label">¿Cuentas con una credencial de activación?</label>
+        <label class="atelier-label">¿Ya tienes un código de licencia PRO?</label>
         <div class="flex gap-2">
-          <input id="activate-license-input" type="text" placeholder="CPRO-2026-..." class="atelier-input font-tabular uppercase flex-1" />
+          <input id="activate-license-input" type="text" placeholder="Escribe tu código CPRO-..." class="atelier-input font-tabular uppercase flex-1" />
           <button onclick="activateProLicense()" class="btn-forest px-4 py-2 text-xs">Activar</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Editorial Toast Notification -->
+  <!-- Toast Notification -->
   <div id="toast-notification" class="no-print fixed bottom-6 right-6 z-50 hidden px-4 py-3 rounded-lg bg-[#141413] text-[#F4F2EC] text-xs font-medium shadow-xl border border-[#2E2D29]">
   </div>
 

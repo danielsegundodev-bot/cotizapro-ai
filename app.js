@@ -1,6 +1,6 @@
 /**
- * CotizaPro Studio — Swiss Editorial & Financial Atelier Engine
- * Works both statically on GitHub Pages ($0/mo) and connected to Python server.py (SQLite API)
+ * CotizaPro Studio — Plataforma de Cotizaciones Comerciales y Contratos
+ * Enfocada 100% en la experiencia del usuario final; Panel de Propietario oculto bajo llave.
  */
 
 const STORAGE_KEYS = {
@@ -12,107 +12,103 @@ const STORAGE_KEYS = {
   THEME: 'cotizapro_atelier_theme_v1'
 };
 
-// Default Owner Configuration (Daniel Segundo)
+// Configuración oficial conectada a tu Stripe
 const DEFAULT_CONFIG = {
   geminiApiKey: '',
   stripeMonthlyUrl: 'https://buy.stripe.com/4gM6oA2kWceC4I6g0Vbsc00',
   stripeLifetimeUrl: 'https://buy.stripe.com/4gM6oA2kWceC4I6g0Vbsc00',
-  ownerWhatsapp: '5215500000000',
-  bankInstructions: 'Liquidación mediante tarjeta bancaria vía Stripe (https://buy.stripe.com/4gM6oA2kWceC4I6g0Vbsc00) o transferencia electrónica autorizada (daniel.segundo.dev@gmail.com).',
-  affHosting: 'https://www.hostinger.com/?REFERRALCODE=COTIZAPRO',
-  affEcommerce: 'https://www.shopify.com/?ref=cotizapro-ai',
-  affCrm: 'https://www.make.com/en/register?pc=cotizapro'
+  ownerWhatsapp: '5215500000000'
 };
 
-// High-Ticket Presets for Instant Monetization
+// Plantillas listas por giro para que cualquier usuario cotice en 10 segundos
 const HIGH_TICKET_PRESETS = {
-  ai_automation: {
-    title: 'Arquitectura de Automatización Comercial & Concierge IA 24/7',
-    summary: 'Implementación de un ecosistema de recepción, calificación y agendamiento de prospectos en WhatsApp y Web con Inteligencia Artificial, entrenado sobre las reglas del negocio para responder en menos de 5 segundos y suprimir la fuga de ingresos fuera de horario.',
-    delivery: '7 a 10 días hábiles',
-    items: [
-      { name: 'Ingeniería y Entrenamiento de Agente IA (Base de Conocimiento Corporativa)', qty: 1, price: 350 },
-      { name: 'Integración Oficial con WhatsApp Business y Registro Automático en CRM', qty: 1, price: 300 },
-      { name: 'Flujo Automatizado de Confirmación de Citas y Reactivación de Prospectos', qty: 1, price: 200 }
-    ]
-  },
   web_ecommerce: {
-    title: 'Plataforma E-Commerce de Alta Conversión & Pasarela Financiera',
-    summary: 'Desarrollo integral de plataforma de comercio electrónico optimizada para conversión móvil, catálogo autogestionable, checkout sin fricción, recuperación de carritos abandonados e integración bancaria.',
+    title: 'Desarrollo de Sitio Web & Tienda en Línea',
+    summary: 'Diseño y desarrollo completo de plataforma web adaptable a celulares, catálogo de productos/servicios, pasarela de cobro con tarjeta y optimización en buscadores (Google).',
     delivery: '12 a 15 días hábiles',
     items: [
-      { name: 'Dirección UI/UX Mobile-First y Construcción de Catálogo Transaccional', qty: 1, price: 450 },
-      { name: 'Integración de Pasarelas de Cobro (Stripe / MercadoPago) y Logística', qty: 1, price: 280 },
-      { name: 'Auditoría de Velocidad, SEO Estructural y Transferencia Operativa', qty: 1, price: 220 }
+      { name: 'Diseño Web Responsivo (Adaptable a Celular y Computadora)', qty: 1, price: 450 },
+      { name: 'Configuración de Catálogo y Pasarela de Pagos en Línea', qty: 1, price: 280 },
+      { name: 'Optimización de Velocidad, Dominio, Correo y Capacitación', qty: 1, price: 220 }
+    ]
+  },
+  ai_automation: {
+    title: 'Automatización de Atención & Chatbot en WhatsApp 24/7',
+    summary: 'Implementación de asistente automático en WhatsApp y sitio web para responder dudas frecuentes al instante, calificar clientes potenciales y agendar citas las 24 horas.',
+    delivery: '7 a 10 días hábiles',
+    items: [
+      { name: 'Configuración y Entrenamiento de Asistente Inteligente', qty: 1, price: 350 },
+      { name: 'Conexión con WhatsApp Business y Registro de Clientes', qty: 1, price: 300 },
+      { name: 'Automatización de Recordatorios de Citas y Seguimiento', qty: 1, price: 200 }
     ]
   },
   landing_funnel: {
-    title: 'Landing Page Editorial de Alta Conversión & Embudo Comercial',
-    summary: 'Diseño y programación de página de captación con arquitectura persuasiva, redacción comercial orientada a retorno sobre inversión (ROI), tiempos de carga sub-segundo y canalización directa a cierre por WhatsApp.',
+    title: 'Página de Ventas (Landing Page) & Embudo de WhatsApp',
+    summary: 'Creación de página de aterrizaje enfocada en convertir visitantes en clientes, con textos persuasivos, botón directo a WhatsApp y medición de resultados.',
     delivery: '5 a 7 días hábiles',
     items: [
-      { name: 'Diseño Editorial y Desarrollo Frontend de Alta Velocidad', qty: 1, price: 260 },
-      { name: 'Copywriting Estratégico Orientado a Conversión de Prospectos', qty: 1, price: 110 },
-      { name: 'Instrumentación Analítica, Tracking y Enrutamiento a WhatsApp', qty: 1, price: 80 }
+      { name: 'Diseño y Programación de Landing Page de Alta Conversión', qty: 1, price: 260 },
+      { name: 'Redacción Comercial Persuasiva de Servicios y Beneficios', qty: 1, price: 110 },
+      { name: 'Integración con Botón de WhatsApp y Estadísticas', qty: 1, price: 80 }
     ]
   },
   saas_mvp: {
-    title: 'Ingeniería de Aplicación Web a Medida / Producto Micro-SaaS',
-    summary: 'Arquitectura y desarrollo full-stack de aplicación web propietaria con panel ejecutivo de administración, control de sesiones, base de datos relacional segura, cobros recurrentes y despliegue en producción.',
+    title: 'Desarrollo de Sistema Web / Aplicación a Medida',
+    summary: 'Programación de sistema a medida con acceso de usuarios, base de datos en la nube, panel de control administrativo y reportes.',
     delivery: '21 a 30 días hábiles',
     items: [
-      { name: 'Modelado de Datos, API Backend y Control de Autenticación', qty: 1, price: 750 },
-      { name: 'Interfaz Operativa (Frontend) y Tablero de Control Administrativo', qty: 1, price: 650 },
-      { name: 'Integración de Suscripciones (Stripe) y Puesta en Producción Cloud', qty: 1, price: 400 }
+      { name: 'Base de Datos, Seguridad e Inicio de Sesión de Usuarios', qty: 1, price: 750 },
+      { name: 'Pantallas del Sistema y Panel de Administración', qty: 1, price: 650 },
+      { name: 'Instalación en Servidor Cloud, Pruebas y Garantía', qty: 1, price: 400 }
     ]
   },
   marketing_seo: {
-    title: 'Estrategia de Posicionamiento Orgánico (SEO Local) & Adquisición B2B',
-    summary: 'Programa mensual de captación de demanda calificada mediante optimización en motores de búsqueda (Google Maps + Búsqueda Orgánica) y campañas orientadas a costo por adquisición controlado.',
-    delivery: 'Despliegue inicial en 7 días (Iguala Mensual)',
+    title: 'Manejo de Publicidad Digital & Posicionamiento en Google',
+    summary: 'Servicio mensual de captación de clientes mediante campañas publicitarias en redes sociales/Google y mejora de presencia en Google Maps.',
+    delivery: 'Inicio en 5 días (Servicio Mensual)',
     items: [
-      { name: 'Auditoría Técnica SEO, Optimización de Ficha Google Business e Indexación', qty: 1, price: 250 },
-      { name: 'Estructuración y Gestión de Campañas de Adquisición (Google / Meta Ads)', qty: 1, price: 220 },
-      { name: 'Informe Financiero de Atribución y Optimización Continua de Conversión', qty: 1, price: 130 }
+      { name: 'Optimización de Perfil en Google Maps y Buscadores', qty: 1, price: 250 },
+      { name: 'Creación y Administración de Campañas de Anuncios', qty: 1, price: 220 },
+      { name: 'Reporte Mensual de Prospectos y Resultados', qty: 1, price: 130 }
     ]
   },
   branding_ui: {
-    title: 'Dirección de Arte, Identidad Corporativa & Sistema de Diseño UI/UX',
-    summary: 'Renovación integral de los activos visuales y digitales de la firma para consolidar autoridad institucional, diferenciación competitiva y respaldo de precios premium.',
-    delivery: '10 días hábiles',
+    title: 'Diseño de Logotipo, Identidad Corporativa & Manual de Marca',
+    summary: 'Creación de imagen visual profesional para proyectar confianza, incluyendo logotipo en alta resolución, paleta de colores, tipografías y papelería digital.',
+    delivery: '8 a 10 días hábiles',
     items: [
-      { name: 'Sistema de Identidad Visual, Logometría Vectorial y Manual de Marca', qty: 1, price: 280 },
-      { name: 'Papelería Corporativa Digital y Prototipo Interactivo UI/UX', qty: 1, price: 270 }
+      { name: 'Diseño de Logotipo Original (3 Propuestas) y Manual de Marca', qty: 1, price: 280 },
+      { name: 'Kit de Plantillas para Redes Sociales, Tarjetas y Hoja Membretada', qty: 1, price: 270 }
     ]
   },
   consulting_b2b: {
-    title: 'Diagnóstico de Eficiencia Operativa & Digitalización de Procesos',
-    summary: 'Auditoría profunda de cuellos de botella comerciales y fugas de facturación, seguida de la implantación de flujos digitales para disminuir tiempos operativos hasta en un 35%.',
+    title: 'Servicios Profesionales de Consultoría, Asesoría & Gestión',
+    summary: 'Diagnóstico especializado, planeación estratégica y acompañamiento profesional para optimizar resultados financieros y operativos.',
     delivery: '10 a 14 días hábiles',
     items: [
-      { name: 'Mapeo de Arquitectura Operativa Actual y Cuantificación de Mermas', qty: 1, price: 320 },
-      { name: 'Implantación de Tablero de Control Directivo y Pipeline CRM', qty: 1, price: 430 }
+      { name: 'Diagnóstico Inicial y Auditoría de Situación Actual', qty: 1, price: 320 },
+      { name: 'Plan de Trabajo, Implementación y Entrega de Reporte Final', qty: 1, price: 430 }
     ]
   },
   technical_services: {
-    title: 'Proyecto Llave en Mano de Ingeniería, Adecuación e Infraestructura',
-    summary: 'Ejecución integral bajo estándares normativos con insumos especificados, supervisión especializada, cronograma garantizado y póliza de respaldo técnico por escrito.',
+    title: 'Proyecto de Remodelación, Instalación & Servicios Técnicos',
+    summary: 'Ejecución completa del trabajo con materiales de calidad especificada, mano de obra calificada, supervisión y garantía por escrito.',
     delivery: '14 días hábiles',
     items: [
-      { name: 'Levantamiento en Sitio, Ingeniería de Detalle y Memoria Técnica', qty: 1, price: 350 },
-      { name: 'Suministro de Equipamiento e Instalación por Personal Certificado', qty: 1, price: 600 },
-      { name: 'Protocolo de Pruebas, Entrega Formal y Póliza de Garantía', qty: 1, price: 250 }
+      { name: 'Levantamiento Técnico, Planeación y Presupuesto de Materiales', qty: 1, price: 350 },
+      { name: 'Suministro de Materiales e Instalación Especializada', qty: 1, price: 600 },
+      { name: 'Pruebas de Funcionamiento, Limpieza y Garantía por Escrito', qty: 1, price: 250 }
     ]
   }
 };
 
-// State
+// Estado de la Aplicación
 let state = {
   quoteNumber: 'CP-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000),
   lineItems: [
-    { name: 'Arquitectura y Desarrollo Web de Alta Conversión (Mobile-First)', qty: 1, price: 380 },
-    { name: 'Concierge Inteligente IA 24/7 Integrado a WhatsApp Business', qty: 1, price: 320 },
-    { name: 'Tablero de Control de Prospectos y Transferencia Operativa', qty: 1, price: 150 }
+    { name: 'Diseño y Desarrollo de Plataforma Web Profesional', qty: 1, price: 380 },
+    { name: 'Sistema de Atención y Citas Automáticas en WhatsApp', qty: 1, price: 320 },
+    { name: 'Panel de Control y Capacitación de Uso', qty: 1, price: 150 }
   ],
   signatureDataUrl: null,
   isPro: false,
@@ -123,7 +119,6 @@ let state = {
   generatedLicenses: []
 };
 
-// Currency Formatter
 function formatMoney(amount, currency = 'USD') {
   const symbols = { USD: '$', MXN: '$', EUR: '€', COP: '$', ARS: '$', CLP: '$', PEN: 'S/' };
   const sym = symbols[currency] || '$';
@@ -131,7 +126,6 @@ function formatMoney(amount, currency = 'USD') {
   return `${sym}${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`;
 }
 
-// Editorial Toast Notification
 function showToast(msg) {
   const el = document.getElementById('toast-notification');
   if (!el) return;
@@ -143,18 +137,16 @@ function showToast(msg) {
   }, 3600);
 }
 
-// Theme Switcher (Warm Paper vs Warm Carbon Obsidian)
 function toggleAtelierTheme() {
   const html = document.documentElement;
   const isCarbon = html.classList.toggle('theme-carbon');
   localStorage.setItem(STORAGE_KEYS.THEME, isCarbon ? 'carbon' : 'paper');
   const label = document.getElementById('theme-toggle-label');
   if (label) {
-    label.textContent = isCarbon ? 'Modo Papel Editorial' : 'Modo Carbón';
+    label.textContent = isCarbon ? 'Modo Papel' : 'Modo Carbón';
   }
 }
 
-// Segmented Inspector Step Switcher (Step 1, 2, 3)
 function switchInspectorStep(stepNum) {
   [1, 2, 3].forEach(n => {
     const panel = document.getElementById(`inspector-step-${n}`);
@@ -170,7 +162,6 @@ function switchInspectorStep(stepNum) {
   });
 }
 
-// Sync Direct Inline Paper Edits Back to Inspector Form Inputs
 function syncInlineEdit(inputId, newText) {
   const input = document.getElementById(inputId);
   if (input) {
@@ -179,34 +170,44 @@ function syncInlineEdit(inputId, newText) {
   }
 }
 
-// Main Studio Tab Navigation
 function switchTab(tabId) {
-  const tabs = ['builder', 'auditor', 'affiliates', 'admin'];
+  const tabs = ['builder', 'history', 'calculator', 'admin'];
   tabs.forEach(t => {
     const sec = document.getElementById(`tab-${t}`);
     const btn = document.getElementById(`tab-btn-${t}`);
     if (sec) sec.classList.toggle('hidden', t !== tabId);
-    if (btn) {
+    if (btn && !btn.classList.contains('hidden')) {
       if (t === tabId) {
-        btn.className = 'tab-btn px-3.5 py-1.5 rounded-md text-xs font-semibold transition-all bg-[var(--bg-elevated)] text-[var(--ink-primary)] shadow-sm';
+        btn.className = 'tab-btn px-4 py-1.5 rounded-md text-xs font-semibold transition-all bg-[var(--bg-elevated)] text-[var(--ink-primary)] shadow-sm flex items-center gap-1.5';
       } else {
-        btn.className = 'tab-btn px-3.5 py-1.5 rounded-md text-xs font-medium transition-all text-[var(--ink-secondary)] hover:text-[var(--ink-primary)]';
+        btn.className = 'tab-btn px-4 py-1.5 rounded-md text-xs font-medium transition-all text-[var(--ink-secondary)] hover:text-[var(--ink-primary)] flex items-center gap-1.5';
       }
     }
   });
-  if (tabId === 'auditor') calculateB2BAudit();
-  if (tabId === 'affiliates') renderAffiliateMarketplace();
-  if (tabId === 'admin') renderAdminDashboard();
+  if (tabId === 'history') renderCustomerQuotesHistory();
+  if (tabId === 'calculator') calculateB2BAudit();
 }
 
-// Initialize Studio
+// Acceso Privado para Daniel (Propietario)
+function promptOwnerAccess() {
+  const pass = window.prompt('Ingresa tu clave de propietario para abrir la configuración interna:');
+  if (!pass) return;
+  if (pass.trim() === 'daniel' || pass.trim().toUpperCase() === 'CPRO-OWNER-PRO') {
+    document.getElementById('tab-btn-admin')?.classList.remove('hidden');
+    switchTab('admin');
+    showToast('Modo Propietario desbloqueado.');
+  } else {
+    showToast('Clave incorrecta.');
+  }
+}
+
 async function initApp() {
   try {
     const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME);
     if (savedTheme === 'carbon') {
       document.documentElement.classList.add('theme-carbon');
       const label = document.getElementById('theme-toggle-label');
-      if (label) label.textContent = 'Modo Papel Editorial';
+      if (label) label.textContent = 'Modo Papel';
     }
 
     const savedCfg = localStorage.getItem(STORAGE_KEYS.CONFIG);
@@ -232,21 +233,25 @@ async function initApp() {
     const savedUsage = localStorage.getItem(STORAGE_KEYS.USAGE);
     if (savedUsage) state.freeUsed = parseInt(savedUsage, 10) || 0;
 
-    // Auto-unlock PRO when Stripe redirects back with ?pro=activated or ?payment=success
     const params = new URLSearchParams(window.location.search);
+    // Si Daniel entra con ?admin=daniel se muestra su pestaña privada
+    if (params.get('admin') === 'daniel') {
+      document.getElementById('tab-btn-admin')?.classList.remove('hidden');
+    }
+
+    // Desbloqueo automático al regresar de Stripe (?pro=activated)
     if (params.get('pro') === 'activated' || params.get('payment') === 'success' || params.get('session_id')) {
       state.isPro = true;
       localStorage.setItem(STORAGE_KEYS.PLAN, 'PRO');
       setTimeout(() => {
-        showToast('Pago verificado en Stripe. Tu licencia Studio PRO está activa.');
+        showToast('¡Pago confirmado en Stripe! Tu cuenta PRO Ilimitada está activa.');
       }, 600);
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   } catch (e) {
-    console.warn('LocalStorage init warning:', e);
+    console.warn('Init warning:', e);
   }
 
-  // Sync with local Python SQLite server if active
   try {
     const res = await fetch('/api/state', { method: 'GET' });
     if (res.ok) {
@@ -267,45 +272,60 @@ async function initApp() {
 
   populateOwnerConfigInputs();
   updatePlanUI();
+  updateQuotesCounter();
   renderLineItemsEditor();
   renderProposalPreview();
   initSignatureCanvas();
   calculateB2BAudit();
-  renderAffiliateMarketplace();
 }
 
-// Update Freemium / Studio PRO UI
+function updateQuotesCounter() {
+  const counter = document.getElementById('nav-quotes-counter');
+  if (counter) counter.textContent = String(state.savedQuotes.length);
+}
+
 function updatePlanUI() {
   const badge = document.getElementById('plan-badge');
   const upgradeBtn = document.getElementById('upgrade-header-btn');
   const watermark = document.getElementById('doc-viral-watermark');
-  const dot = document.getElementById('ai-status-dot');
   const statusText = document.getElementById('ai-status-text');
 
-  if (state.config.geminiApiKey && state.config.geminiApiKey.trim().length > 10) {
-    dot.className = 'w-1.5 h-1.5 rounded-full bg-[var(--accent-forest)]';
-    statusText.textContent = 'Gemini API Activa';
-  } else {
-    dot.className = 'w-1.5 h-1.5 rounded-full bg-[var(--accent-terracotta)]';
-    statusText.textContent = 'Motor Editorial Listo';
+  if (statusText) {
+    statusText.textContent = (state.config.geminiApiKey && state.config.geminiApiKey.trim().length > 10)
+      ? 'IA Gemini Conectada'
+      : 'Motor IA Activo';
   }
 
   if (state.isPro) {
-    badge.textContent = 'STUDIO PRO ACTIVO';
+    badge.textContent = 'CUENTA PRO ILIMITADA';
     badge.className = 'font-tabular text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[var(--accent-forest-soft)] text-[var(--accent-forest)]';
     if (upgradeBtn) {
-      upgradeBtn.innerHTML = '<span>Licencia Studio PRO</span>';
+      upgradeBtn.innerHTML = '<span>PRO Activo</span>';
       upgradeBtn.className = 'btn-outline px-3.5 py-1.5 text-xs font-tabular';
     }
     if (watermark) watermark.classList.add('hidden');
   } else {
     const remaining = Math.max(0, state.freeLimit - state.freeUsed);
-    badge.textContent = `Edición Base · ${remaining}/${state.freeLimit}`;
+    badge.textContent = `${remaining} de ${state.freeLimit} Cotizaciones Gratis`;
     if (watermark) watermark.classList.remove('hidden');
   }
 }
 
-// Render Line Items Editor in Step 2
+function resetNewQuote() {
+  state.quoteNumber = 'CP-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
+  document.getElementById('doc-quote-number').textContent = state.quoteNumber;
+  document.getElementById('client-name').value = 'Nombre del Cliente';
+  document.getElementById('project-title').value = 'Propuesta de Servicios Profesionales';
+  document.getElementById('proposal-summary').value = 'Descripción detallada del alcance del proyecto, objetivos y beneficios para el cliente.';
+  state.lineItems = [
+    { name: 'Concepto o Entregable Principal', qty: 1, price: 350 }
+  ];
+  renderLineItemsEditor();
+  renderProposalPreview();
+  switchInspectorStep(1);
+  showToast('Nueva cotización lista para editar.');
+}
+
 function renderLineItemsEditor() {
   const container = document.getElementById('line-items-editor');
   if (!container) return;
@@ -320,9 +340,9 @@ function renderLineItemsEditor() {
         <span class="font-tabular text-[11px] font-bold text-[var(--ink-muted)]">${numLabel}</span>
         <input type="text" value="${escapeHtml(item.name)}"
           oninput="updateLineItem(${idx}, 'name', this.value)"
-          placeholder="Descripción de la partida..."
+          placeholder="Nombre del servicio o producto..."
           class="atelier-input flex-1" />
-        <button onclick="removeLineItem(${idx})" class="text-[var(--ink-muted)] hover:text-[var(--accent-terracotta)] px-1.5 text-xs font-bold" title="Remover partida">✕</button>
+        <button onclick="removeLineItem(${idx})" class="text-[var(--ink-muted)] hover:text-[var(--accent-terracotta)] px-1.5 text-xs font-bold" title="Eliminar">✕</button>
       </div>
       <div class="grid grid-cols-2 gap-2.5 pl-6">
         <div class="flex items-center gap-2">
@@ -332,7 +352,7 @@ function renderLineItemsEditor() {
             class="atelier-input font-tabular py-1" />
         </div>
         <div class="flex items-center gap-2">
-          <span class="font-tabular text-[10px] uppercase text-[var(--ink-secondary)]">Unitario ($):</span>
+          <span class="font-tabular text-[10px] uppercase text-[var(--ink-secondary)]">Precio ($):</span>
           <input type="number" min="0" step="10" value="${item.price}"
             oninput="updateLineItem(${idx}, 'price', this.value)"
             class="atelier-input font-tabular font-semibold text-[var(--accent-forest)] py-1" />
@@ -357,7 +377,7 @@ function updateLineItem(idx, field, value) {
 
 function addLineItem() {
   state.lineItems.push({
-    name: 'Módulo Complementario / Póliza de Acompañamiento',
+    name: 'Servicio o Entregable Adicional',
     qty: 1,
     price: 150
   });
@@ -367,7 +387,7 @@ function addLineItem() {
 
 function removeLineItem(idx) {
   if (state.lineItems.length <= 1) {
-    showToast('El dossier requiere al menos una partida presupuestal.');
+    showToast('La cotización debe incluir al menos un concepto.');
     return;
   }
   state.lineItems.splice(idx, 1);
@@ -386,10 +406,9 @@ function loadPresetTemplate(presetKey) {
 
   renderLineItemsEditor();
   renderProposalPreview();
-  showToast('Plantilla sectorial aplicada al dossier.');
+  showToast('Plantilla cargada en tu cotización.');
 }
 
-// Totals Calculator
 function getCalculatedTotals() {
   const currency = document.getElementById('currency-select')?.value || 'USD';
   const taxRate = Math.max(0, parseFloat(document.getElementById('tax-rate')?.value) || 0);
@@ -418,17 +437,16 @@ function getCalculatedTotals() {
   };
 }
 
-// Render Live Editorial Dossier Sheet
 function renderProposalPreview() {
-  const senderName = document.getElementById('sender-name')?.value || 'Estudio Consultor';
+  const senderName = document.getElementById('sender-name')?.value || 'Tu Empresa';
   const senderContact = document.getElementById('sender-contact')?.value || '';
-  const clientName = document.getElementById('client-name')?.value || 'Organización Cliente';
+  const clientName = document.getElementById('client-name')?.value || 'Cliente';
   const projectTitle = document.getElementById('project-title')?.value || 'Propuesta Comercial';
   const summary = document.getElementById('proposal-summary')?.value || '';
   const deliveryTime = document.getElementById('delivery-time')?.value || '10 días hábiles';
   const validityDays = document.getElementById('validity-days')?.value || '7 días';
+  const paymentNote = document.getElementById('payment-methods-note')?.value || 'Transferencia bancaria, Tarjeta o PayPal.';
   const includeContract = document.getElementById('toggle-contract')?.checked;
-  const includeAffiliates = document.getElementById('toggle-affiliates')?.checked;
 
   const calc = getCalculatedTotals();
 
@@ -449,7 +467,6 @@ function renderProposalPreview() {
   document.getElementById('doc-validity').textContent = validityDays;
   document.getElementById('doc-deposit-condition').textContent = `${calc.depositRate}% Anticipo (${formatMoney(calc.depositAmount, calc.currency)})`;
 
-  // Schedule Table Rows with Numbered Indices
   const tbody = document.getElementById('doc-items-tbody');
   tbody.innerHTML = '';
   state.lineItems.forEach((item, index) => {
@@ -466,7 +483,6 @@ function renderProposalPreview() {
     tbody.appendChild(tr);
   });
 
-  // Financial Breakdown
   document.getElementById('doc-subtotal').textContent = formatMoney(calc.subtotal, calc.currency);
   document.getElementById('doc-discount-pct').textContent = calc.discountRate;
   document.getElementById('doc-discount-amount').textContent = '-' + formatMoney(calc.discountAmount, calc.currency);
@@ -480,13 +496,11 @@ function renderProposalPreview() {
   document.getElementById('doc-total').textContent = formattedTotal;
   document.getElementById('preview-quick-total').textContent = formattedTotal;
 
-  // Deposit Plan
   document.getElementById('doc-deposit-pct').textContent = calc.depositRate;
   document.getElementById('doc-deposit-amount').textContent = formatMoney(calc.depositAmount, calc.currency);
   document.getElementById('doc-balance-amount').textContent = formatMoney(calc.balanceAmount, calc.currency);
-  document.getElementById('doc-payment-instructions').textContent = state.config.bankInstructions || DEFAULT_CONFIG.bankInstructions;
+  document.getElementById('doc-payment-instructions').textContent = paymentNote;
 
-  // Legal Contract Clauses
   const contractSec = document.getElementById('doc-contract-section');
   contractSec.classList.toggle('hidden', !includeContract);
   document.getElementById('contract-sender').textContent = senderName;
@@ -494,40 +508,15 @@ function renderProposalPreview() {
   document.getElementById('contract-delivery').textContent = deliveryTime;
   document.getElementById('contract-total').textContent = formattedTotal;
 
-  // Signatures
   document.getElementById('sig-sender-name').textContent = senderName;
   document.getElementById('sig-client-name').textContent = clientName;
-
-  // Affiliates Block inside Dossier
-  const affSec = document.getElementById('doc-affiliates-section');
-  affSec.classList.toggle('hidden', !includeAffiliates);
-  const affList = document.getElementById('doc-affiliates-list');
-  if (affList) {
-    affList.innerHTML = `
-      <a href="${escapeHtml(state.config.affHosting)}" target="_blank" rel="noopener" class="p-3 bg-white border border-[#D6D1C7] hover:border-[#141413] block transition">
-        <div class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C]">Infraestructura Cloud</div>
-        <div class="font-semibold text-[#141413] mt-0.5">Servidor Dedicado &amp; Dominio SSL</div>
-        <div class="font-tabular text-[10px] text-[#C84B31] font-semibold mt-1.5">Consultar tarifa preferencial &rarr;</div>
-      </a>
-      <a href="${escapeHtml(state.config.affEcommerce)}" target="_blank" rel="noopener" class="p-3 bg-white border border-[#D6D1C7] hover:border-[#141413] block transition">
-        <div class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C]">Motor Transaccional</div>
-        <div class="font-semibold text-[#141413] mt-0.5">Pasarela E-Commerce &amp; Catálogo</div>
-        <div class="font-tabular text-[10px] text-[#C84B31] font-semibold mt-1.5">Consultar tarifa preferencial &rarr;</div>
-      </a>
-      <a href="${escapeHtml(state.config.affCrm)}" target="_blank" rel="noopener" class="p-3 bg-white border border-[#D6D1C7] hover:border-[#141413] block transition">
-        <div class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C]">Orquestación</div>
-        <div class="font-semibold text-[#141413] mt-0.5">Automatización de Flujos &amp; CRM</div>
-        <div class="font-tabular text-[10px] text-[#C84B31] font-semibold mt-1.5">Consultar tarifa preferencial &rarr;</div>
-      </a>
-    `;
-  }
 }
 
-// AI Proposal Synthesis (Gemini API + Local Editorial Engine)
+// Autocompletado con IA
 async function generateProposalWithAI() {
   const brief = document.getElementById('ai-brief-input')?.value.trim();
   if (!brief) {
-    showToast('Describe brevemente el alcance del cliente para estructurar la propuesta.');
+    showToast('Escribe en el recuadro qué trabajo deseas cotizar.');
     document.getElementById('ai-brief-input')?.focus();
     return;
   }
@@ -535,22 +524,22 @@ async function generateProposalWithAI() {
   const btn = document.getElementById('btn-generate-ai');
   const originalHtml = btn.innerHTML;
   btn.disabled = true;
-  btn.innerHTML = '<span>Estructurando tesis, partidas e inversión...</span>';
+  btn.innerHTML = '<span>Generando propuesta y precios...</span>';
 
   try {
     const apiKey = (state.config.geminiApiKey || '').trim();
     if (apiKey.length > 12) {
-      const prompt = `Actúa como socio director de una firma consultora de ingeniería y diseño digital. Estructura una propuesta comercial formal para: "${brief}".
+      const prompt = `Eres un experto en cotizaciones comerciales. Crea una cotización formal para: "${brief}".
 Responde ÚNICAMENTE con un objeto JSON válido con este esquema exacto:
 {
-  "clientName": "Nombre sugerido de la empresa cliente",
-  "projectTitle": "Título ejecutivo del proyecto",
-  "summary": "Tesis ejecutiva de 2 a 3 oraciones con enfoque en rentabilidad y eficiencia operativa",
+  "clientName": "Nombre sugerido del cliente",
+  "projectTitle": "Título profesional del proyecto",
+  "summary": "Descripción clara de 2 a 3 oraciones del alcance y beneficios",
   "deliveryTime": "Ej: 10 a 14 días hábiles",
   "items": [
-    {"name": "Partida 1", "qty": 1, "price": 350},
-    {"name": "Partida 2", "qty": 1, "price": 280},
-    {"name": "Partida 3", "qty": 1, "price": 190}
+    {"name": "Concepto 1", "qty": 1, "price": 350},
+    {"name": "Concepto 2", "qty": 1, "price": 280},
+    {"name": "Concepto 3", "qty": 1, "price": 190}
   ]
 }`;
       const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`, {
@@ -567,18 +556,18 @@ Responde ÚNICAMENTE con un objeto JSON válido con este esquema exacto:
         const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
         const parsed = JSON.parse(rawText);
         applyGeneratedProposal(parsed);
-        showToast('Dossier estructurado mediante Google Gemini.');
+        showToast('Cotización redactada con IA.');
         return;
       }
     }
 
     const synthesized = synthesizeProposalLocally(brief);
     applyGeneratedProposal(synthesized);
-    showToast('Dossier estructurado y actualizado.');
+    showToast('Cotización generada automáticamente.');
   } catch (err) {
     const synthesized = synthesizeProposalLocally(brief);
     applyGeneratedProposal(synthesized);
-    showToast('Dossier estructurado con éxito.');
+    showToast('Cotización lista.');
   } finally {
     btn.disabled = false;
     btn.innerHTML = originalHtml;
@@ -588,50 +577,50 @@ Responde ÚNICAMENTE con un objeto JSON válido con este esquema exacto:
 function synthesizeProposalLocally(brief) {
   const lower = brief.toLowerCase();
   let items = [];
-  let projectTitle = 'Arquitectura Digital de Captación & Automatización Operativa';
+  let projectTitle = 'Propuesta de Proyecto: ' + brief.slice(0, 48);
   let deliveryTime = '10 a 12 días hábiles';
-  let summary = `Intervención tecnológica diseñada a medida para "${brief}", orientada a sistematizar la recepción de prospectos, elevar la autoridad institucional de la marca y acelerar la conversión comercial con retorno medible desde el primer ciclo mensual.`;
+  let summary = `Propuesta integral elaborada para "${brief}", enfocada en entregar resultados de alta calidad en tiempo y forma, con garantía de satisfacción sobre cada entregable acordado.`;
 
-  if (lower.includes('clínica') || lower.includes('clinica') || lower.includes('dental') || lower.includes('médic') || lower.includes('medic') || lower.includes('dermat')) {
-    projectTitle = 'Sistema de Gestión de Pacientes & Concierge IA en WhatsApp 24/7';
+  if (lower.includes('clínica') || lower.includes('clinica') || lower.includes('dental') || lower.includes('médic') || lower.includes('medic') || lower.includes('doctor')) {
+    projectTitle = 'Portal Web Médico & Sistema de Citas en WhatsApp';
     deliveryTime = '7 a 10 días hábiles';
-    summary = 'Infraestructura digital para el sector salud que atiende consultas de pacientes al instante por WhatsApp, pre-califica tratamientos de especialidad y coordina la agenda clínica con recordatorios automáticos para disminuir el ausentismo hasta en un 45%.';
+    summary = 'Desarrollo de página web profesional para clínica con agendamiento automático de pacientes por WhatsApp y recordatorios para evitar inasistencias.';
     items = [
-      { name: 'Portal Clínico de Alta Conversión con Directorio de Especialidades', qty: 1, price: 340 },
-      { name: 'Concierge IA en WhatsApp para Pre-Valoración y Citas 24/7', qty: 1, price: 320 },
-      { name: 'Protocolo Automatizado de Confirmaciones y Registro de Pacientes', qty: 1, price: 190 }
+      { name: 'Diseño de Sitio Web Médico con Perfil de Especialidades y Ubicación', qty: 1, price: 340 },
+      { name: 'Asistente Automático en WhatsApp para Agendar Citas 24/7', qty: 1, price: 320 },
+      { name: 'Configuración de Recordatorios de Citas y Capacitación', qty: 1, price: 190 }
     ];
   } else if (lower.includes('restaurante') || lower.includes('comida') || lower.includes('menú') || lower.includes('menu') || lower.includes('cafeter')) {
-    projectTitle = 'Plataforma Propia de Pedidos Directos & Sistema de Reservaciones';
+    projectTitle = 'Menú Digital de Pedidos en Línea & Reservaciones por WhatsApp';
     deliveryTime = '7 días hábiles';
-    summary = 'Canal transaccional directo para recepción de pedidos y reservaciones de mesa por WhatsApp, diseñado para eliminar comisiones de hasta 30% en plataformas de terceros y fidelizar la cartera de comensales.';
+    summary = 'Sistema propio para recibir pedidos a domicilio y reservaciones directo en el WhatsApp del negocio sin pagar comisiones a aplicaciones externas.';
     items = [
-      { name: 'Carta Digital Transaccional con Enrutamiento Directo a Cocina', qty: 1, price: 290 },
-      { name: 'Asistente Automatizado de Reservaciones y Domicilios en WhatsApp', qty: 1, price: 240 },
-      { name: 'CRM Gastronómico para Clientes Frecuentes y Reactivación', qty: 1, price: 140 }
+      { name: 'Menú Digital Interactivo con Carrito de Compras', qty: 1, price: 290 },
+      { name: 'Automatización de Pedidos y Reservaciones en WhatsApp', qty: 1, price: 240 },
+      { name: 'Registro de Clientes Frecuentes y Capacitación', qty: 1, price: 140 }
     ];
-  } else if (lower.includes('inmobiliaria') || lower.includes('bienes') || lower.includes('casas') || lower.includes('departamentos') || lower.includes('desarroll')) {
-    projectTitle = 'Portal Patrimonial de Propiedades & Pre-Calificador Hipotecario IA';
-    deliveryTime = '12 a 15 días hábiles';
-    summary = 'Plataforma de exhibición inmobiliaria vinculada a un agente IA que segmenta interesados por rango de inversión, ubicación y liquidez antes de asignarlos a la fuerza de ventas.';
+  } else if (lower.includes('remodel') || lower.includes('construc') || lower.includes('obra') || lower.includes('oficina') || lower.includes('mantenimiento')) {
+    projectTitle = 'Proyecto de Adecuación, Remodelación y Ejecución Técnica';
+    deliveryTime = '14 días hábiles';
+    summary = 'Ejecución llave en mano de trabajos de adecuación y mejora con materiales de primera calidad, supervisión técnica y garantía por escrito.';
     items = [
-      { name: 'Catálogo Web de Inventario Inmobiliario con Fichas Técnicas', qty: 1, price: 450 },
-      { name: 'Agente IA de Filtrado Financiero y Agendamiento de Visitas', qty: 1, price: 380 },
-      { name: 'Integración de Pipeline Comercial y Seguimiento Automatizado', qty: 1, price: 220 }
+      { name: 'Levantamiento, Planeación y Suministro de Materiales', qty: 1, price: 480 },
+      { name: 'Mano de Obra Especializada e Instalación Completa', qty: 1, price: 550 },
+      { name: 'Acabados, Limpieza Final y Póliza de Garantía', qty: 1, price: 220 }
     ];
   } else if (lower.includes('tienda') || lower.includes('ecommerce') || lower.includes('venta') || lower.includes('catálogo') || lower.includes('catalogo')) {
-    projectTitle = 'Arquitectura E-Commerce Transaccional & Recuperación de Carritos';
+    projectTitle = 'Tienda en Línea (E-Commerce) con Pasarela de Pagos';
     deliveryTime = '10 a 14 días hábiles';
     items = [
-      { name: 'Desarrollo de Tienda Online Optimizada para Conversión Móvil', qty: 1, price: 480 },
-      { name: 'Integración de Pasarela Bancaria (Tarjeta / SPEI) y Reglas de Envío', qty: 1, price: 260 },
-      { name: 'Secuencia Automatizada de Recuperación de Carritos por WhatsApp', qty: 1, price: 180 }
+      { name: 'Diseño y Configuración de Tienda Online con Carrito de Compras', qty: 1, price: 480 },
+      { name: 'Integración de Cobros con Tarjeta, Transferencia y Envíos', qty: 1, price: 260 },
+      { name: 'Capacitación para Subir Productos y Soporte Técnico', qty: 1, price: 180 }
     ];
   } else {
     items = [
-      { name: 'Ingeniería y Desarrollo de Solución Digital (' + brief.slice(0, 42) + ')', qty: 1, price: 420 },
-      { name: 'Automatización de Recepción Comercial y Enrutamiento de Prospectos', qty: 1, price: 290 },
-      { name: 'Despliegue en Servidor, Garantía Operativa y Capacitación', qty: 1, price: 160 }
+      { name: 'Planeación y Desarrollo Principal (' + brief.slice(0, 40) + ')', qty: 1, price: 420 },
+      { name: 'Implementación Técnica, Ajustes y Configuración', qty: 1, price: 290 },
+      { name: 'Entrega Final, Capacitación y Garantía de 30 Días', qty: 1, price: 160 }
     ];
   }
 
@@ -645,7 +634,7 @@ function applyGeneratedProposal(data) {
   if (data.deliveryTime) document.getElementById('delivery-time').value = data.deliveryTime;
   if (Array.isArray(data.items) && data.items.length > 0) {
     state.lineItems = data.items.map(i => ({
-      name: String(i.name || 'Partida'),
+      name: String(i.name || 'Concepto'),
       qty: Number(i.qty) || 1,
       price: Number(i.price) || 150
     }));
@@ -654,7 +643,7 @@ function applyGeneratedProposal(data) {
   renderProposalPreview();
 }
 
-// Fountain-Pen Signature Pad
+// Firma Digital
 function initSignatureCanvas() {
   const canvas = document.getElementById('signature-canvas');
   if (!canvas) return;
@@ -731,10 +720,10 @@ function clearSignature() {
   if (placeholder) placeholder.classList.remove('hidden');
 }
 
-// Export Official PDF
+// Descargar PDF
 function exportProposalPDF() {
   if (!state.isPro && state.freeUsed >= state.freeLimit) {
-    showToast('Has alcanzado los 3 dossiers de cortesía. Activa tu Pase Studio PRO.');
+    showToast('Llegaste al límite de 3 cotizaciones gratuitas. Desbloquea Studio PRO.');
     openProModal();
     return;
   }
@@ -749,17 +738,26 @@ function exportProposalPDF() {
   window.print();
 }
 
+// Guardar Cotización en "Mis Cotizaciones"
 async function saveCurrentQuote(silent = false) {
   const calc = getCalculatedTotals();
   const quoteRecord = {
     id: state.quoteNumber,
     date: new Date().toISOString(),
+    senderName: document.getElementById('sender-name')?.value || '',
+    senderContact: document.getElementById('sender-contact')?.value || '',
     clientName: document.getElementById('client-name')?.value || 'Cliente',
     projectTitle: document.getElementById('project-title')?.value || 'Proyecto',
+    summary: document.getElementById('proposal-summary')?.value || '',
+    deliveryTime: document.getElementById('delivery-time')?.value || '10 días hábiles',
+    validityDays: document.getElementById('validity-days')?.value || '7 días',
     total: calc.total,
     currency: calc.currency,
+    taxRate: calc.taxRate,
+    discountRate: calc.discountRate,
+    depositRate: calc.depositRate,
     depositAmount: calc.depositAmount,
-    items: state.lineItems
+    items: state.lineItems.map(i => ({ ...i }))
   };
 
   const existingIdx = state.savedQuotes.findIndex(q => q.id === quoteRecord.id);
@@ -770,6 +768,7 @@ async function saveCurrentQuote(silent = false) {
   }
 
   localStorage.setItem(STORAGE_KEYS.QUOTES, JSON.stringify(state.savedQuotes));
+  updateQuotesCounter();
 
   try {
     await fetch('/api/quotes', {
@@ -780,12 +779,117 @@ async function saveCurrentQuote(silent = false) {
   } catch (_) {}
 
   if (!silent) {
-    showToast('Dossier archivado correctamente.');
+    showToast('Cotización guardada en "Mis Cotizaciones".');
   }
 }
 
+// Renderizar Historial de Cotizaciones del Usuario ("Mis Cotizaciones")
+function renderCustomerQuotesHistory() {
+  const grid = document.getElementById('customer-quotes-grid');
+  const totalEl = document.getElementById('history-total-amount');
+  if (!grid) return;
+
+  const sumTotal = state.savedQuotes.reduce((acc, q) => acc + (Number(q.total) || 0), 0);
+  if (totalEl) totalEl.textContent = formatMoney(sumTotal, 'USD');
+
+  if (state.savedQuotes.length === 0) {
+    grid.innerHTML = `
+      <div class="col-span-full atelier-card rounded-xl p-10 text-center space-y-3">
+        <p class="font-editorial text-xl text-[var(--ink-primary)]">Aún no tienes cotizaciones guardadas</p>
+        <p class="text-xs text-[var(--ink-secondary)]">Todas las cotizaciones que guardes o descargues en PDF aparecerán aquí para cuando quieras volver a editarlas.</p>
+        <button onclick="switchTab('builder')" class="btn-obsidian px-4 py-2 text-xs mt-2">Crear mi primera cotización &rarr;</button>
+      </div>
+    `;
+    return;
+  }
+
+  grid.innerHTML = state.savedQuotes.map(q => `
+    <div class="atelier-card atelier-card-interactive rounded-xl p-5 flex flex-col justify-between space-y-4">
+      <div class="space-y-1.5">
+        <div class="flex items-center justify-between">
+          <span class="font-tabular text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-[var(--bg-subtle)] text-[var(--ink-secondary)]">${escapeHtml(q.id)}</span>
+          <span class="font-tabular text-[11px] text-[var(--ink-muted)]">${new Date(q.date).toLocaleDateString()}</span>
+        </div>
+        <h3 class="font-editorial text-lg text-[var(--ink-primary)] leading-snug pt-1">${escapeHtml(q.projectTitle)}</h3>
+        <p class="text-xs text-[var(--ink-secondary)]">Cliente: <strong class="text-[var(--ink-primary)]">${escapeHtml(q.clientName)}</strong></p>
+      </div>
+
+      <div class="pt-3 border-t border-[var(--border-hairline)] space-y-3">
+        <div class="flex items-baseline justify-between">
+          <span class="text-[11px] text-[var(--ink-muted)]">Total Cotizado:</span>
+          <span class="font-tabular text-base font-bold text-[var(--accent-forest)]">${formatMoney(q.total, q.currency)}</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="loadSavedQuote('${escapeHtml(q.id)}')" class="btn-obsidian flex-1 py-1.5 text-xs">
+            Abrir y Editar
+          </button>
+          <button onclick="duplicateSavedQuote('${escapeHtml(q.id)}')" class="btn-outline px-2.5 py-1.5 text-xs" title="Duplicar">
+            Duplicar
+          </button>
+          <button onclick="deleteSavedQuote('${escapeHtml(q.id)}')" class="btn-outline px-2.5 py-1.5 text-xs text-[var(--accent-terracotta)]" title="Eliminar">
+            ✕
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function loadSavedQuote(quoteId) {
+  const q = state.savedQuotes.find(item => item.id === quoteId);
+  if (!q) return;
+
+  state.quoteNumber = q.id;
+  document.getElementById('doc-quote-number').textContent = q.id;
+  if (q.senderName) document.getElementById('sender-name').value = q.senderName;
+  if (q.senderContact) document.getElementById('sender-contact').value = q.senderContact;
+  document.getElementById('client-name').value = q.clientName || '';
+  document.getElementById('project-title').value = q.projectTitle || '';
+  if (q.summary) document.getElementById('proposal-summary').value = q.summary;
+  if (q.deliveryTime) document.getElementById('delivery-time').value = q.deliveryTime;
+  if (q.validityDays) document.getElementById('validity-days').value = q.validityDays;
+  if (q.currency) document.getElementById('currency-select').value = q.currency;
+  if (q.taxRate !== undefined) document.getElementById('tax-rate').value = q.taxRate;
+  if (q.discountRate !== undefined) document.getElementById('discount-rate').value = q.discountRate;
+  if (q.depositRate !== undefined) document.getElementById('deposit-rate').value = q.depositRate;
+
+  if (Array.isArray(q.items) && q.items.length > 0) {
+    state.lineItems = q.items.map(i => ({ ...i }));
+  }
+
+  renderLineItemsEditor();
+  renderProposalPreview();
+  switchTab('builder');
+  showToast(`Cotización ${q.id} cargada en el editor.`);
+}
+
+function duplicateSavedQuote(quoteId) {
+  const q = state.savedQuotes.find(item => item.id === quoteId);
+  if (!q) return;
+  const newId = 'CP-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
+  const copy = {
+    ...q,
+    id: newId,
+    date: new Date().toISOString(),
+    clientName: q.clientName + ' (Copia)'
+  };
+  state.savedQuotes.unshift(copy);
+  localStorage.setItem(STORAGE_KEYS.QUOTES, JSON.stringify(state.savedQuotes));
+  updateQuotesCounter();
+  renderCustomerQuotesHistory();
+  showToast('Cotización duplicada.');
+}
+
+function deleteSavedQuote(quoteId) {
+  state.savedQuotes = state.savedQuotes.filter(item => item.id !== quoteId);
+  localStorage.setItem(STORAGE_KEYS.QUOTES, JSON.stringify(state.savedQuotes));
+  updateQuotesCounter();
+  renderCustomerQuotesHistory();
+  showToast('Cotización eliminada.');
+}
+
 function buildProposalPitchText() {
-  const clientName = document.getElementById('client-name')?.value || 'Estimado equipo';
+  const clientName = document.getElementById('client-name')?.value || 'Cliente';
   const projectTitle = document.getElementById('project-title')?.value || 'su proyecto';
   const deliveryTime = document.getElementById('delivery-time')?.value || '10 días hábiles';
   const calc = getCalculatedTotals();
@@ -794,16 +898,16 @@ function buildProposalPitchText() {
     .map((i, idx) => `${String(idx + 1).padStart(2, '0')}. ${i.name} — ${formatMoney(i.qty * i.price, calc.currency)}`)
     .join('\n');
 
-  return `Estimado equipo de *${clientName}*, comparto el resumen ejecutivo del Dossier *${projectTitle}* (Folio ${state.quoteNumber}):
+  return `Hola *${clientName}*, te comparto el resumen de la cotización *${projectTitle}* (Folio ${state.quoteNumber}):
 
-*Alcance y Partidas:*
+*Conceptos incluidos:*
 ${itemsText}
 
-• *Inversión Total:* ${formatMoney(calc.total, calc.currency)}
-• *Condición de Apertura (${calc.depositRate}%):* ${formatMoney(calc.depositAmount, calc.currency)}
-• *Plazo de Ejecución:* ${deliveryTime}
+• *Total:* ${formatMoney(calc.total, calc.currency)}
+• *Anticipo para iniciar (${calc.depositRate}%):* ${formatMoney(calc.depositAmount, calc.currency)}
+• *Tiempo de entrega:* ${deliveryTime}
 
-Quedo a su disposición para formalizar el inicio de actividades esta semana.`;
+Quedo atento a tus comentarios para iniciar.`;
 }
 
 function sendWhatsAppPitch() {
@@ -814,56 +918,40 @@ function sendWhatsAppPitch() {
 function copyProposalSummary() {
   const text = buildProposalPitchText();
   navigator.clipboard.writeText(text).then(() => {
-    showToast('Resumen ejecutivo copiado al portapapeles.');
+    showToast('Resumen copiado al portapapeles.');
   });
 }
 
-// ============================================================================
-// VIEW 02: B2B FINANCIAL LOSS AUDITOR & WHATSAPP CLOSER
-// ============================================================================
+// Calculadora de Precio & ROI
 function calculateB2BAudit() {
-  const businessName = document.getElementById('audit-business-name')?.value || 'Su Organización';
-  const niche = document.getElementById('audit-niche')?.value || 'clinica';
+  const businessName = document.getElementById('audit-business-name')?.value || 'Tu Cliente';
   const leadsMonth = Math.max(1, parseFloat(document.getElementById('audit-leads-month')?.value) || 100);
   const ticketUsd = Math.max(1, parseFloat(document.getElementById('audit-ticket-usd')?.value) || 120);
   const lossPct = Math.max(5, parseFloat(document.getElementById('audit-loss-pct')?.value) || 25);
   const yourPrice = Math.max(50, parseFloat(document.getElementById('audit-your-price')?.value) || 650);
 
-  document.getElementById('audit-loss-pct-label').textContent = `${lossPct}% de fuga`;
+  document.getElementById('audit-loss-pct-label').textContent = `${lossPct}%`;
 
-  const lostClientsMonth = Math.round(leadsMonth * (lossPct / 100) * 0.35);
-  const monthlyLoss = Math.max(ticketUsd, lostClientsMonth * ticketUsd);
-  const yearlyLoss = monthlyLoss * 12;
-  const roiMultiple = (monthlyLoss / yourPrice).toFixed(1);
+  const gainedClientsMonth = Math.round(leadsMonth * (lossPct / 100) * 0.35);
+  const monthlyBenefit = Math.max(ticketUsd, gainedClientsMonth * ticketUsd);
+  const yearlyBenefit = monthlyBenefit * 12;
+  const roiMultiple = (monthlyBenefit / yourPrice).toFixed(1);
   const breakevenClients = Math.max(1, Math.ceil(yourPrice / ticketUsd));
 
-  document.getElementById('audit-monthly-loss').textContent = `$${monthlyLoss.toLocaleString('en-US')} USD`;
-  document.getElementById('audit-yearly-loss').textContent = `$${yearlyLoss.toLocaleString('en-US')} USD`;
+  document.getElementById('audit-monthly-loss').textContent = `$${monthlyBenefit.toLocaleString('en-US')} USD`;
+  document.getElementById('audit-yearly-loss').textContent = `$${yearlyBenefit.toLocaleString('en-US')} USD`;
   document.getElementById('audit-roi-multiple').textContent = `${roiMultiple}x mes 1`;
   document.getElementById('audit-breakeven-clients').textContent = breakevenClients;
 
-  const nichePainPoints = {
-    clinica: 'pacientes que solicitan valoración fuera de horario o demoran en recibir confirmación de agenda',
-    inmobiliaria: 'inversionistas y compradores que solicitan fichas técnicas y pierden interés antes de agendar visita',
-    restaurante: 'órdenes directas y reservaciones no atendidas en horas pico o sujetas a comisiones del 30% en agregadores',
-    despacho: 'prospectos corporativos que requieren respuesta inmediata para formalizar iguala o representación',
-    ecommerce: 'carritos abandonados y consultas de compra por WhatsApp no atendidas en los primeros 5 minutos',
-    gimnasio: 'prospectos que solicitan planes de inscripción y no reciben seguimiento estructurado'
-  };
+  const script = `Hola *${businessName}*,
 
-  const pain = nichePainPoints[niche] || 'prospectos que no reciben atención inmediata las 24 horas';
+Junto con mi cotización, hice una proyección rápida del retorno de inversión para tu negocio:
 
-  const script = `Estimada dirección de *${businessName}*,
+Actualmente, con un promedio de *${leadsMonth} prospectos al mes* y una venta promedio de *$${ticketUsd} USD*, mejorar apenas un ${lossPct}% la captación y seguimiento representa aproximadamente *$${monthlyBenefit.toLocaleString('en-US')} USD adicionales al mes* ($${yearlyBenefit.toLocaleString('en-US')} USD al año).
 
-Realicé un análisis preliminar sobre el flujo de recepción digital de su organización e identifiqué un área de oportunidad financiera relevante:
+• *Lo más importante:* El proyecto tiene una inversión de *$${yourPrice} USD*, por lo que *con solo ${breakevenClients} clientes nuevos el proyecto se paga solo* (retorno estimado de ${roiMultiple}x desde el primer mes).
 
-Con un volumen estimado de *${leadsMonth} prospectos mensuales* y un ticket promedio de *$${ticketUsd} USD*, una merma del ${lossPct}% en ${pain} representa un lucro cesante aproximado de *$${monthlyLoss.toLocaleString('en-US')} USD mensuales* ($${yearlyLoss.toLocaleString('en-US')} USD al año).
-
-En nuestro estudio implementamos una *Arquitectura Web + Concierge IA en WhatsApp 24/7* que responde en menos de 5 segundos, pre-califica al interesado y agenda en automático.
-
-• *Rentabilidad:* La implementación llave en mano requiere una inversión única de *$${yourPrice} USD*, por lo que *se amortiza por completo recuperando únicamente ${breakevenClients} clientes* (múltiplo de retorno de ${roiMultiple}x desde el primer mes).
-
-¿Me autoriza compartirle por esta vía el Dossier PDF formal con el desglose técnico y tiempos de entrega?`;
+Te adjunto el PDF con el desglose completo.`;
 
   const scriptEl = document.getElementById('audit-whatsapp-script');
   if (scriptEl) scriptEl.value = script;
@@ -873,7 +961,7 @@ function copyAuditPitch() {
   const scriptEl = document.getElementById('audit-whatsapp-script');
   if (!scriptEl) return;
   navigator.clipboard.writeText(scriptEl.value).then(() => {
-    showToast('Memorándum copiado al portapapeles.');
+    showToast('Mensaje copiado al portapapeles.');
   });
 }
 
@@ -884,13 +972,13 @@ function sendAuditWhatsApp() {
 }
 
 function convertAuditToProposal() {
-  const businessName = document.getElementById('audit-business-name')?.value || 'Organización Cliente';
+  const businessName = document.getElementById('audit-business-name')?.value || 'Cliente';
   const yourPrice = Math.max(50, parseFloat(document.getElementById('audit-your-price')?.value) || 650);
-  const monthlyLossText = document.getElementById('audit-monthly-loss')?.textContent || '$3,000 USD';
+  const monthlyBenefitText = document.getElementById('audit-monthly-loss')?.textContent || '$3,000 USD';
 
   document.getElementById('client-name').value = businessName;
-  document.getElementById('project-title').value = `Infraestructura de Captación & Concierge IA para ${businessName}`;
-  document.getElementById('proposal-summary').value = `Intervención tecnológica llave en mano diseñada para recuperar el lucro cesante estimado en ${monthlyLossText}/mes por prospectos no atendidos, mediante un portal de conversión rápida y un Agente IA en WhatsApp operativo 24/7.`;
+  document.getElementById('project-title').value = `Propuesta de Optimización Comercial para ${businessName}`;
+  document.getElementById('proposal-summary').value = `Proyecto integral diseñado para generar un impacto estimado de ${monthlyBenefitText}/mes en ventas recuperadas y mejora operativa para ${businessName}.`;
   document.getElementById('currency-select').value = 'USD';
   document.getElementById('discount-rate').value = '0';
   document.getElementById('tax-rate').value = '0';
@@ -900,75 +988,18 @@ function convertAuditToProposal() {
   const p3 = yourPrice - p1 - p2;
 
   state.lineItems = [
-    { name: 'Portal Digital de Captación Optimizado para Conversión Comercial', qty: 1, price: p1 },
-    { name: 'Entrenamiento e Integración de Concierge IA 24/7 en WhatsApp', qty: 1, price: p2 },
-    { name: 'Sincronización de Agenda, CRM y Póliza de Garantía de 30 Días', qty: 1, price: p3 }
+    { name: 'Diseño e Implementación de Solución Principal', qty: 1, price: p1 },
+    { name: 'Automatización de Captación y Seguimiento de Clientes', qty: 1, price: p2 },
+    { name: 'Puesta en Marcha, Capacitación y Garantía de 30 Días', qty: 1, price: p3 }
   ];
 
   renderLineItemsEditor();
   renderProposalPreview();
   switchTab('builder');
-  showToast('Diagnóstico transferido al Dossier PDF.');
+  showToast('Datos cargados en tu Cotización PDF.');
 }
 
-// ============================================================================
-// VIEW 03: AFFILIATES & INFRASTRUCTURE PARTNERS
-// ============================================================================
-function renderAffiliateMarketplace() {
-  const grid = document.getElementById('affiliate-marketplace-grid');
-  if (!grid) return;
-
-  const tools = [
-    {
-      code: 'PARTNER 01 · INFRAESTRUCTURA',
-      commission: 'Comisión: $60 – $150 USD / alta',
-      title: 'Hostinger Cloud & Servidores VPS',
-      desc: 'Infraestructura de alojamiento de baja latencia con certificado SSL y dominio corporativo para desplegar los portales de tus clientes.',
-      url: state.config.affHosting || DEFAULT_CONFIG.affHosting
-    },
-    {
-      code: 'PARTNER 02 · COMERCIO ELECTRÓNICO',
-      commission: 'Comisión de Partner Oficial',
-      title: 'Shopify & Motor Transaccional',
-      desc: 'Especifica el estándar global de comercio electrónico en tus proyectos de retail y percibe comisiones recurrentes por referido.',
-      url: state.config.affEcommerce || DEFAULT_CONFIG.affEcommerce
-    },
-    {
-      code: 'PARTNER 03 · ORQUESTACIÓN & IA',
-      commission: 'Comisión: 20% Recurrente (12 meses)',
-      title: 'Make.com & Automatización B2B',
-      desc: 'Interconecta WhatsApp Business, bases de datos, CRMs y modelos de lenguaje para tus clientes generando ingresos pasivos mensuales.',
-      url: state.config.affCrm || DEFAULT_CONFIG.affCrm
-    }
-  ];
-
-  grid.innerHTML = tools.map(t => `
-    <div class="atelier-card atelier-card-interactive rounded-xl p-6 flex flex-col justify-between">
-      <div class="space-y-2.5">
-        <div class="flex items-center justify-between">
-          <span class="font-tabular text-[10px] uppercase tracking-widest text-[var(--ink-muted)]">${escapeHtml(t.code)}</span>
-          <span class="font-tabular text-[10px] font-semibold px-2 py-0.5 rounded bg-[var(--accent-forest-soft)] text-[var(--accent-forest)]">
-            ${escapeHtml(t.commission)}
-          </span>
-        </div>
-        <h3 class="font-editorial text-xl text-[var(--ink-primary)]">${escapeHtml(t.title)}</h3>
-        <p class="text-xs text-[var(--ink-secondary)] leading-relaxed">${escapeHtml(t.desc)}</p>
-      </div>
-      <div class="mt-6 pt-4 border-t border-[var(--border-hairline)] flex items-center gap-2">
-        <a href="${escapeHtml(t.url)}" target="_blank" rel="noopener" class="btn-obsidian flex-1 text-center py-2 px-3 text-xs">
-          Abrir Enlace de Partner &rarr;
-        </a>
-        <button onclick="navigator.clipboard.writeText('${escapeHtml(t.url)}'); showToast('Enlace de partner copiado');" class="btn-outline py-2 px-3 text-xs">
-          Copiar URL
-        </button>
-      </div>
-    </div>
-  `).join('');
-}
-
-// ============================================================================
-// VIEW 04: OWNER ADMINISTRATION
-// ============================================================================
+// Configuración Privada del Propietario
 function populateOwnerConfigInputs() {
   const c = state.config;
   const setVal = (id, val) => {
@@ -979,10 +1010,6 @@ function populateOwnerConfigInputs() {
   setVal('cfg-stripe-monthly', c.stripeMonthlyUrl);
   setVal('cfg-stripe-lifetime', c.stripeLifetimeUrl);
   setVal('cfg-owner-whatsapp', c.ownerWhatsapp);
-  setVal('cfg-bank-instructions', c.bankInstructions);
-  setVal('cfg-aff-hosting', c.affHosting);
-  setVal('cfg-aff-ecommerce', c.affEcommerce);
-  setVal('cfg-aff-crm', c.affCrm);
 }
 
 async function saveOwnerConfig() {
@@ -990,11 +1017,7 @@ async function saveOwnerConfig() {
     geminiApiKey: document.getElementById('cfg-gemini-key')?.value.trim() || '',
     stripeMonthlyUrl: document.getElementById('cfg-stripe-monthly')?.value.trim() || DEFAULT_CONFIG.stripeMonthlyUrl,
     stripeLifetimeUrl: document.getElementById('cfg-stripe-lifetime')?.value.trim() || DEFAULT_CONFIG.stripeLifetimeUrl,
-    ownerWhatsapp: document.getElementById('cfg-owner-whatsapp')?.value.trim() || DEFAULT_CONFIG.ownerWhatsapp,
-    bankInstructions: document.getElementById('cfg-bank-instructions')?.value.trim() || DEFAULT_CONFIG.bankInstructions,
-    affHosting: document.getElementById('cfg-aff-hosting')?.value.trim() || DEFAULT_CONFIG.affHosting,
-    affEcommerce: document.getElementById('cfg-aff-ecommerce')?.value.trim() || DEFAULT_CONFIG.affEcommerce,
-    affCrm: document.getElementById('cfg-aff-crm')?.value.trim() || DEFAULT_CONFIG.affCrm
+    ownerWhatsapp: document.getElementById('cfg-owner-whatsapp')?.value.trim() || DEFAULT_CONFIG.ownerWhatsapp
   };
 
   localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify(state.config));
@@ -1008,15 +1031,13 @@ async function saveOwnerConfig() {
   } catch (_) {}
 
   updatePlanUI();
-  renderProposalPreview();
-  renderAffiliateMarketplace();
-  showToast('Parámetros del estudio actualizados.');
+  showToast('Configuración guardada.');
 }
 
 async function testGeminiConnection() {
   const key = document.getElementById('cfg-gemini-key')?.value.trim();
   if (!key) {
-    showToast('Operando con el Motor Editorial Local ($0 costo).');
+    showToast('Usando el motor integrado sin costo.');
     return;
   }
   try {
@@ -1029,10 +1050,10 @@ async function testGeminiConnection() {
       await saveOwnerConfig();
       showToast('Conexión con Google Gemini verificada.');
     } else {
-      showToast('No fue posible validar la clave proporcionada.');
+      showToast('API Key no válida.');
     }
   } catch (e) {
-    showToast('Error de red al consultar Google Gemini.');
+    showToast('Error al conectar con Gemini.');
   }
 }
 
@@ -1050,7 +1071,7 @@ async function generateClientLicenseKey() {
   const emailInput = document.getElementById('license-client-email');
   const email = (emailInput?.value || '').trim();
   if (!email || !email.includes('@')) {
-    showToast('Ingresa el correo electrónico del cliente para emitir su credencial.');
+    showToast('Ingresa el correo del cliente.');
     return;
   }
 
@@ -1072,64 +1093,18 @@ async function generateClientLicenseKey() {
 
   document.getElementById('generated-license-code').textContent = licenseKey;
   document.getElementById('generated-license-box').classList.remove('hidden');
-  renderAdminDashboard();
-  showToast(`Credencial emitida para ${email}`);
+  showToast(`Código generado para ${email}`);
 }
 
 function copyGeneratedLicense() {
   const code = document.getElementById('generated-license-code')?.textContent;
   if (!code) return;
   navigator.clipboard.writeText(code).then(() => {
-    showToast('Credencial copiada al portapapeles.');
+    showToast('Código copiado.');
   });
 }
 
-function renderAdminDashboard() {
-  const totalQuoted = state.savedQuotes.reduce((acc, q) => acc + (Number(q.total) || 0), 0);
-  document.getElementById('stat-total-quoted').textContent = formatMoney(totalQuoted, 'USD');
-  document.getElementById('stat-quotes-count').textContent = String(state.savedQuotes.length);
-  document.getElementById('stat-licenses-count').textContent = String(state.generatedLicenses.length);
-
-  const list = document.getElementById('crm-quotes-list');
-  if (!list) return;
-
-  if (state.savedQuotes.length === 0) {
-    list.innerHTML = `<div class="p-4 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-hairline)] text-[var(--ink-muted)] text-center">
-      Sin dossiers archivados aún.
-    </div>`;
-    return;
-  }
-
-  list.innerHTML = state.savedQuotes.map(q => `
-    <div class="p-3 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-hairline)] flex items-center justify-between gap-2">
-      <div>
-        <div class="font-semibold text-[var(--ink-primary)]">${escapeHtml(q.clientName)} <span class="font-tabular text-[11px] text-[var(--ink-muted)]">· ${escapeHtml(q.id)}</span></div>
-        <div class="text-[11px] text-[var(--ink-secondary)] truncate max-w-xs">${escapeHtml(q.projectTitle)}</div>
-      </div>
-      <div class="text-right">
-        <div class="font-tabular font-bold text-[var(--accent-forest)]">${formatMoney(q.total, q.currency)}</div>
-        <div class="font-tabular text-[10px] text-[var(--ink-muted)]">${new Date(q.date).toLocaleDateString()}</div>
-      </div>
-    </div>
-  `).join('');
-}
-
-function exportCRMToJSON() {
-  const blob = new Blob([JSON.stringify({
-    exportedAt: new Date().toISOString(),
-    quotes: state.savedQuotes,
-    licenses: state.generatedLicenses
-  }, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `cotizapro-archivo-${new Date().toISOString().slice(0, 10)}.json`;
-  a.click();
-}
-
-// ============================================================================
-// PRO CHECKOUT MODAL & LICENSE ACTIVATION
-// ============================================================================
+// Modal de Compra PRO para los Clientes
 function openProModal() {
   document.getElementById('pro-modal')?.classList.remove('hidden');
 }
@@ -1147,26 +1122,18 @@ function triggerPaymentCheckout(planType) {
     window.open(url, '_blank');
     return;
   }
-
-  const priceText = planType === 'monthly' ? '$9 USD/mes (Membresía Mensual)' : '$29 USD (Pase Vitalicio)';
-  const waNumber = (state.config.ownerWhatsapp || '').replace(/\D/g, '');
-  const msg = `Hola Daniel, deseo adquirir mi licencia de *CotizaPro Studio — ${priceText}*.`;
-  const waUrl = waNumber
-    ? `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`
-    : `https://wa.me/?text=${encodeURIComponent(msg)}`;
-  window.open(waUrl, '_blank');
 }
 
 function activateProLicense() {
   const code = (document.getElementById('activate-license-input')?.value || '').trim().toUpperCase();
   if (!code) {
-    showToast('Ingresa una credencial de activación válida.');
+    showToast('Escribe tu código de licencia.');
     return;
   }
 
   const isValidFormat = code === 'CPRO-OWNER-PRO' || /^CPRO-2026-[A-Z0-9]{6}-\d{3}$/.test(code) || code.startsWith('CPRO-2026-VIP');
   if (!isValidFormat) {
-    showToast('Credencial no reconocida. Verifica el formato CPRO-2026-...');
+    showToast('Código no válido. Verifica tu clave CPRO-2026-...');
     return;
   }
 
@@ -1174,7 +1141,7 @@ function activateProLicense() {
   localStorage.setItem(STORAGE_KEYS.PLAN, 'PRO');
   updatePlanUI();
   closeProModal();
-  showToast('Licencia Studio PRO activada. Colofón removido.');
+  showToast('¡Cuenta PRO Ilimitada Activada!');
 }
 
 function escapeHtml(str) {
