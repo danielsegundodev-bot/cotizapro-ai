@@ -16,7 +16,7 @@ const STORAGE_KEYS = {
 
 // Configuración oficial conectada a tus dos productos en Stripe
 const DEFAULT_CONFIG = {
-  geminiApiKey: '',
+  aiEnabled: false,
   stripeMonthlyUrl: 'https://buy.stripe.com/6oUaEQ9No5Qe6Qe9Cxbsc02',
   stripeLifetimeUrl: 'https://buy.stripe.com/eVq9AM1gS92qfmK5mhbsc01',
   ownerWhatsapp: '5215500000000'
@@ -247,7 +247,7 @@ async function loadOwnerConfig() {
   const res = await fetch('/api/owner/config', { headers: ownerAuthHeaders() });
   if (!res.ok) return;
   const data = await res.json();
-  state.config = { ...state.config, ...data.config, geminiApiKey: '' };
+  state.config = { ...state.config, ...data.config };
   populateOwnerConfigInputs();
   const keyInput = document.getElementById('cfg-gemini-key');
   if (keyInput) keyInput.placeholder = data.config.geminiConfigured ? '•••••••• (configurada, escribe para reemplazar)' : 'AIzaSy...';
@@ -266,6 +266,8 @@ async function initApp() {
     if (savedCfg) {
       const parsedCfg = JSON.parse(savedCfg);
       const isOldLink = (u) => !u || u.includes('4gM6oA2kWceC4I6g0Vbsc00');
+      // Versiones anteriores guardaban la API key de Gemini en el navegador: se elimina
+      delete parsedCfg.geminiApiKey;
       state.config = {
         ...DEFAULT_CONFIG,
         ...parsedCfg,
@@ -344,7 +346,7 @@ function updatePlanUI() {
   const statusText = document.getElementById('ai-status-text');
 
   if (statusText) {
-    statusText.textContent = (state.config.geminiApiKey && state.config.geminiApiKey.trim().length > 10)
+    statusText.textContent = state.config.aiEnabled
       ? 'IA Gemini Conectada'
       : 'Motor IA Activo';
   }
@@ -604,35 +606,17 @@ async function generateProposalWithAI() {
   btn.innerHTML = '<span>Generando propuesta y precios...</span>';
 
   try {
-    const apiKey = (state.config.geminiApiKey || '').trim();
-    if (apiKey.length > 12) {
-      const prompt = `Eres un experto en cotizaciones comerciales. Crea una cotización formal para: "${brief}".
-Responde ÚNICAMENTE con un objeto JSON válido con este esquema exacto:
-{
-  "clientName": "Nombre sugerido del cliente",
-  "projectTitle": "Título profesional del proyecto",
-  "summary": "Descripción clara de 2 a 3 oraciones del alcance y beneficios",
-  "deliveryTime": "Ej: 10 a 14 días hábiles",
-  "items": [
-    {"name": "Concepto 1", "qty": 1, "price": 350},
-    {"name": "Concepto 2", "qty": 1, "price": 280},
-    {"name": "Concepto 3", "qty": 1, "price": 190}
-  ]
-}`;
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`, {
+    // La IA se invoca a través del servidor: la API key de Gemini nunca llega al navegador
+    if (state.config.aiEnabled) {
+      const response = await fetch('/api/ai/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { responseMimeType: 'application/json' }
-        })
+        body: JSON.stringify({ brief })
       });
 
       if (response.ok) {
         const data = await response.json();
-        const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-        const parsed = JSON.parse(rawText);
-        applyGeneratedProposal(parsed);
+        applyGeneratedProposal(data.proposal);
         showToast('Cotización redactada con IA.');
         return;
       }
@@ -1083,52 +1067,57 @@ function populateOwnerConfigInputs() {
     const el = document.getElementById(id);
     if (el) el.value = val || '';
   };
-  setVal('cfg-gemini-key', c.geminiApiKey);
+  setVal('cfg-gemini-key', '');
   setVal('cfg-stripe-monthly', c.stripeMonthlyUrl);
   setVal('cfg-stripe-lifetime', c.stripeLifetimeUrl);
   setVal('cfg-owner-whatsapp', c.ownerWhatsapp);
 }
 
 async function saveOwnerConfig() {
-  state.config = {
-    geminiApiKey: document.getElementById('cfg-gemini-key')?.value.trim() || '',
+  const geminiInput = document.getElementById('cfg-gemini-key');
+  const payload = {
+    geminiApiKey: geminiInput?.value.trim() || '',
     stripeMonthlyUrl: document.getElementById('cfg-stripe-monthly')?.value.trim() || DEFAULT_CONFIG.stripeMonthlyUrl,
     stripeLifetimeUrl: document.getElementById('cfg-stripe-lifetime')?.value.trim() || DEFAULT_CONFIG.stripeLifetimeUrl,
     ownerWhatsapp: document.getElementById('cfg-owner-whatsapp')?.value.trim() || DEFAULT_CONFIG.ownerWhatsapp
   };
 
-  localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify(state.config));
-
   try {
-    await fetch('/api/config', {
+    const res = await fetch('/api/config', {
       method: 'POST',
       headers: ownerAuthHeaders(),
-      body: JSON.stringify(state.config)
+      body: JSON.stringify(payload)
     });
-  } catch (_) {}
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      showToast(res.status === 401 ? 'Tu sesión de propietario expiró. Vuelve a ingresar.' : `No se guardó: ${err.error || 'datos inválidos'}`);
+      return false;
+    }
+  } catch (_) {
+    showToast('No se pudo conectar con el servidor.');
+    return false;
+  }
+
+  // La API key se guarda solo en el servidor; en el navegador se conserva la configuración pública
+  const { geminiApiKey, ...publicConfig } = payload;
+  state.config = { ...state.config, ...publicConfig, aiEnabled: state.config.aiEnabled || Boolean(geminiApiKey) };
+  localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify(state.config));
+  if (geminiInput) {
+    geminiInput.value = '';
+    if (geminiApiKey) geminiInput.placeholder = '•••••••• (configurada, escribe para reemplazar)';
+  }
 
   updatePlanUI();
   showToast('Configuración guardada.');
+  return true;
 }
 
 async function testGeminiConnection() {
-  const key = document.getElementById('cfg-gemini-key')?.value.trim();
-  if (!key) {
-    showToast('Usando el motor integrado sin costo.');
-    return;
-  }
+  if (!(await saveOwnerConfig())) return;
   try {
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(key)}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents: [{ parts: [{ text: 'OK' }] }] })
-    });
-    if (res.ok) {
-      await saveOwnerConfig();
-      showToast('Conexión con Google Gemini verificada.');
-    } else {
-      showToast('API Key no válida.');
-    }
+    const res = await fetch('/api/owner/gemini/test', { method: 'POST', headers: ownerAuthHeaders(), body: '{}' });
+    const data = await res.json();
+    showToast(data.ok ? 'Conexión con Google Gemini verificada.' : 'API Key no válida o sin configurar.');
   } catch (e) {
     showToast('Error al conectar con Gemini.');
   }
