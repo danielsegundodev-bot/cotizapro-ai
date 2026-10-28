@@ -11,6 +11,7 @@ const STORAGE_KEYS = {
   LICENSE_KEY: 'cotizapro_license_key_v1',
   CLIENT_ID: 'cotizapro_client_id_v1',
   SENDER: 'cotizapro_sender_profile_v1',
+  DOC_THEME: 'cotizapro_doc_theme_v1',
   USAGE: 'cotizapro_free_usage_v1',
   THEME: 'cotizapro_atelier_theme_v1'
 };
@@ -122,6 +123,31 @@ let state = {
   generatedLicenses: []
 };
 
+// Las plantillas y el generador local tienen precios base en USD; se convierten a la moneda elegida
+// con un tipo de cambio aproximado y se redondean a cifras "de cotización".
+const CURRENCY_ROUNDING = {
+  USD: { rate: 1, step: 10 },
+  MXN: { rate: 18, step: 50 },
+  EUR: { rate: 0.92, step: 10 },
+  COP: { rate: 4000, step: 10000 },
+  ARS: { rate: 1000, step: 1000 },
+  CLP: { rate: 900, step: 1000 },
+  PEN: { rate: 3.7, step: 10 }
+};
+
+function currentCurrency() {
+  return document.getElementById('currency-select')?.value || 'MXN';
+}
+
+function localizeBasePrice(usdAmount, currency = currentCurrency()) {
+  const conf = CURRENCY_ROUNDING[currency] || CURRENCY_ROUNDING.USD;
+  return Math.max(conf.step, Math.round((usdAmount * conf.rate) / conf.step) * conf.step);
+}
+
+function localizeItems(items) {
+  return items.map(i => ({ ...i, price: localizeBasePrice(i.price) }));
+}
+
 function formatMoney(amount, currency = 'USD') {
   const symbols = { USD: '$', MXN: '$', EUR: '€', COP: '$', ARS: '$', CLP: '$', PEN: 'S/' };
   const code = Object.prototype.hasOwnProperty.call(symbols, currency) ? currency : 'USD';
@@ -185,6 +211,7 @@ function toggleAtelierTheme() {
 }
 
 function switchInspectorStep(stepNum) {
+  if (stepNum === 3) requestAnimationFrame(sizeSignatureCanvas);
   [1, 2, 3].forEach(n => {
     const panel = document.getElementById(`inspector-step-${n}`);
     const btn = document.getElementById(`step-btn-${n}`);
@@ -364,6 +391,10 @@ async function initApp() {
   document.getElementById('doc-quote-number').textContent = state.quoteNumber;
 
   loadSenderProfile();
+  state.lineItems = localizeItems(state.lineItems);
+  loadDocTheme();
+  setSignatureMode('draw');
+  initMobilePreviewShortcut();
   populateOwnerConfigInputs();
   updatePlanUI();
   updateQuotesCounter();
@@ -379,6 +410,7 @@ function updateQuotesCounter() {
 }
 
 function updatePlanUI() {
+  renderThemePicker();
   const badge = document.getElementById('plan-badge');
   const upgradeBtn = document.getElementById('upgrade-header-btn');
   const proActivePill = document.getElementById('pro-active-pill');
@@ -387,8 +419,8 @@ function updatePlanUI() {
 
   if (statusText) {
     statusText.textContent = state.config.aiEnabled
-      ? 'IA Gemini Conectada'
-      : 'Motor IA Activo';
+      ? 'IA Gemini'
+      : 'Asistente rápido';
   }
 
   if (state.isPro) {
@@ -521,10 +553,12 @@ function loadPresetTemplate(presetKey) {
   document.getElementById('project-title').value = preset.title;
   document.getElementById('proposal-summary').value = preset.summary;
   document.getElementById('delivery-time').value = preset.delivery;
-  state.lineItems = preset.items.map(i => ({ ...i }));
+  state.lineItems = localizeItems(preset.items);
+  clearExampleClient();
 
   renderLineItemsEditor();
   renderProposalPreview();
+  flashUpdated(['doc-project-title', 'doc-summary', 'doc-items-tbody']);
   showToast('Plantilla cargada en tu cotización.');
 }
 
@@ -593,11 +627,11 @@ function renderProposalPreview() {
     const idxStr = String(index + 1).padStart(2, '0');
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td class="py-3 px-3.5 font-tabular text-[11px] text-[#8A857C]">${idxStr}</td>
-      <td class="py-3 px-3.5 font-medium text-[#141413]">${escapeHtml(item.name)}</td>
-      <td class="py-3 px-3.5 text-center font-tabular text-[#57544E]">${safeNumber(item.qty)}</td>
-      <td class="py-3 px-3.5 text-right font-tabular text-[#57544E]">${formatMoney(item.price, calc.currency)}</td>
-      <td class="py-3 px-3.5 text-right font-tabular font-semibold text-[#141413]">${formatMoney(lineTotal, calc.currency)}</td>
+      <td class="py-3 px-3.5 font-tabular text-[11px] text-[color:var(--doc-muted)]">${idxStr}</td>
+      <td class="py-3 px-3.5 font-medium text-[color:var(--doc-ink)]">${escapeHtml(item.name)}</td>
+      <td class="py-3 px-3.5 text-center font-tabular text-[color:var(--doc-text-2)]">${safeNumber(item.qty)}</td>
+      <td class="py-3 px-3.5 text-right font-tabular text-[color:var(--doc-text-2)]">${formatMoney(item.price, calc.currency)}</td>
+      <td class="py-3 px-3.5 text-right font-tabular font-semibold text-[color:var(--doc-ink)]">${formatMoney(lineTotal, calc.currency)}</td>
     `;
     tbody.appendChild(tr);
   });
@@ -632,6 +666,9 @@ function renderProposalPreview() {
 }
 
 // Autocompletado con IA
+const AI_BUTTON_IDLE_HTML = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/></svg><span>Redactar Cotización con IA</span>`;
+const AI_BUTTON_BUSY_HTML = `<svg class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3" stroke-opacity="0.25"/><path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg><span>Generando tu cotización…</span>`;
+
 async function generateProposalWithAI() {
   const brief = document.getElementById('ai-brief-input')?.value.trim();
   if (!brief) {
@@ -641,95 +678,166 @@ async function generateProposalWithAI() {
   }
 
   const btn = document.getElementById('btn-generate-ai');
-  const originalHtml = btn.innerHTML;
   btn.disabled = true;
-  btn.innerHTML = '<span>Generando propuesta y precios...</span>';
+  btn.setAttribute('aria-busy', 'true');
+  btn.innerHTML = AI_BUTTON_BUSY_HTML;
+  document.getElementById('ai-result')?.classList.add('hidden');
+  // Un mínimo de espera hace visible que algo ocurrió aunque el motor local responda al instante
+  const minDelay = new Promise(r => setTimeout(r, 650));
 
+  let proposal = null;
   try {
     // La IA se invoca a través del servidor: la API key de Gemini nunca llega al navegador
     if (state.config.aiEnabled) {
       const response = await fetch('/api/ai/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ brief })
+        body: JSON.stringify({ brief, currency: currentCurrency() })
       });
-
-      if (response.ok) {
-        const data = await response.json();
-        applyGeneratedProposal(data.proposal);
-        showToast('Cotización redactada con IA.');
-        return;
-      }
+      if (response.ok) proposal = (await response.json()).proposal;
     }
-
-    const synthesized = synthesizeProposalLocally(brief);
-    applyGeneratedProposal(synthesized);
-    showToast('Cotización generada automáticamente.');
-  } catch (err) {
-    const synthesized = synthesizeProposalLocally(brief);
-    applyGeneratedProposal(synthesized);
-    showToast('Cotización lista.');
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = originalHtml;
+  } catch (_) {}
+  if (!proposal || !Array.isArray(proposal.items) || proposal.items.length === 0) {
+    proposal = synthesizeProposalLocally(brief);
   }
+
+  await minDelay;
+  applyGeneratedProposal(proposal);
+  showAiResult(proposal);
+  btn.disabled = false;
+  btn.removeAttribute('aria-busy');
+  btn.innerHTML = AI_BUTTON_IDLE_HTML;
+}
+
+function showAiResult(proposal) {
+  const calc = getCalculatedTotals();
+  const panel = document.getElementById('ai-result');
+  const text = document.getElementById('ai-result-text');
+  const missing = document.getElementById('ai-result-missing');
+  if (!panel || !text) return;
+  const n = state.lineItems.length;
+  text.textContent = `✓ Listo. Llenamos el título, la descripción, el tiempo de entrega y ${n} concepto${n === 1 ? '' : 's'} por un total de ${formatMoney(calc.total, calc.currency)}. Revisa los precios antes de enviarla.`;
+  const pending = [];
+  if (!document.getElementById('client-name')?.value.trim()) pending.push('el nombre de tu cliente');
+  if (!document.getElementById('sender-name')?.value.trim()) pending.push('tu nombre o empresa');
+  if (missing) {
+    missing.textContent = pending.length ? `Falta: ${pending.join(' y ')}.` : '';
+    missing.classList.toggle('hidden', pending.length === 0);
+  }
+  panel.classList.remove('hidden');
+}
+
+function flashUpdated(ids) {
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('flash-updated');
+    void el.offsetWidth; // reinicia la animación
+    el.classList.add('flash-updated');
+  });
+}
+
+function scrollToPreview() {
+  switchTab('builder');
+  document.getElementById('proposal-document')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+const EXAMPLE_CLIENT_NAMES = ['Grupo Médico San Ángel', 'Nombre del Cliente'];
+
+function clearExampleClient() {
+  const el = document.getElementById('client-name');
+  if (el && EXAMPLE_CLIENT_NAMES.includes(el.value.trim())) el.value = '';
+}
+
+// Motor local (sin IA externa): reconoce el giro por palabras clave. Precios base en USD.
+const LOCAL_NICHES = [
+  { keys: ['foto', 'fotógraf', 'fotograf'], title: 'Cobertura Fotográfica Profesional', delivery: '10 a 15 días hábiles para la entrega de fotos editadas',
+    summary: 'Cobertura fotográfica profesional con equipo de alta gama, dirección de poses y edición individual de cada fotografía para entregar recuerdos de calidad de galería.',
+    items: [['Cobertura fotográfica del evento (hasta 6 horas)', 1, 420], ['Edición profesional y retoque de fotografías', 1, 180], ['Galería digital privada en alta resolución', 1, 70], ['Álbum impreso de lujo (opcional)', 1, 160]] },
+  { keys: ['video', 'filmaci', 'grabaci', 'dron'], title: 'Producción y Edición de Video Profesional', delivery: '10 a 14 días hábiles',
+    summary: 'Producción de video con cámaras profesionales, audio limpio y edición con corrección de color, música licenciada y versiones para redes sociales.',
+    items: [['Jornada de grabación con equipo profesional', 1, 380], ['Edición, corrección de color y musicalización', 1, 260], ['Versiones cortas para redes sociales (3 clips)', 1, 120]] },
+  { keys: ['evento', 'boda', 'xv', 'fiesta', 'banquete', 'catering', 'banquet'], title: 'Organización y Servicio para Evento', delivery: 'Según la fecha del evento',
+    summary: 'Planeación y operación integral del evento: coordinación de proveedores, montaje, servicio durante el evento y desmontaje, para que solo te ocupes de disfrutar.',
+    items: [['Planeación y coordinación del evento', 1, 300], ['Montaje, mobiliario y decoración', 1, 450], ['Servicio de personal durante el evento', 1, 280], ['Desmontaje y limpieza final', 1, 90]] },
+  { keys: ['logo', 'branding', 'marca', 'identidad', 'diseño gráfico', 'diseno grafico'], title: 'Diseño de Identidad de Marca', delivery: '7 a 10 días hábiles',
+    summary: 'Creación de una identidad visual profesional y coherente: logotipo, paleta de colores, tipografías y aplicaciones listas para usar en redes, papelería y web.',
+    items: [['Diseño de logotipo (3 propuestas y 2 rondas de ajustes)', 1, 280], ['Manual de identidad: colores, tipografías y usos', 1, 160], ['Kit de aplicaciones para redes sociales y papelería', 1, 120]] },
+  { keys: ['redes sociales', 'community', 'marketing', 'publicidad', 'anuncios', 'facebook ads', 'instagram', 'tiktok'], title: 'Gestión de Redes Sociales y Publicidad Digital', delivery: 'Servicio mensual',
+    summary: 'Estrategia y gestión mensual de redes sociales con contenido diseñado, campañas de anuncios segmentadas y reporte de resultados para atraer clientes de forma constante.',
+    items: [['Estrategia y calendario mensual de contenido', 1, 150], ['Diseño de 12 publicaciones y 8 historias', 1, 240], ['Gestión de campañas de anuncios (no incluye inversión)', 1, 180], ['Reporte mensual de resultados', 1, 60]] },
+  { keys: ['contab', 'contador', 'fiscal', 'impuesto', 'declaraci', ' sat ', 'nómina', 'nomina'], title: 'Servicios Contables y Fiscales', delivery: 'Servicio mensual',
+    summary: 'Contabilidad y cumplimiento fiscal en tiempo y forma: registro de operaciones, cálculo y presentación de impuestos y asesoría para pagar lo justo sin multas.',
+    items: [['Contabilidad electrónica mensual', 1, 120], ['Cálculo y presentación de declaraciones', 1, 90], ['Asesoría fiscal y atención a requerimientos', 1, 70]] },
+  { keys: ['abogad', 'legal', 'contrato', 'jurídic', 'juridic', 'demanda'], title: 'Asesoría y Servicios Legales', delivery: '5 a 10 días hábiles',
+    summary: 'Atención legal profesional con análisis del caso, elaboración o revisión de documentos y acompañamiento hasta resolver tu asunto con certeza jurídica.',
+    items: [['Consulta y análisis del caso', 1, 120], ['Elaboración o revisión de documentos legales', 1, 260], ['Seguimiento y representación', 1, 300]] },
+  { keys: ['limpieza', 'aseo', 'sanitiz'], title: 'Servicio Profesional de Limpieza', delivery: 'Según calendario acordado',
+    summary: 'Servicio de limpieza profunda con personal capacitado, productos profesionales y supervisión para entregar espacios impecables y desinfectados.',
+    items: [['Limpieza profunda de áreas', 1, 180], ['Productos e insumos profesionales', 1, 60], ['Supervisión y control de calidad', 1, 40]] },
+  { keys: ['jardín', 'jardin', 'pasto', 'poda', 'paisaj'], title: 'Servicio de Jardinería y Paisajismo', delivery: '3 a 7 días hábiles',
+    summary: 'Mantenimiento y diseño de áreas verdes: poda, corte de pasto, plantas nuevas y sistema de riego para mantener tu jardín sano y atractivo todo el año.',
+    items: [['Diseño y trazo de áreas verdes', 1, 160], ['Suministro y plantación', 1, 240], ['Mantenimiento: poda y corte de pasto', 1, 90]] },
+  { keys: ['plomer', 'electric', 'instalaci', 'fuga', 'cableado', 'aire acondicionado', 'minisplit'], title: 'Instalación y Reparación Técnica', delivery: '1 a 3 días hábiles',
+    summary: 'Diagnóstico e instalación por técnicos con experiencia, materiales de calidad y garantía por escrito sobre la mano de obra.',
+    items: [['Diagnóstico y revisión técnica', 1, 40], ['Materiales y refacciones', 1, 120], ['Mano de obra e instalación', 1, 160], ['Garantía de 90 días', 1, 0]] },
+  { keys: ['remodel', 'construc', 'obra', 'albañil', 'albanil', 'pintura', 'impermeabil'], title: 'Proyecto de Remodelación y Obra', delivery: '14 a 21 días hábiles',
+    summary: 'Ejecución llave en mano de trabajos de remodelación con materiales de primera calidad, supervisión técnica y garantía por escrito.',
+    items: [['Levantamiento, planeación y suministro de materiales', 1, 480], ['Mano de obra especializada', 1, 550], ['Acabados, limpieza final y garantía', 1, 220]] },
+  { keys: ['clase', 'curso', 'taller', 'capacitaci', 'tutor', 'asesoría escolar'], title: 'Programa de Capacitación', delivery: 'Según calendario de sesiones',
+    summary: 'Programa de formación práctico con material didáctico, ejercicios aplicados y seguimiento personalizado para lograr resultados medibles.',
+    items: [['Sesiones de capacitación (8 horas)', 1, 320], ['Material didáctico y ejercicios', 1, 80], ['Evaluación y constancia de participación', 1, 50]] },
+  { keys: ['mudanza', 'flete', 'transporte', 'envío', 'envio', 'paquete'], title: 'Servicio de Mudanza y Transporte', delivery: 'Fecha acordada',
+    summary: 'Traslado seguro con unidad adecuada, personal de carga y protección de tus pertenencias de principio a fin.',
+    items: [['Unidad de transporte y combustible', 1, 180], ['Personal de carga y descarga', 1, 120], ['Material de empaque y protección', 1, 50]] },
+  { keys: ['belleza', 'maquillaje', 'peinado', 'uñas', 'unas', 'estética', 'estetica', 'spa'], title: 'Servicio de Belleza y Maquillaje Profesional', delivery: 'Fecha y hora acordadas',
+    summary: 'Servicio profesional de belleza con productos de alta gama, prueba previa y atención a domicilio para que luzcas increíble en tu día especial.',
+    items: [['Maquillaje profesional', 1, 90], ['Peinado', 1, 70], ['Prueba previa', 1, 40]] },
+  { keys: ['clínica', 'clinica', 'dental', 'médic', 'medic', 'doctor', 'consultorio'], title: 'Portal Web Médico & Sistema de Citas en WhatsApp', delivery: '7 a 10 días hábiles',
+    summary: 'Página web profesional para clínica con agendamiento automático de pacientes por WhatsApp y recordatorios para evitar inasistencias.',
+    items: [['Sitio web médico con especialidades y ubicación', 1, 340], ['Agenda automática de citas en WhatsApp 24/7', 1, 320], ['Recordatorios de citas y capacitación', 1, 190]] },
+  { keys: ['restaurante', 'comida', 'menú', 'menu', 'cafeter'], title: 'Menú Digital, Pedidos en Línea y Reservaciones', delivery: '7 días hábiles',
+    summary: 'Sistema propio para recibir pedidos y reservaciones directo en el WhatsApp del negocio, sin comisiones de aplicaciones externas.',
+    items: [['Menú digital interactivo con carrito', 1, 290], ['Automatización de pedidos y reservaciones', 1, 240], ['Registro de clientes frecuentes y capacitación', 1, 140]] },
+  { keys: ['página web', 'pagina web', 'sitio web', 'tienda', 'ecommerce', 'landing', 'software', ' app ', 'aplicaci'], title: 'Desarrollo de Sitio Web / Aplicación', delivery: '10 a 15 días hábiles',
+    summary: 'Diseño y desarrollo a la medida, adaptable a celulares, con panel de administración, optimización para Google y capacitación para que lo manejes tú mismo.',
+    items: [['Diseño responsivo (celular y computadora)', 1, 450], ['Desarrollo de funciones y panel de administración', 1, 380], ['Dominio, publicación, SEO básico y capacitación', 1, 200]] }
+];
+
+function capitalizeFirst(text) {
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
 function synthesizeProposalLocally(brief) {
-  const lower = brief.toLowerCase();
-  let items = [];
-  let projectTitle = 'Propuesta de Proyecto: ' + brief.slice(0, 48);
-  let deliveryTime = '10 a 12 días hábiles';
-  let summary = `Propuesta integral elaborada para "${brief}", enfocada en entregar resultados de alta calidad en tiempo y forma, con garantía de satisfacción sobre cada entregable acordado.`;
+  const lower = ` ${brief.toLowerCase()} `;
+  const placeMatch = /\ben\s+([A-ZÁÉÍÓÚÑ][\wáéíóúñ]+(?:\s+[A-ZÁÉÍÓÚÑ][\wáéíóúñ]+)*)/.exec(brief);
+  const place = placeMatch ? placeMatch[1] : '';
+  const niche = LOCAL_NICHES.find(n => n.keys.some(k => lower.includes(k)));
+  const toItems = rows => localizeItems(rows.map(([name, qty, price]) => ({ name, qty, price })));
 
-  if (lower.includes('clínica') || lower.includes('clinica') || lower.includes('dental') || lower.includes('médic') || lower.includes('medic') || lower.includes('doctor')) {
-    projectTitle = 'Portal Web Médico & Sistema de Citas en WhatsApp';
-    deliveryTime = '7 a 10 días hábiles';
-    summary = 'Desarrollo de página web profesional para clínica con agendamiento automático de pacientes por WhatsApp y recordatorios para evitar inasistencias.';
-    items = [
-      { name: 'Diseño de Sitio Web Médico con Perfil de Especialidades y Ubicación', qty: 1, price: 340 },
-      { name: 'Asistente Automático en WhatsApp para Agendar Citas 24/7', qty: 1, price: 320 },
-      { name: 'Configuración de Recordatorios de Citas y Capacitación', qty: 1, price: 190 }
-    ];
-  } else if (lower.includes('restaurante') || lower.includes('comida') || lower.includes('menú') || lower.includes('menu') || lower.includes('cafeter')) {
-    projectTitle = 'Menú Digital de Pedidos en Línea & Reservaciones por WhatsApp';
-    deliveryTime = '7 días hábiles';
-    summary = 'Sistema propio para recibir pedidos a domicilio y reservaciones directo en el WhatsApp del negocio sin pagar comisiones a aplicaciones externas.';
-    items = [
-      { name: 'Menú Digital Interactivo con Carrito de Compras', qty: 1, price: 290 },
-      { name: 'Automatización de Pedidos y Reservaciones en WhatsApp', qty: 1, price: 240 },
-      { name: 'Registro de Clientes Frecuentes y Capacitación', qty: 1, price: 140 }
-    ];
-  } else if (lower.includes('remodel') || lower.includes('construc') || lower.includes('obra') || lower.includes('oficina') || lower.includes('mantenimiento')) {
-    projectTitle = 'Proyecto de Adecuación, Remodelación y Ejecución Técnica';
-    deliveryTime = '14 días hábiles';
-    summary = 'Ejecución llave en mano de trabajos de adecuación y mejora con materiales de primera calidad, supervisión técnica y garantía por escrito.';
-    items = [
-      { name: 'Levantamiento, Planeación y Suministro de Materiales', qty: 1, price: 480 },
-      { name: 'Mano de Obra Especializada e Instalación Completa', qty: 1, price: 550 },
-      { name: 'Acabados, Limpieza Final y Póliza de Garantía', qty: 1, price: 220 }
-    ];
-  } else if (lower.includes('tienda') || lower.includes('ecommerce') || lower.includes('venta') || lower.includes('catálogo') || lower.includes('catalogo')) {
-    projectTitle = 'Tienda en Línea (E-Commerce) con Pasarela de Pagos';
-    deliveryTime = '10 a 14 días hábiles';
-    items = [
-      { name: 'Diseño y Configuración de Tienda Online con Carrito de Compras', qty: 1, price: 480 },
-      { name: 'Integración de Cobros con Tarjeta, Transferencia y Envíos', qty: 1, price: 260 },
-      { name: 'Capacitación para Subir Productos y Soporte Técnico', qty: 1, price: 180 }
-    ];
-  } else {
-    items = [
-      { name: 'Planeación y Desarrollo Principal (' + brief.slice(0, 40) + ')', qty: 1, price: 420 },
-      { name: 'Implementación Técnica, Ajustes y Configuración', qty: 1, price: 290 },
-      { name: 'Entrega Final, Capacitación y Garantía de 30 Días', qty: 1, price: 160 }
-    ];
+  if (niche) {
+    return {
+      projectTitle: niche.title + (place ? ` en ${place}` : ''),
+      summary: niche.summary + (place ? ` Servicio en ${place}.` : ''),
+      deliveryTime: niche.delivery,
+      items: toItems(niche.items)
+    };
   }
-
-  return { projectTitle, summary, deliveryTime, items };
+  const subject = capitalizeFirst(brief.replace(/^(cotizaci[oó]n|presupuesto)\s+(de|para)\s+/i, '').slice(0, 70));
+  return {
+    projectTitle: subject,
+    summary: `Propuesta para ${brief.charAt(0).toLowerCase() + brief.slice(1)}, con alcance definido, materiales y mano de obra de calidad, entrega en tiempo y garantía por escrito.`,
+    deliveryTime: '7 a 10 días hábiles',
+    items: toItems([[`Servicio principal: ${subject}`, 1, 350], ['Materiales, insumos y traslados', 1, 140], ['Entrega, seguimiento y garantía de 30 días', 1, 80]])
+  };
 }
 
 function applyGeneratedProposal(data) {
-  if (data.clientName) document.getElementById('client-name').value = data.clientName;
+  if (data.clientName) {
+    document.getElementById('client-name').value = data.clientName;
+  } else {
+    clearExampleClient();
+  }
   if (data.projectTitle) document.getElementById('project-title').value = data.projectTitle;
   if (data.summary) document.getElementById('proposal-summary').value = data.summary;
   if (data.deliveryTime) document.getElementById('delivery-time').value = data.deliveryTime;
@@ -737,88 +845,244 @@ function applyGeneratedProposal(data) {
     state.lineItems = data.items.map(i => ({
       name: String(i.name || 'Concepto'),
       qty: Number(i.qty) || 1,
-      price: Number(i.price) || 150
+      price: Number(i.price) || 0
     }));
   }
   renderLineItemsEditor();
   renderProposalPreview();
+  flashUpdated(['doc-project-title', 'doc-summary', 'doc-items-tbody', 'doc-total']);
 }
 
-// Firma Digital
-function initSignatureCanvas() {
+// Firma: dibujar, subir imagen o escribir. Nunca se envía al servidor.
+const SIGNATURE_MAX_BYTES = 2 * 1024 * 1024;
+const SIGNATURE_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
+const SIGNATURE_FONTS = { 1: '"Dancing Script"', 2: '"Great Vibes"', 3: '"Caveat"' };
+let signatureCanvasReady = false;
+let signatureHasStrokes = false;
+
+function sizeSignatureCanvas() {
   const canvas = document.getElementById('signature-canvas');
   if (!canvas) return;
+  const rect = canvas.getBoundingClientRect();
+  if (rect.width === 0 || signatureHasStrokes) return;
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
   const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.strokeStyle = '#141413';
-  ctx.lineWidth = 2.0;
+  ctx.lineWidth = 2.2;
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
+}
 
+function initSignatureCanvas() {
+  const canvas = document.getElementById('signature-canvas');
+  if (!canvas || signatureCanvasReady) return;
+  signatureCanvasReady = true;
+  const ctx = canvas.getContext('2d');
   let drawing = false;
 
   const getPos = (e) => {
     const rect = canvas.getBoundingClientRect();
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    return {
-      x: (clientX - rect.left) * (canvas.width / rect.width),
-      y: (clientY - rect.top) * (canvas.height / rect.height)
-    };
+    const point = e.touches ? e.touches[0] : e;
+    return { x: point.clientX - rect.left, y: point.clientY - rect.top };
   };
-
   const startDraw = (e) => {
+    sizeSignatureCanvas();
     drawing = true;
     const pos = getPos(e);
     ctx.beginPath();
     ctx.moveTo(pos.x, pos.y);
     e.preventDefault();
   };
-
   const moveDraw = (e) => {
     if (!drawing) return;
     const pos = getPos(e);
     ctx.lineTo(pos.x, pos.y);
     ctx.stroke();
+    signatureHasStrokes = true;
     e.preventDefault();
   };
-
   const endDraw = () => {
     if (!drawing) return;
     drawing = false;
-    syncSignatureToDocument();
+    if (signatureHasStrokes) setSignatureImage(canvas.toDataURL('image/png'));
   };
 
   canvas.addEventListener('mousedown', startDraw);
   canvas.addEventListener('mousemove', moveDraw);
   window.addEventListener('mouseup', endDraw);
-
   canvas.addEventListener('touchstart', startDraw, { passive: false });
   canvas.addEventListener('touchmove', moveDraw, { passive: false });
   window.addEventListener('touchend', endDraw);
 }
 
-function syncSignatureToDocument() {
-  const canvas = document.getElementById('signature-canvas');
+function setSignatureImage(dataUrl) {
   const img = document.getElementById('doc-signature-img');
   const placeholder = document.getElementById('doc-signature-placeholder');
-  if (!canvas || !img) return;
+  state.signatureDataUrl = dataUrl;
+  if (!img) return;
+  if (dataUrl) {
+    img.src = dataUrl;
+    img.classList.remove('hidden');
+    placeholder?.classList.add('hidden');
+  } else {
+    img.removeAttribute('src');
+    img.classList.add('hidden');
+    placeholder?.classList.remove('hidden');
+  }
+}
 
-  state.signatureDataUrl = canvas.toDataURL('image/png');
-  img.src = state.signatureDataUrl;
-  img.classList.remove('hidden');
-  if (placeholder) placeholder.classList.add('hidden');
+function setSignatureMode(mode) {
+  ['draw', 'upload', 'type'].forEach(m => {
+    document.getElementById(`sig-panel-${m}`)?.classList.toggle('hidden', m !== mode);
+    const tab = document.getElementById(`sig-mode-${m}`);
+    if (tab) {
+      tab.setAttribute('aria-selected', String(m === mode));
+      tab.className = `sig-mode-btn px-2 py-1.5 rounded-md text-xs ${m === mode ? 'font-semibold bg-[var(--bg-elevated)] text-[var(--ink-primary)] shadow-sm' : 'font-medium text-[var(--ink-secondary)] hover:text-[var(--ink-primary)]'}`;
+    }
+  });
+  if (mode === 'draw') requestAnimationFrame(sizeSignatureCanvas);
+  if (mode === 'type') renderTypedSignature();
+}
+
+// Imagen subida: se redimensiona y se vuelve transparente el fondo claro, todo en el navegador
+function onSignatureUpload(input) {
+  const file = input.files && input.files[0];
+  input.value = '';
+  if (!file) return;
+  if (!SIGNATURE_TYPES.includes(file.type)) {
+    showToast('Formato no soportado. Usa una imagen PNG, JPG o WEBP.');
+    return;
+  }
+  if (file.size > SIGNATURE_MAX_BYTES) {
+    showToast('La imagen pesa más de 2 MB. Usa una más ligera.');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = () => {
+    const image = new Image();
+    image.onload = () => {
+      const scale = Math.min(1, 600 / image.width, 200 / image.height);
+      const w = Math.max(1, Math.round(image.width * scale));
+      const h = Math.max(1, Math.round(image.height * scale));
+      const off = document.createElement('canvas');
+      off.width = w;
+      off.height = h;
+      const ctx = off.getContext('2d');
+      ctx.drawImage(image, 0, 0, w, h);
+      const pixels = ctx.getImageData(0, 0, w, h);
+      const d = pixels.data;
+      for (let i = 0; i < d.length; i += 4) {
+        if (d[i] > 225 && d[i + 1] > 225 && d[i + 2] > 225) d[i + 3] = 0;
+      }
+      ctx.putImageData(pixels, 0, 0);
+      setSignatureImage(off.toDataURL('image/png'));
+      showToast('Firma cargada en tu cotización.');
+      flashUpdated(['doc-signature-img']);
+    };
+    image.onerror = () => showToast('No pudimos leer esa imagen.');
+    image.src = reader.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+state.typedSignatureStyle = 1;
+
+function setTypedSignatureStyle(style) {
+  state.typedSignatureStyle = Number(style) || 1;
+  document.querySelectorAll('.sig-style-btn').forEach(btn => {
+    const active = btn.dataset.arg === String(state.typedSignatureStyle);
+    btn.classList.toggle('ring-2', active);
+    btn.classList.toggle('ring-[var(--ink-primary)]', active);
+  });
+  renderTypedSignature();
+}
+
+async function renderTypedSignature() {
+  const name = (document.getElementById('signature-typed-name')?.value || '').trim().slice(0, 60);
+  if (!name) {
+    if (!signatureHasStrokes) setSignatureImage(null);
+    return;
+  }
+  const family = SIGNATURE_FONTS[state.typedSignatureStyle] || SIGNATURE_FONTS[1];
+  try { await document.fonts.load(`64px ${family}`); } catch (_) {}
+  const off = document.createElement('canvas');
+  const ctx = off.getContext('2d');
+  ctx.font = `64px ${family}`;
+  const width = Math.min(900, Math.ceil(ctx.measureText(name).width) + 40);
+  off.width = width;
+  off.height = 120;
+  ctx.font = `64px ${family}`;
+  ctx.fillStyle = '#141413';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(name, 20, 64);
+  setSignatureImage(off.toDataURL('image/png'));
 }
 
 function clearSignature() {
   const canvas = document.getElementById('signature-canvas');
-  const img = document.getElementById('doc-signature-img');
-  const placeholder = document.getElementById('doc-signature-placeholder');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  state.signatureDataUrl = null;
-  if (img) img.classList.add('hidden');
-  if (placeholder) placeholder.classList.remove('hidden');
+  if (canvas) canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+  signatureHasStrokes = false;
+  const typed = document.getElementById('signature-typed-name');
+  if (typed) typed.value = '';
+  setSignatureImage(null);
+}
+
+// Diseños del documento: 2 gratis, 4 PRO (se pueden previsualizar; descargar requiere PRO)
+const DOC_THEMES = {
+  clasico: { label: 'Clásico', pro: false },
+  minimal: { label: 'Minimal', pro: false },
+  moderno: { label: 'Moderno', pro: true },
+  corporativo: { label: 'Corporativo', pro: true },
+  elegante: { label: 'Elegante', pro: true },
+  vibrante: { label: 'Vibrante', pro: true }
+};
+
+function setDocTheme(name, { silent = false } = {}) {
+  const theme = DOC_THEMES[name];
+  if (!theme) return;
+  state.docTheme = name;
+  const doc = document.getElementById('proposal-document');
+  if (doc) doc.dataset.docTheme = name;
+  try { localStorage.setItem(STORAGE_KEYS.DOC_THEME, name); } catch (_) {}
+  renderThemePicker();
+  if (!silent && theme.pro && !state.isPro) {
+    showToast(`Vista previa del diseño ${theme.label} (PRO). Para descargarlo activa Studio PRO.`);
+  }
+}
+
+function isLockedTheme() {
+  const theme = DOC_THEMES[state.docTheme];
+  return Boolean(theme && theme.pro && !state.isPro);
+}
+
+function renderThemePicker() {
+  document.querySelectorAll('#doc-theme-picker [data-arg]').forEach(btn => {
+    btn.setAttribute('aria-pressed', String(btn.dataset.arg === state.docTheme));
+  });
+  document.querySelectorAll('#doc-theme-picker .theme-lock').forEach(el => el.classList.toggle('hidden', state.isPro));
+  document.getElementById('doc-theme-note')?.classList.toggle('hidden', !isLockedTheme());
+}
+
+function loadDocTheme() {
+  let saved = 'clasico';
+  try { saved = localStorage.getItem(STORAGE_KEYS.DOC_THEME) || 'clasico'; } catch (_) {}
+  setDocTheme(DOC_THEMES[saved] ? saved : 'clasico', { silent: true });
+}
+
+// Botón flotante en celular: solo aparece mientras la cotización está fuera de la pantalla
+function initMobilePreviewShortcut() {
+  const fab = document.getElementById('mobile-preview-fab');
+  const doc = document.getElementById('proposal-document');
+  const builder = document.getElementById('tab-builder');
+  if (!fab || !doc || !('IntersectionObserver' in window)) return;
+  const observer = new IntersectionObserver(([entry]) => {
+    const builderVisible = builder && !builder.classList.contains('hidden');
+    fab.classList.toggle('hidden', entry.isIntersecting || !builderVisible);
+  }, { threshold: 0.05 });
+  observer.observe(doc);
 }
 
 // Datos del emisor: el ejemplo no trae datos reales; cada usuario guarda los suyos solo en su navegador
@@ -844,6 +1108,11 @@ function onSenderInput() {
 
 // Descargar PDF
 function exportProposalPDF() {
+  if (isLockedTheme()) {
+    showToast(`El diseño ${DOC_THEMES[state.docTheme].label} es PRO. Activa Studio PRO o elige Clásico o Minimal.`);
+    openProModal();
+    return;
+  }
   const senderInput = document.getElementById('sender-name');
   if (senderInput && !senderInput.value.trim()) {
     showToast('Escribe tu nombre o empresa antes de descargar la cotización.');
@@ -888,7 +1157,8 @@ async function saveCurrentQuote(silent = false) {
     discountRate: calc.discountRate,
     depositRate: calc.depositRate,
     depositAmount: calc.depositAmount,
-    items: state.lineItems.map(i => ({ ...i }))
+    items: state.lineItems.map(i => ({ ...i })),
+    docTheme: state.docTheme || 'clasico'
   };
 
   const existingIdx = state.savedQuotes.findIndex(q => q.id === quoteRecord.id);
@@ -987,6 +1257,7 @@ function loadSavedQuote(quoteId) {
   if (Array.isArray(q.items) && q.items.length > 0) {
     state.lineItems = q.items.map(i => ({ ...i }));
   }
+  if (q.docTheme && DOC_THEMES[q.docTheme]) setDocTheme(q.docTheme, { silent: true });
 
   renderLineItemsEditor();
   renderProposalPreview();
@@ -1353,6 +1624,12 @@ const UI_ACTIONS = {
   loadPresetTemplate: el => loadPresetTemplate(el.value),
   syncInlineEdit: el => syncInlineEdit(el.dataset.arg, el.innerText),
   onSenderInput,
+  setDocTheme: el => setDocTheme(el.dataset.arg),
+  scrollToPreview,
+  setSignatureMode: el => setSignatureMode(el.dataset.arg),
+  onSignatureUpload: el => onSignatureUpload(el),
+  renderTypedSignature,
+  setTypedSignatureStyle: el => setTypedSignatureStyle(el.dataset.arg),
   updateLineItem: el => updateLineItem(Number(el.dataset.idx), el.dataset.field, el.value),
   removeLineItem: el => removeLineItem(Number(el.dataset.idx)),
   loadSavedQuote: el => loadSavedQuote(el.dataset.quoteId),

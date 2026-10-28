@@ -110,10 +110,8 @@ body {
 
 .atelier-label {
   display: block;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  font-size: 0.75rem;
+  font-weight: 500;
   color: var(--ink-secondary);
   margin-bottom: 0.3rem;
 }
@@ -180,6 +178,82 @@ body {
   border-radius: 4px;
   position: relative;
 }
+
+/* Document design themes: every color/heading font of the quote sheet comes from these
+   variables, so a theme is just a different set of values. "clasico" and "minimal" are free. */
+.dossier-paper {
+  --doc-ink: #141413;
+  --doc-text: #262624;
+  --doc-text-2: #57544E;
+  --doc-muted: #8A857C;
+  --doc-accent: #C84B31;
+  --doc-accent-2: #185C43;
+  --doc-accent-2-soft: #E5F0EC;
+  --doc-rule: #D6D1C7;
+  --doc-rule-soft: #E5E0D5;
+  --doc-surface: #FAF9F5;
+  --doc-heading-font: var(--font-serif);
+  --doc-heading-weight: 400;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.dossier-paper .font-editorial {
+  font-family: var(--doc-heading-font);
+  font-weight: var(--doc-heading-weight);
+}
+.dossier-paper[data-doc-theme="minimal"] {
+  --doc-ink: #111111; --doc-text: #222222; --doc-text-2: #555555; --doc-muted: #8C8C8C;
+  --doc-accent: #111111; --doc-accent-2: #111111; --doc-accent-2-soft: #F2F2F2;
+  --doc-rule: #DDDDDD; --doc-rule-soft: #EEEEEE; --doc-surface: #FAFAFA;
+  --doc-heading-font: var(--font-sans); --doc-heading-weight: 600;
+}
+.dossier-paper[data-doc-theme="moderno"] {
+  --doc-ink: #0F172A; --doc-text: #1E293B; --doc-text-2: #475569; --doc-muted: #94A3B8;
+  --doc-accent: #2563EB; --doc-accent-2: #0E7490; --doc-accent-2-soft: #E0F2FE;
+  --doc-rule: #CBD5E1; --doc-rule-soft: #E2E8F0; --doc-surface: #F8FAFC;
+  --doc-heading-font: var(--font-sans); --doc-heading-weight: 700;
+}
+.dossier-paper[data-doc-theme="corporativo"] {
+  --doc-ink: #1B2A41; --doc-text: #24324A; --doc-text-2: #4A5568; --doc-muted: #8492A6;
+  --doc-accent: #1F4E79; --doc-accent-2: #1F6F50; --doc-accent-2-soft: #E3F1EA;
+  --doc-rule: #C9D3DF; --doc-rule-soft: #E3E8EF; --doc-surface: #F5F8FB;
+}
+.dossier-paper[data-doc-theme="elegante"] {
+  --doc-ink: #2B2620; --doc-text: #3A332B; --doc-text-2: #6B6157; --doc-muted: #A39887;
+  --doc-accent: #A67C2E; --doc-accent-2: #7A5C1E; --doc-accent-2-soft: #F7F0E1;
+  --doc-rule: #E2D6BF; --doc-rule-soft: #EEE5D3; --doc-surface: #FCF9F2;
+}
+.dossier-paper[data-doc-theme="elegante"] h2.font-editorial { font-style: italic; }
+.dossier-paper[data-doc-theme="vibrante"] {
+  --doc-ink: #1F1B2E; --doc-text: #2C2840; --doc-text-2: #4C4A57; --doc-muted: #8E8A99;
+  --doc-accent: #E8590C; --doc-accent-2: #2B8A3E; --doc-accent-2-soft: #EBFBEE;
+  --doc-rule: #DCD6E8; --doc-rule-soft: #ECE8F3; --doc-surface: #FFF8F1;
+  --doc-heading-font: var(--font-sans); --doc-heading-weight: 700;
+}
+
+/* Theme picker swatches */
+.theme-swatch {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.3rem 0.6rem; border-radius: 9999px;
+  border: 1px solid var(--border-hairline); background: var(--bg-elevated);
+  font-size: 0.6875rem; font-weight: 600; color: var(--ink-secondary);
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.theme-swatch:hover { border-color: var(--ink-primary); color: var(--ink-primary); }
+.theme-swatch[aria-pressed="true"] { border-color: var(--ink-primary); color: var(--ink-primary); box-shadow: inset 0 0 0 1px var(--ink-primary); }
+.theme-swatch .dot { width: 0.7rem; height: 0.7rem; border-radius: 9999px; }
+
+/* Brief highlight on content filled by the AI / templates */
+@keyframes flash-updated {
+  0% { background-color: rgba(24, 92, 67, 0.18); }
+  100% { background-color: transparent; }
+}
+.flash-updated { animation: flash-updated 1.6s ease-out; }
+
+/* Typed signature fonts (loaded from Google Fonts) */
+.font-sig-1 { font-family: 'Dancing Script', cursive; }
+.font-sig-2 { font-family: 'Great Vibes', cursive; }
+.font-sig-3 { font-family: 'Caveat', cursive; }
 
 /* Inline Editable Highlights on Dossier Paper */
 .inline-editable {

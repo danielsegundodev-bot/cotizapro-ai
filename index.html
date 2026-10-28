@@ -62,7 +62,7 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Caveat:wght@600&family=Dancing+Script:wght@600&family=Great+Vibes&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
   <!-- Tailwind compilado (npm run build:css) va después, igual que el CDN que inyectaba sus estilos al final -->
   <link rel="stylesheet" href="tailwind.css" />
@@ -141,7 +141,6 @@
       <!-- Top Action Bar -->
       <div class="no-print flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-5 border-b border-[var(--border-hairline)]">
         <div>
-          <span class="font-tabular text-[11px] uppercase tracking-widest text-[var(--accent-terracotta)] font-semibold">Generador de Cotizaciones &amp; Contratos</span>
           <h1 class="font-editorial text-2xl sm:text-3xl font-normal text-[var(--ink-primary)] mt-0.5">
             Haz cotizaciones profesionales en PDF, gratis y en segundos
           </h1>
@@ -207,9 +206,7 @@
             <!-- AI Quick Generator -->
             <div class="atelier-card rounded-xl p-5 space-y-3">
               <div class="flex items-center justify-between">
-                <span class="font-tabular text-[11px] uppercase tracking-wider font-semibold text-[var(--accent-terracotta)]">
-                  Autocompletar con Inteligencia Artificial
-                </span>
+                <h2 class="text-sm font-semibold text-[var(--ink-primary)]">Autocompletar con IA</h2>
                 <span id="ai-status-text" class="text-[11px] text-[var(--ink-muted)]">Listo</span>
               </div>
               <p class="text-xs text-[var(--ink-secondary)] leading-relaxed">
@@ -222,12 +219,20 @@
                 </svg>
                 <span>Redactar Cotización con IA</span>
               </button>
+              <div id="ai-result" class="hidden rounded-lg border border-[var(--accent-forest)]/30 bg-[var(--accent-forest-soft)] p-3 space-y-2.5" role="status" aria-live="polite">
+                <p id="ai-result-text" class="text-xs text-[var(--ink-primary)] leading-relaxed"></p>
+                <p id="ai-result-missing" class="hidden text-xs font-semibold text-[var(--accent-terracotta)]"></p>
+                <div class="flex flex-wrap gap-2">
+                  <button type="button" data-click="scrollToPreview" class="btn-forest px-3 py-1.5 text-xs">Ver cotización &darr;</button>
+                  <button type="button" data-click="switchInspectorStep" data-arg="2" class="btn-outline px-3 py-1.5 text-xs">Revisar conceptos y precios</button>
+                </div>
+              </div>
             </div>
 
             <!-- Client & Sender Info -->
             <div class="atelier-card rounded-xl p-5 space-y-4">
               <div class="flex items-center justify-between border-b border-[var(--border-hairline)] pb-2.5">
-                <h2 class="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)]">Quién Cotiza y Para Quién</h2>
+                <h2 class="text-sm font-semibold text-[var(--ink-primary)]">Quién Cotiza y Para Quién</h2>
                 <span class="text-[11px] text-[var(--ink-muted)]">O edita directo en la hoja &rarr;</span>
               </div>
 
@@ -279,7 +284,7 @@
             <div class="atelier-card rounded-xl p-5 space-y-4">
               <div class="flex items-center justify-between border-b border-[var(--border-hairline)] pb-2.5">
                 <div>
-                  <h2 class="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)]">Conceptos a Cobrar</h2>
+                  <h2 class="text-sm font-semibold text-[var(--ink-primary)]">Conceptos a Cobrar</h2>
                   <p class="text-[11px] text-[var(--ink-muted)]">Agrega o edita cada servicio o producto</p>
                 </div>
                 <button data-click="addLineItem" class="btn-outline px-2.5 py-1 text-xs">
@@ -295,8 +300,8 @@
                 <div>
                   <label class="atelier-label">Moneda</label>
                   <select id="currency-select" data-change="renderProposalPreview" class="atelier-input font-tabular">
+                    <option value="MXN" selected>MXN ($)</option>
                     <option value="USD">USD ($)</option>
-                    <option value="MXN">MXN ($)</option>
                     <option value="EUR">EUR (€)</option>
                     <option value="COP">COP ($)</option>
                     <option value="ARS">ARS ($)</option>
@@ -328,7 +333,7 @@
           <!-- STEP 3: CONTRACT & DIGITAL SIGNATURE -->
           <div id="inspector-step-3" class="hidden space-y-4">
             <div class="atelier-card rounded-xl p-5 space-y-4">
-              <h2 class="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)] border-b border-[var(--border-hairline)] pb-2.5">
+              <h2 class="text-sm font-semibold text-[var(--ink-primary)] border-b border-[var(--border-hairline)] pb-2.5">
                 Condiciones de Pago, Contrato y Firma
               </h2>
 
@@ -345,20 +350,45 @@
                 <input id="toggle-contract" type="checkbox" checked data-change="renderProposalPreview" class="mt-0.5 w-4 h-4 accent-[#141413]" />
               </label>
 
-              <!-- Digital Signature Pad -->
-              <div class="space-y-1.5">
+              <!-- Signature: draw, upload an image or type it -->
+              <div class="space-y-2">
                 <div class="flex items-center justify-between">
-                  <label class="atelier-label mb-0">Tu Firma Digital (Dibuja con el mouse o tu dedo)</label>
-                  <button data-click="clearSignature" class="text-[11px] font-medium text-[var(--accent-terracotta)] hover:underline">
+                  <span class="atelier-label mb-0">Tu firma</span>
+                  <button type="button" data-click="clearSignature" class="text-[11px] font-medium text-[var(--accent-terracotta)] hover:underline">
                     Borrar firma
                   </button>
                 </div>
-                <div class="rounded-lg bg-white border border-[#D6D1C7] p-1">
-                  <canvas id="signature-canvas" width="380" height="96" class="w-full h-[96px] rounded bg-white"></canvas>
+                <div class="grid grid-cols-3 gap-1 p-1 rounded-lg bg-[var(--bg-subtle)] border border-[var(--border-hairline)]" role="tablist" aria-label="Cómo agregar tu firma">
+                  <button type="button" id="sig-mode-draw" role="tab" data-click="setSignatureMode" data-arg="draw" class="sig-mode-btn px-2 py-1.5 rounded-md text-xs font-semibold">Dibujar</button>
+                  <button type="button" id="sig-mode-upload" role="tab" data-click="setSignatureMode" data-arg="upload" class="sig-mode-btn px-2 py-1.5 rounded-md text-xs font-medium">Subir imagen</button>
+                  <button type="button" id="sig-mode-type" role="tab" data-click="setSignatureMode" data-arg="type" class="sig-mode-btn px-2 py-1.5 rounded-md text-xs font-medium">Escribir</button>
                 </div>
-                <p class="text-[11px] text-[var(--ink-muted)]">
-                  Tu firma aparece automáticamente al final de la cotización lista para imprimir en PDF.
-                </p>
+
+                <div id="sig-panel-draw" class="space-y-1.5">
+                  <div class="rounded-lg bg-white border border-[#D6D1C7] p-1">
+                    <canvas id="signature-canvas" class="w-full h-[110px] rounded bg-white"></canvas>
+                  </div>
+                  <p class="text-[11px] text-[var(--ink-muted)]">Dibuja con el mouse o con tu dedo.</p>
+                </div>
+
+                <div id="sig-panel-upload" class="hidden space-y-1.5">
+                  <label for="signature-file" class="flex flex-col items-center justify-center gap-1 h-[110px] rounded-lg border-2 border-dashed border-[var(--border-hairline)] bg-[var(--bg-elevated)] hover:border-[var(--ink-primary)] cursor-pointer text-center px-3 transition">
+                    <span class="text-xs font-semibold text-[var(--ink-primary)]">Elegir imagen de tu firma</span>
+                    <span class="text-[11px] text-[var(--ink-muted)]">PNG, JPG o WEBP · máximo 2 MB · quitamos el fondo blanco</span>
+                  </label>
+                  <input id="signature-file" type="file" accept="image/png,image/jpeg,image/webp" class="sr-only" data-change="onSignatureUpload" />
+                </div>
+
+                <div id="sig-panel-type" class="hidden space-y-2">
+                  <input id="signature-typed-name" type="text" placeholder="Escribe tu nombre como firma" autocomplete="name" data-input="renderTypedSignature" class="atelier-input" />
+                  <div class="grid grid-cols-3 gap-2">
+                    <button type="button" data-click="setTypedSignatureStyle" data-arg="1" class="sig-style-btn font-sig-1 text-xl py-2 rounded-lg border border-[var(--border-hairline)] bg-white text-[#141413]">Firma</button>
+                    <button type="button" data-click="setTypedSignatureStyle" data-arg="2" class="sig-style-btn font-sig-2 text-2xl py-1.5 rounded-lg border border-[var(--border-hairline)] bg-white text-[#141413]">Firma</button>
+                    <button type="button" data-click="setTypedSignatureStyle" data-arg="3" class="sig-style-btn font-sig-3 text-2xl py-1.5 rounded-lg border border-[var(--border-hairline)] bg-white text-[#141413]">Firma</button>
+                  </div>
+                </div>
+
+                <p class="text-[11px] text-[var(--ink-muted)]">Tu firma aparece al final de la cotización. No se guarda en ningún servidor.</p>
               </div>
 
               <div class="pt-2 flex justify-between items-center border-t border-[var(--border-hairline)]">
@@ -395,77 +425,94 @@
             </div>
           </div>
 
+          <!-- Document design picker (2 free, 4 PRO) -->
+          <div class="no-print atelier-card rounded-xl px-4 py-3 space-y-2.5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-semibold text-[var(--ink-primary)]">Diseño de tu cotización</span>
+              <span class="text-[11px] text-[var(--ink-muted)]">2 gratis · 4 con PRO</span>
+            </div>
+            <div id="doc-theme-picker" class="flex flex-wrap gap-2">
+              <button type="button" class="theme-swatch" data-click="setDocTheme" data-arg="clasico" aria-pressed="true"><span class="dot bg-[#C84B31]"></span>Clásico</button>
+              <button type="button" class="theme-swatch" data-click="setDocTheme" data-arg="minimal" aria-pressed="false"><span class="dot bg-[#111111]"></span>Minimal</button>
+              <button type="button" class="theme-swatch" data-click="setDocTheme" data-arg="moderno" aria-pressed="false"><span class="dot bg-[#2563EB]"></span>Moderno<span class="theme-lock text-[9px] font-bold text-[var(--accent-terracotta)]">PRO</span></button>
+              <button type="button" class="theme-swatch" data-click="setDocTheme" data-arg="corporativo" aria-pressed="false"><span class="dot bg-[#1F4E79]"></span>Corporativo<span class="theme-lock text-[9px] font-bold text-[var(--accent-terracotta)]">PRO</span></button>
+              <button type="button" class="theme-swatch" data-click="setDocTheme" data-arg="elegante" aria-pressed="false"><span class="dot bg-[#A67C2E]"></span>Elegante<span class="theme-lock text-[9px] font-bold text-[var(--accent-terracotta)]">PRO</span></button>
+              <button type="button" class="theme-swatch" data-click="setDocTheme" data-arg="vibrante" aria-pressed="false"><span class="dot bg-[#E8590C]"></span>Vibrante<span class="theme-lock text-[9px] font-bold text-[var(--accent-terracotta)]">PRO</span></button>
+            </div>
+            <p id="doc-theme-note" class="hidden text-[11px] text-[var(--accent-terracotta)]">Vista previa de un diseño PRO. Para descargarlo en PDF activa <button type="button" data-click="openProModal" class="underline font-semibold">Studio PRO</button>.</p>
+          </div>
+
           <!-- THE PRINTABLE QUOTE PAPER SHEET -->
-          <article id="proposal-document" class="dossier-paper p-4 sm:p-12 space-y-8">
+          <article id="proposal-document" data-doc-theme="clasico" class="dossier-paper p-4 sm:p-12 space-y-8">
 
             <!-- Header -->
-            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-6 border-b-2 border-[#141413] pb-6">
+            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-6 border-b-2 border-[color:var(--doc-ink)] pb-6">
               <div class="space-y-2 max-w-xl">
                 <div class="flex items-center gap-2">
-                  <span class="font-tabular text-[10px] font-bold uppercase tracking-[0.14em] px-2 py-0.5 bg-[#141413] text-white">
+                  <span class="font-tabular text-[10px] font-bold uppercase tracking-[0.14em] px-2 py-0.5 bg-[color:var(--doc-ink)] text-white">
                     COTIZACIÓN &amp; PROPUESTA DE SERVICIOS
                   </span>
                 </div>
-                <h2 id="doc-project-title" contenteditable="true" data-blur="syncInlineEdit" data-arg="project-title" class="inline-editable font-editorial text-2xl sm:text-3xl font-normal text-[#141413] leading-tight">
+                <h2 id="doc-project-title" contenteditable="true" data-blur="syncInlineEdit" data-arg="project-title" class="inline-editable font-editorial text-2xl sm:text-3xl font-normal text-[color:var(--doc-ink)] leading-tight">
                   Desarrollo de Portal Web &amp; Automatización de Citas
                 </h2>
-                <div class="pt-1 text-xs text-[#57544E] flex flex-wrap items-center gap-x-3 gap-y-1">
-                  <span id="doc-sender-name" class="font-semibold text-[#141413]">Tu Empresa</span>
+                <div class="pt-1 text-xs text-[color:var(--doc-text-2)] flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <span id="doc-sender-name" class="font-semibold text-[color:var(--doc-ink)]">Tu Empresa</span>
                   <span>·</span>
                   <span id="doc-sender-contact" class="font-tabular text-[11px]">tu@correo.com</span>
                 </div>
               </div>
 
               <!-- Folio Box -->
-              <div class="sm:text-right border border-[#D6D1C7] bg-[#FAF9F5] p-3.5 min-w-[205px] space-y-1">
-                <div class="font-tabular text-[10px] uppercase tracking-widest text-[#8A857C]">Folio de Cotización</div>
-                <div id="doc-quote-number" class="font-tabular text-sm font-bold text-[#141413]">CP-2026-0842</div>
-                <div class="font-tabular text-[11px] text-[#57544E] pt-1 border-t border-[#E5E0D5]">
+              <div class="sm:text-right border border-[color:var(--doc-rule)] bg-[color:var(--doc-surface)] p-3.5 min-w-[205px] space-y-1">
+                <div class="font-tabular text-[10px] uppercase tracking-widest text-[color:var(--doc-muted)]">Folio de Cotización</div>
+                <div id="doc-quote-number" class="font-tabular text-sm font-bold text-[color:var(--doc-ink)]">CP-2026-0842</div>
+                <div class="font-tabular text-[11px] text-[color:var(--doc-text-2)] pt-1 border-t border-[color:var(--doc-rule-soft)]">
                   Fecha: <span id="doc-date"></span>
                 </div>
-                <div class="font-tabular text-[11px] text-[#185C43] font-semibold">
+                <div class="font-tabular text-[11px] text-[color:var(--doc-accent-2)] font-semibold">
                   Vigencia: <span id="doc-validity">7 días naturales</span>
                 </div>
               </div>
             </div>
 
             <!-- 3-Column Client Metadata -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 border border-[#D6D1C7] divide-y sm:divide-y-0 sm:divide-x divide-[#D6D1C7] bg-[#FAF9F5] text-xs">
+            <div class="grid grid-cols-1 sm:grid-cols-3 border border-[color:var(--doc-rule)] divide-y sm:divide-y-0 sm:divide-x divide-[color:var(--doc-rule)] bg-[color:var(--doc-surface)] text-xs">
               <div class="p-3.5">
-                <span class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C] block">Cliente / Destinatario</span>
-                <span id="doc-client-name" contenteditable="true" data-blur="syncInlineEdit" data-arg="client-name" class="inline-editable font-semibold text-[#141413] text-sm mt-0.5 block">Grupo Médico San Ángel</span>
+                <span class="font-tabular text-[10px] uppercase tracking-wider text-[color:var(--doc-muted)] block">Cliente / Destinatario</span>
+                <span id="doc-client-name" contenteditable="true" data-blur="syncInlineEdit" data-arg="client-name" class="inline-editable font-semibold text-[color:var(--doc-ink)] text-sm mt-0.5 block">Grupo Médico San Ángel</span>
               </div>
               <div class="p-3.5">
-                <span class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C] block">Tiempo de Entrega</span>
-                <span id="doc-delivery-time" class="font-semibold text-[#141413] mt-0.5 block">10 a 14 días hábiles</span>
+                <span class="font-tabular text-[10px] uppercase tracking-wider text-[color:var(--doc-muted)] block">Tiempo de Entrega</span>
+                <span id="doc-delivery-time" class="font-semibold text-[color:var(--doc-ink)] mt-0.5 block">10 a 14 días hábiles</span>
               </div>
               <div class="p-3.5">
-                <span class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C] block">Condición de Inicio</span>
-                <span id="doc-deposit-condition" class="font-tabular font-bold text-[#185C43] mt-0.5 block">50% Anticipo</span>
+                <span class="font-tabular text-[10px] uppercase tracking-wider text-[color:var(--doc-muted)] block">Condición de Inicio</span>
+                <span id="doc-deposit-condition" class="font-tabular font-bold text-[color:var(--doc-accent-2)] mt-0.5 block">50% Anticipo</span>
               </div>
             </div>
 
             <!-- Summary -->
             <div class="space-y-2">
               <div class="flex items-center gap-2">
-                <span class="font-tabular text-[10px] font-bold uppercase tracking-widest text-[#8A857C]">01 · Descripción &amp; Alcance del Proyecto</span>
-                <div class="flex-1 border-t border-[#E5E0D5]"></div>
+                <span class="font-tabular text-[10px] font-bold uppercase tracking-widest text-[color:var(--doc-muted)]">01 · Descripción &amp; Alcance del Proyecto</span>
+                <div class="flex-1 border-t border-[color:var(--doc-rule-soft)]"></div>
               </div>
-              <p id="doc-summary" contenteditable="true" data-blur="syncInlineEdit" data-arg="proposal-summary" class="inline-editable text-xs sm:text-[13.5px] text-[#262624] leading-relaxed pl-3.5 border-l-2 border-[#C84B31] py-1">
+              <p id="doc-summary" contenteditable="true" data-blur="syncInlineEdit" data-arg="proposal-summary" class="inline-editable text-xs sm:text-[13.5px] text-[color:var(--doc-text)] leading-relaxed pl-3.5 border-l-2 border-[color:var(--doc-accent)] py-1">
               </p>
             </div>
 
             <!-- Items Table -->
             <div class="space-y-2.5">
               <div class="flex items-center gap-2">
-                <span class="font-tabular text-[10px] font-bold uppercase tracking-widest text-[#8A857C]">02 · Desglose de Conceptos e Inversión</span>
-                <div class="flex-1 border-t border-[#E5E0D5]"></div>
+                <span class="font-tabular text-[10px] font-bold uppercase tracking-widest text-[color:var(--doc-muted)]">02 · Desglose de Conceptos e Inversión</span>
+                <div class="flex-1 border-t border-[color:var(--doc-rule-soft)]"></div>
               </div>
 
-              <div class="border border-[#D6D1C7] overflow-x-auto">
+              <div class="border border-[color:var(--doc-rule)] overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                   <thead>
-                    <tr class="border-b border-[#141413] bg-[#FAF9F5] font-tabular text-[10px] uppercase tracking-wider text-[#57544E]">
+                    <tr class="border-b border-[color:var(--doc-ink)] bg-[color:var(--doc-surface)] font-tabular text-[10px] uppercase tracking-wider text-[color:var(--doc-text-2)]">
                       <th class="py-2.5 px-3.5 w-10">#</th>
                       <th class="py-2.5 px-3.5">Concepto / Entregable</th>
                       <th class="py-2.5 px-3.5 text-center w-16">Cant.</th>
@@ -473,7 +520,7 @@
                       <th class="py-2.5 px-3.5 text-right w-28">Subtotal</th>
                     </tr>
                   </thead>
-                  <tbody id="doc-items-tbody" class="divide-y divide-[#E5E0D5] text-xs sm:text-[13px]">
+                  <tbody id="doc-items-tbody" class="divide-y divide-[color:var(--doc-rule-soft)] text-xs sm:text-[13px]">
                   </tbody>
                 </table>
               </div>
@@ -481,42 +528,42 @@
 
             <!-- Totals & Deposit Breakdown -->
             <div class="grid grid-cols-1 sm:grid-cols-12 gap-5 items-stretch pt-1">
-              <div class="sm:col-span-6 border border-[#185C43]/30 bg-[#E5F0EC]/60 p-4 flex flex-col justify-between">
+              <div class="sm:col-span-6 border border-[color:var(--doc-accent-2)]/30 bg-[color:var(--doc-accent-2-soft)]/60 p-4 flex flex-col justify-between">
                 <div class="space-y-2">
-                  <div class="font-tabular text-[10px] font-bold uppercase tracking-wider text-[#185C43]">
+                  <div class="font-tabular text-[10px] font-bold uppercase tracking-wider text-[color:var(--doc-accent-2)]">
                     Plan de Pagos para Iniciar
                   </div>
                   <div class="space-y-1 text-xs">
-                    <div class="flex justify-between font-bold text-[#141413]">
+                    <div class="flex justify-between font-bold text-[color:var(--doc-ink)]">
                       <span>1er Pago · Anticipo (<span id="doc-deposit-pct">50</span>%):</span>
-                      <span id="doc-deposit-amount" class="font-tabular text-[#185C43]">$0.00</span>
+                      <span id="doc-deposit-amount" class="font-tabular text-[color:var(--doc-accent-2)]">$0.00</span>
                     </div>
-                    <div class="flex justify-between text-[#57544E]">
+                    <div class="flex justify-between text-[color:var(--doc-text-2)]">
                       <span>Liquidación contra entrega:</span>
                       <span id="doc-balance-amount" class="font-tabular">$0.00</span>
                     </div>
                   </div>
                 </div>
-                <div id="doc-payment-instructions" class="mt-3 pt-2.5 border-t border-[#185C43]/20 text-[11px] text-[#262624] leading-snug">
+                <div id="doc-payment-instructions" class="mt-3 pt-2.5 border-t border-[color:var(--doc-accent-2)]/20 text-[11px] text-[color:var(--doc-text)] leading-snug">
                 </div>
               </div>
 
-              <div class="sm:col-span-6 border border-[#D6D1C7] bg-[#FAF9F5] p-4 space-y-1.5 text-xs">
-                <div class="flex justify-between text-[#57544E]">
+              <div class="sm:col-span-6 border border-[color:var(--doc-rule)] bg-[color:var(--doc-surface)] p-4 space-y-1.5 text-xs">
+                <div class="flex justify-between text-[color:var(--doc-text-2)]">
                   <span>Subtotal:</span>
-                  <span id="doc-subtotal" class="font-tabular font-medium text-[#141413]">$0.00</span>
+                  <span id="doc-subtotal" class="font-tabular font-medium text-[color:var(--doc-ink)]">$0.00</span>
                 </div>
-                <div id="doc-discount-row" class="flex justify-between text-[#185C43]">
+                <div id="doc-discount-row" class="flex justify-between text-[color:var(--doc-accent-2)]">
                   <span>Descuento (<span id="doc-discount-pct">0</span>%):</span>
                   <span id="doc-discount-amount" class="font-tabular">-$0.00</span>
                 </div>
-                <div id="doc-tax-row" class="flex justify-between text-[#57544E]">
+                <div id="doc-tax-row" class="flex justify-between text-[color:var(--doc-text-2)]">
                   <span>IVA (<span id="doc-tax-pct">16</span>%):</span>
                   <span id="doc-tax-amount" class="font-tabular">$0.00</span>
                 </div>
-                <div class="border-t-2 border-[#141413] pt-2.5 mt-2 flex justify-between items-baseline">
-                  <span class="font-tabular font-bold text-[#141413] text-xs uppercase tracking-wider">Total:</span>
-                  <span id="doc-total" class="font-tabular font-bold text-[#141413] text-lg">$0.00 USD</span>
+                <div class="border-t-2 border-[color:var(--doc-ink)] pt-2.5 mt-2 flex justify-between items-baseline">
+                  <span class="font-tabular font-bold text-[color:var(--doc-ink)] text-xs uppercase tracking-wider">Total:</span>
+                  <span id="doc-total" class="font-tabular font-bold text-[color:var(--doc-ink)] text-lg">$0.00 USD</span>
                 </div>
               </div>
             </div>
@@ -524,48 +571,48 @@
             <!-- Legal Contract Clauses -->
             <div id="doc-contract-section" class="space-y-2 pt-2">
               <div class="flex items-center gap-2">
-                <span class="font-tabular text-[10px] font-bold uppercase tracking-widest text-[#8A857C]">03 · Términos y Condiciones de Servicio</span>
-                <div class="flex-1 border-t border-[#E5E0D5]"></div>
+                <span class="font-tabular text-[10px] font-bold uppercase tracking-widest text-[color:var(--doc-muted)]">03 · Términos y Condiciones de Servicio</span>
+                <div class="flex-1 border-t border-[color:var(--doc-rule-soft)]"></div>
               </div>
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-[11px] text-[#57544E] leading-relaxed pt-1">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-[11px] text-[color:var(--doc-text-2)] leading-relaxed pt-1">
                 <div>
-                  <strong class="text-[#141413] block mb-0.5">I. Alcance y Entrega</strong>
+                  <strong class="text-[color:var(--doc-ink)] block mb-0.5">I. Alcance y Entrega</strong>
                   <span id="contract-sender"></span> realizará a favor de <span id="contract-client"></span> los conceptos descritos en un plazo estimado de <span id="contract-delivery"></span> a partir de la recepción del anticipo.
                 </div>
                 <div>
-                  <strong class="text-[#141413] block mb-0.5">II. Liquidación y Propiedad</strong>
+                  <strong class="text-[color:var(--doc-ink)] block mb-0.5">II. Liquidación y Propiedad</strong>
                   Una vez cubierto el 100% del total (<span id="contract-total" class="font-tabular"></span>), el Cliente recibe la titularidad total sobre los entregables acordados.
                 </div>
                 <div>
-                  <strong class="text-[#141413] block mb-0.5">III. Garantía</strong>
+                  <strong class="text-[color:var(--doc-ink)] block mb-0.5">III. Garantía</strong>
                   Incluye hasta 2 revisiones de ajustes sobre el alcance aprobado y 30 días naturales de garantía técnica posterior a la entrega.
                 </div>
               </div>
             </div>
 
             <!-- Dual Signatures Block -->
-            <div class="grid grid-cols-2 gap-8 pt-6 border-t border-[#D6D1C7]">
+            <div class="grid grid-cols-2 gap-8 pt-6 border-t border-[color:var(--doc-rule)]">
               <div>
-                <div class="h-20 flex items-center justify-start border-b border-[#141413] mb-2">
+                <div class="h-20 flex items-center justify-start border-b border-[color:var(--doc-ink)] mb-2">
                   <img id="doc-signature-img" alt="Firma Emisor" class="max-h-16 object-contain hidden" />
-                  <span id="doc-signature-placeholder" class="font-editorial italic text-sm text-[#8A857C]">Firma del emisor</span>
+                  <span id="doc-signature-placeholder" class="font-editorial italic text-sm text-[color:var(--doc-muted)]">Firma del emisor</span>
                 </div>
-                <p id="sig-sender-name" class="text-xs font-bold text-[#141413]">Tu Empresa</p>
-                <p class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C]">Proveedor / Especialista</p>
+                <p id="sig-sender-name" class="text-xs font-bold text-[color:var(--doc-ink)]">Tu Empresa</p>
+                <p class="font-tabular text-[10px] uppercase tracking-wider text-[color:var(--doc-muted)]">Proveedor / Especialista</p>
               </div>
               <div>
-                <div class="h-20 flex items-end justify-start border-b border-[#141413] mb-2 pb-1">
-                  <span class="font-editorial italic text-sm text-[#8A857C]">Firma de aceptación del cliente</span>
+                <div class="h-20 flex items-end justify-start border-b border-[color:var(--doc-ink)] mb-2 pb-1">
+                  <span class="font-editorial italic text-sm text-[color:var(--doc-muted)]">Firma de aceptación del cliente</span>
                 </div>
-                <p id="sig-client-name" class="text-xs font-bold text-[#141413]">Grupo Médico San Ángel</p>
-                <p class="font-tabular text-[10px] uppercase tracking-wider text-[#8A857C]">Cliente · Acepto cotización</p>
+                <p id="sig-client-name" class="text-xs font-bold text-[color:var(--doc-ink)]">Grupo Médico San Ángel</p>
+                <p class="font-tabular text-[10px] uppercase tracking-wider text-[color:var(--doc-muted)]">Cliente · Acepto cotización</p>
               </div>
             </div>
 
             <!-- Subtle Freemium Colophon (Removed in PRO) -->
-            <div id="doc-viral-watermark" class="pt-3 border-t border-dashed border-[#E5E0D5] flex flex-wrap items-center justify-between gap-2 font-tabular text-[10px] text-[#8A857C]">
+            <div id="doc-viral-watermark" class="pt-3 border-t border-dashed border-[color:var(--doc-rule-soft)] flex flex-wrap items-center justify-between gap-2 font-tabular text-[10px] text-[color:var(--doc-muted)]">
               <span>COTIZACIÓN GENERADA CON COTIZAPRO STUDIO</span>
-              <span class="text-[#C84B31] font-semibold cursor-pointer" data-click="openProModal">Quitar marca de agua con Pase PRO &rarr;</span>
+              <span class="text-[color:var(--doc-accent)] font-semibold cursor-pointer" data-click="openProModal">Quitar marca de agua con Pase PRO &rarr;</span>
             </div>
 
           </article>
@@ -630,7 +677,7 @@
                 <ul class="mt-3 space-y-1.5 text-xs text-[var(--ink-secondary)]">
                   <li>· Cotizaciones ilimitadas</li>
                   <li>· Sin marca de agua</li>
-                  <li>· Historial de clientes</li>
+                  <li>· 4 diseños premium</li>
                 </ul>
               </div>
               <button data-click="triggerPaymentCheckout" data-arg="monthly" class="btn-outline mt-5 w-full py-2.5 text-xs">Suscribirme &rarr;</button>
@@ -725,7 +772,7 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         <div class="lg:col-span-5 atelier-card rounded-xl p-6 space-y-4">
-          <h3 class="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)] border-b border-[var(--border-hairline)] pb-2.5">
+          <h3 class="text-sm font-semibold text-[var(--ink-primary)] border-b border-[var(--border-hairline)] pb-2.5">
             Datos del Proyecto de tu Cliente
           </h3>
 
@@ -799,7 +846,7 @@
           <div class="atelier-card rounded-xl p-6 space-y-3">
             <div class="flex flex-wrap items-center justify-between gap-2">
               <div>
-                <h4 class="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)]">Mensaje Sugerido para Enviarle tu Cotización por WhatsApp</h4>
+                <h4 class="text-sm font-semibold text-[var(--ink-primary)]">Mensaje Sugerido para Enviarle tu Cotización por WhatsApp</h4>
                 <p class="text-[11px] text-[var(--ink-muted)]">Úsalo para acompañar tu archivo PDF cuando se lo mandes a tu cliente</p>
               </div>
               <div class="flex items-center gap-2">
@@ -830,7 +877,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <!-- Settings Form -->
         <div class="lg:col-span-7 atelier-card rounded-xl p-6 space-y-5">
-          <h3 class="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)] border-b border-[var(--border-hairline)] pb-2.5">
+          <h3 class="text-sm font-semibold text-[var(--ink-primary)] border-b border-[var(--border-hairline)] pb-2.5">
             Tus Pasarelas y API Keys
           </h3>
 
@@ -931,7 +978,7 @@
             <div class="font-tabular text-[10px] text-[var(--ink-muted)]">≈ $9 USD</div>
             <ul class="mt-3 space-y-1.5 text-xs text-[var(--ink-secondary)]">
               <li>· Cotizaciones PDF ilimitadas</li>
-              <li>· Sin marca de agua al pie</li>
+              <li>· Sin marca de agua y 4 diseños premium</li>
               <li>· Contratos legales y Firma Digital</li>
             </ul>
           </div>
@@ -969,6 +1016,11 @@
       </div>
     </div>
   </div>
+
+  <!-- Phone-only shortcut to the live quote (hidden while the quote is on screen) -->
+  <button type="button" id="mobile-preview-fab" data-click="scrollToPreview" class="no-print hidden lg:!hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40 btn-obsidian px-4 py-2.5 text-xs shadow-xl">
+    Ver cotización &darr;
+  </button>
 
   <!-- Toast Notification -->
   <div id="toast-notification" class="no-print fixed bottom-6 right-6 z-50 hidden px-4 py-3 rounded-lg bg-[#141413] text-[#F4F2EC] text-xs font-medium shadow-xl border border-[#2E2D29]">

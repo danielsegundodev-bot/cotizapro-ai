@@ -80,6 +80,11 @@ Todas las vulnerabilidades se explotaron primero con pruebas reales y después s
 - Responsive verificado de 360 a 1440 px sin desborde. En celular el header mide 111 px.
 - Sección de beneficios, precios y preguntas frecuentes debajo del cotizador.
 - SEO: title, description y H1 con palabras clave ("cotizador online gratis", "formato de cotización en PDF"), `es-MX`, canonical, Open Graph y Twitter con `og-image.png`, JSON-LD (WebApplication + FAQPage), `robots.txt` y `sitemap.xml`.
+- **Moneda por defecto: MXN.** Las plantillas y el generador local tienen precios base en USD y se convierten con `localizeBasePrice` (tipo de cambio aproximado y redondeo).
+- **"Redactar con IA":** si el servidor tiene la key de Gemini (`aiEnabled`), usa `/api/ai/generate` (recibe `currency`). Si no, usa `synthesizeProposalLocally`, que reconoce unos 17 giros (`LOCAL_NICHES`) y la ciudad. El panel `#ai-result` confirma qué se llenó y qué falta, y resalta los cambios (`flash-updated`).
+- **Firma:** 3 modos (dibujar en canvas HiDPI, subir PNG/JPG/WEBP de hasta 2 MB quitando el fondo blanco, o escribir con 3 fuentes tipo firma). Todo ocurre en el navegador y nunca se envía al servidor.
+- **Diseños del documento** (`DOC_THEMES`, variables CSS `--doc-*` en `styles.css`): Clásico y Minimal son gratis; Moderno, Corporativo, Elegante y Vibrante son PRO. Los PRO se pueden previsualizar, pero descargarlos exige PRO (`isLockedTheme`). El diseño elegido se recuerda y se guarda con cada cotización.
+- **Celular:** el botón flotante "Ver cotización" (`#mobile-preview-fab`) aparece mientras la hoja no está en pantalla.
 - **Google Search Console:** la etiqueta `<meta name="google-site-verification" …>` está en `index.html`. **No la borres.**
 
 ## Operación
