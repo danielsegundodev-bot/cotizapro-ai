@@ -29,6 +29,13 @@ python server.py
 
 Abre en tu navegador: `http://localhost:8080`
 
+Si cambias clases de Tailwind en `index.html` o `app.js`, recompila el CSS estático
+(la CSP no permite cargar scripts de terceros como el CDN de Tailwind):
+
+```bash
+npm install && npm run build:css
+```
+
 El **Panel de Propietario** se abre desde el pie de página ("Acceso Propietario") con la clave definida en
 `COTIZAPRO_OWNER_PASSWORD`. La clave se verifica en el servidor y nunca se incluye en el código del navegador.
 Si la variable no está definida, el panel queda deshabilitado.

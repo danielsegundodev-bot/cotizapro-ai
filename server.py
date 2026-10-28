@@ -88,7 +88,16 @@ ALLOWED_STATIC_PATHS = {
     "/index.html",
     "/styles.css",
     "/app.js",
+    "/tailwind.css",
 }
+
+# Strict CSP: no inline scripts/handlers, no third-party scripts (Tailwind is compiled locally).
+# frame-ancestors only works as a header, not in the <meta> tag.
+CONTENT_SECURITY_POLICY = (
+    "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; "
+    "font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; "
+    "object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+)
 
 
 class RateLimiter:
@@ -380,6 +389,11 @@ class CotizaProHandler(SimpleHTTPRequestHandler):
         self.send_header("X-Frame-Options", "DENY")
         self.send_header("Referrer-Policy", "strict-origin-when-cross-origin")
         self.send_header("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+        self.send_header("Content-Security-Policy", CONTENT_SECURITY_POLICY)
+        self.send_header("Cross-Origin-Opener-Policy", "same-origin")
+        self.send_header("Cross-Origin-Resource-Policy", "same-origin")
+        if TRUST_PROXY and self.headers.get("X-Forwarded-Proto", "") == "https":
+            self.send_header("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
         super().end_headers()
 
     def _client_ip(self):
