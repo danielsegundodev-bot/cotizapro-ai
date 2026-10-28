@@ -14,10 +14,10 @@ const STORAGE_KEYS = {
 // Default Owner Configuration (Daniel Segundo)
 const DEFAULT_CONFIG = {
   geminiApiKey: '',
-  stripeMonthlyUrl: '',
-  stripeLifetimeUrl: '',
+  stripeMonthlyUrl: 'https://buy.stripe.com/4gM6oA2kWceC4I6g0Vbsc00',
+  stripeLifetimeUrl: 'https://buy.stripe.com/4gM6oA2kWceC4I6g0Vbsc00',
   ownerWhatsapp: '5215500000000',
-  bankInstructions: 'Aceptamos Transferencia Bancaria, Tarjeta (Stripe / MercadoPago) o PayPal (daniel.segundo.dev@gmail.com).',
+  bankInstructions: 'Pago seguro con tarjeta en línea: https://buy.stripe.com/4gM6oA2kWceC4I6g0Vbsc00 o vía PayPal/Transferencia (daniel.segundo.dev@gmail.com).',
   affHosting: 'https://www.hostinger.com/?REFERRALCODE=COTIZAPRO',
   affEcommerce: 'https://www.shopify.com/?ref=cotizapro-ai',
   affCrm: 'https://www.make.com/en/register?pc=cotizapro'
@@ -166,7 +166,15 @@ function switchTab(tabId) {
 async function initApp() {
   try {
     const savedCfg = localStorage.getItem(STORAGE_KEYS.CONFIG);
-    if (savedCfg) state.config = { ...DEFAULT_CONFIG, ...JSON.parse(savedCfg) };
+    if (savedCfg) {
+      const parsedCfg = JSON.parse(savedCfg);
+      state.config = {
+        ...DEFAULT_CONFIG,
+        ...parsedCfg,
+        stripeMonthlyUrl: parsedCfg.stripeMonthlyUrl || DEFAULT_CONFIG.stripeMonthlyUrl,
+        stripeLifetimeUrl: parsedCfg.stripeLifetimeUrl || DEFAULT_CONFIG.stripeLifetimeUrl
+      };
+    }
 
     const savedQuotes = localStorage.getItem(STORAGE_KEYS.QUOTES);
     if (savedQuotes) state.savedQuotes = JSON.parse(savedQuotes);
@@ -179,6 +187,17 @@ async function initApp() {
 
     const savedUsage = localStorage.getItem(STORAGE_KEYS.USAGE);
     if (savedUsage) state.freeUsed = parseInt(savedUsage, 10) || 0;
+
+    // Auto-unlock PRO when Stripe redirects back with ?pro=activated or ?payment=success
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('pro') === 'activated' || params.get('payment') === 'success' || params.get('session_id')) {
+      state.isPro = true;
+      localStorage.setItem(STORAGE_KEYS.PLAN, 'PRO');
+      setTimeout(() => {
+        showToast('🎉 ¡Pago de Stripe confirmado! Tu Plan PRO Ilimitado ya está activo.');
+      }, 600);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
   } catch (e) {
     console.warn('LocalStorage init warning:', e);
   }
