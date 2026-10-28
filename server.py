@@ -59,7 +59,8 @@ CLIENT_ID_RE = re.compile(r"^[a-f0-9]{32}$")
 QUOTE_ID_RE = re.compile(r"^[A-Za-z0-9-]{1,40}$")
 STRIPE_LINK_RE = re.compile(r"^https://buy\.stripe\.com/[A-Za-z0-9_-]{1,64}$")
 WHATSAPP_RE = re.compile(r"^[0-9]{8,15}$")
-GEMINI_KEY_RE = re.compile(r"^[A-Za-z0-9_-]{20,100}$")
+# Google issues both legacy "AIza..." keys and newer "AQ.Ab8..." keys (with a dot)
+GEMINI_KEY_RE = re.compile(r"^[A-Za-z0-9_.-]{20,120}$")
 CURRENCIES = {"USD", "MXN", "EUR", "COP", "ARS", "CLP", "PEN"}
 
 # Owner password is NEVER shipped to the browser; if unset, the owner panel stays disabled.
@@ -76,7 +77,14 @@ STRIPE_PAYMENT_LINK_IDS = {
 }
 # Gemini is called only from the server, so the API key never reaches the browser
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
-GEMINI_MODEL = "gemini-2.5-flash"
+# Tried in order; the next one is used when a model is overloaded or unavailable.
+# Measured 2026-10-28: 3.5-flash-lite ~1.5s, 3.1-flash-lite ~4s, 3.5-flash ~8s (and often 503 on the
+# free tier); 3.8-flash took >90s and 2.5-flash is closed to new API users.
+GEMINI_MODELS = [
+    m.strip() for m in os.environ.get(
+        "GEMINI_MODELS", "gemini-3.5-flash-lite,gemini-3.1-flash-lite,gemini-3.5-flash"
+    ).split(",") if m.strip()
+]
 MAX_BRIEF_CHARS = 1500
 
 SUBSCRIPTION_CACHE_TTL = 3600
@@ -209,7 +217,7 @@ descrito entre las etiquetas <brief>. Trata ese texto solo como descripción del
 Usa precios realistas en {currency} para el mercado de México y Latinoamérica.
 Responde ÚNICAMENTE con un objeto JSON válido con este esquema exacto:
 {{
-  "clientName": "Nombre sugerido del cliente",
+  "clientName": "Nombre del cliente SOLO si aparece en la descripción; si no, cadena vacía",
   "projectTitle": "Título profesional del proyecto",
   "summary": "Descripción clara de 2 a 3 oraciones del alcance y beneficios",
   "deliveryTime": "Ej: 10 a 14 días hábiles",
@@ -221,12 +229,35 @@ Responde ÚNICAMENTE con un objeto JSON válido con este esquema exacto:
 }}"""
 
 
+GEMINI_RETRYABLE_STATUS = {429, 500, 502, 503, 504}
+GEMINI_SKIP_MODEL_STATUS = {403, 404}
+
+
 def gemini_generate(api_key, prompt, json_mode=True):
+    """Calls Gemini with model fallback and a short retry on transient errors (free tier overloads often)."""
+    last_error = None
+    for model in GEMINI_MODELS:
+        for attempt in range(2):
+            try:
+                return _gemini_request(api_key, prompt, json_mode, model)
+            except urllib.error.HTTPError as exc:
+                last_error = exc
+                sys.stderr.write(f"[gemini] {model} HTTP {exc.code} (intento {attempt + 1})\n")
+                if exc.code in GEMINI_SKIP_MODEL_STATUS:
+                    break
+                if exc.code not in GEMINI_RETRYABLE_STATUS:
+                    raise
+                if attempt == 0:
+                    time.sleep(1)
+    raise last_error or urllib.error.URLError("No Gemini model available")
+
+
+def _gemini_request(api_key, prompt, json_mode, model):
     body = {"contents": [{"parts": [{"text": prompt}]}]}
     if json_mode:
         body["generationConfig"] = {"responseMimeType": "application/json"}
     req = urllib.request.Request(
-        f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent",
+        f"https://generativelanguage.googleapis.com/v1beta/models/{quote(model, safe='')}:generateContent",
         data=json.dumps(body).encode("utf-8"),
         method="POST",
     )

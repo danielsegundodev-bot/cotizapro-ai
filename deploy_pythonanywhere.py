@@ -27,7 +27,7 @@ PROJECT_FILES = [
     "favicon.svg", "og-image.png", "robots.txt", "sitemap.xml",
 ]
 # Only server secrets are copied to the remote .env; deployment credentials stay local
-REMOTE_ENV_KEYS = ["COTIZAPRO_OWNER_PASSWORD", "STRIPE_SECRET_KEY", "STRIPE_PAYMENT_LINK_IDS", "GEMINI_API_KEY"]
+REMOTE_ENV_KEYS = ["COTIZAPRO_OWNER_PASSWORD", "STRIPE_SECRET_KEY", "STRIPE_PAYMENT_LINK_IDS", "GEMINI_API_KEY", "GEMINI_MODELS"]
 
 
 def read_dotenv(path):
