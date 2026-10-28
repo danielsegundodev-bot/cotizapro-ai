@@ -12,11 +12,11 @@ const STORAGE_KEYS = {
   THEME: 'cotizapro_atelier_theme_v1'
 };
 
-// Configuración oficial conectada a tu Stripe
+// Configuración oficial conectada a tus dos productos en Stripe
 const DEFAULT_CONFIG = {
   geminiApiKey: '',
-  stripeMonthlyUrl: 'https://buy.stripe.com/4gM6oA2kWceC4I6g0Vbsc00',
-  stripeLifetimeUrl: 'https://buy.stripe.com/4gM6oA2kWceC4I6g0Vbsc00',
+  stripeMonthlyUrl: 'https://buy.stripe.com/6oUaEQ9No5Qe6Qe9Cxbsc02',
+  stripeLifetimeUrl: 'https://buy.stripe.com/eVq9AM1gS92qfmK5mhbsc01',
   ownerWhatsapp: '5215500000000'
 };
 
@@ -213,12 +213,14 @@ async function initApp() {
     const savedCfg = localStorage.getItem(STORAGE_KEYS.CONFIG);
     if (savedCfg) {
       const parsedCfg = JSON.parse(savedCfg);
+      const isOldLink = (u) => !u || u.includes('4gM6oA2kWceC4I6g0Vbsc00');
       state.config = {
         ...DEFAULT_CONFIG,
         ...parsedCfg,
-        stripeMonthlyUrl: parsedCfg.stripeMonthlyUrl || DEFAULT_CONFIG.stripeMonthlyUrl,
-        stripeLifetimeUrl: parsedCfg.stripeLifetimeUrl || DEFAULT_CONFIG.stripeLifetimeUrl
+        stripeMonthlyUrl: isOldLink(parsedCfg.stripeMonthlyUrl) ? DEFAULT_CONFIG.stripeMonthlyUrl : parsedCfg.stripeMonthlyUrl,
+        stripeLifetimeUrl: isOldLink(parsedCfg.stripeLifetimeUrl) ? DEFAULT_CONFIG.stripeLifetimeUrl : parsedCfg.stripeLifetimeUrl
       };
+      localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify(state.config));
     }
 
     const savedQuotes = localStorage.getItem(STORAGE_KEYS.QUOTES);
