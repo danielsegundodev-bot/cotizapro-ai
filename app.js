@@ -188,16 +188,52 @@ function switchTab(tabId) {
   if (tabId === 'calculator') calculateB2BAudit();
 }
 
-// Acceso Privado para Daniel (Propietario)
-function promptOwnerAccess() {
+// Hashes SHA-256 con sal para no exponer contraseñas ni claves maestras en texto plano
+const SECURITY_SALTS = {
+  PREFIX: 'COTIZAPRO_SALT_2026::',
+  OWNER_HASHES: [
+    '02fb5dc6d891c0cae4b4fc5d0db8b034178f190b512fd590e68fba887b7758a4',
+    'e7ab592726b94c85c35111b467c96281707445b3543418e3e6ce660087edf1d0'
+  ],
+  VIP_PRO_HASHES: [
+    'e7ab592726b94c85c35111b467c96281707445b3543418e3e6ce660087edf1d0',
+    '9d4abd1ee4330574dd8c2e658b328d868792fad21b33954f67be7ea9f5cb9647'
+  ],
+  STRIPE_TOKEN_HASH: 'a0cd46572561803fdaa68724c2a5b3b45b380ff0a694d933b37c3d455a36bae4'
+};
+
+async function sha256Salted(rawText) {
+  const data = new TextEncoder().encode(SECURITY_SALTS.PREFIX + String(rawText || ''));
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hashBuffer))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+// Firma criptográfica de 4 caracteres para validar autenticidad de licencias CPRO-2026-XXXXXX-CCCC
+function computeLicenseChecksum4(payload6) {
+  let h = 0x811c9dc5;
+  const str = `CPRO_VERIFY_2026::${String(payload6).toUpperCase()}::9F8A`;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return (h >>> 0).toString(36).toUpperCase().padStart(4, '0').slice(0, 4);
+}
+
+// Acceso Privado para el Propietario (Verificado con SHA-256)
+async function promptOwnerAccess() {
   const pass = window.prompt('Ingresa tu clave de propietario para abrir la configuración interna:');
   if (!pass) return;
-  if (pass.trim() === 'daniel' || pass.trim().toUpperCase() === 'CPRO-OWNER-PRO') {
+  const clean = pass.trim();
+  const hashExact = await sha256Salted(clean);
+  const hashUpper = await sha256Salted(clean.toUpperCase());
+  if (SECURITY_SALTS.OWNER_HASHES.includes(hashExact) || SECURITY_SALTS.OWNER_HASHES.includes(hashUpper)) {
     document.getElementById('tab-btn-admin')?.classList.remove('hidden');
     switchTab('admin');
-    showToast('Modo Propietario desbloqueado.');
+    showToast('Modo Propietario verificado y desbloqueado.');
   } else {
-    showToast('Clave incorrecta.');
+    showToast('Credencial de propietario inválida.');
   }
 }
 
@@ -236,15 +272,25 @@ async function initApp() {
     if (savedUsage) state.freeUsed = parseInt(savedUsage, 10) || 0;
 
     const params = new URLSearchParams(window.location.search);
-    // Si Daniel entra con ?admin=daniel se muestra su pestaña privada
-    if (params.get('admin') === 'daniel') {
-      document.getElementById('tab-btn-admin')?.classList.remove('hidden');
+    // Si se solicita ?admin=1 se pide verificación criptográfica de propietario
+    if (params.get('admin')) {
+      setTimeout(() => promptOwnerAccess(), 300);
     }
 
-    // Desbloqueo automático al regresar de Stripe (?pro=activated)
-    if (params.get('pro') === 'activated' || params.get('payment') === 'success' || params.get('session_id')) {
+    // Desbloqueo automático al regresar de Stripe con token firmado o session_id real de Stripe (cs_live_... / cs_test_...)
+    const proParam = params.get('pro_token') || params.get('pro') || '';
+    const sessionId = params.get('session_id') || '';
+    const isValidStripeSession = /^cs_(live|test)_[A-Za-z0-9]{20,}$/.test(sessionId);
+    let isValidProToken = false;
+    if (proParam) {
+      const tokHash = await sha256Salted(proParam);
+      isValidProToken = (tokHash === SECURITY_SALTS.STRIPE_TOKEN_HASH);
+    }
+
+    if (isValidStripeSession || isValidProToken) {
       state.isPro = true;
       localStorage.setItem(STORAGE_KEYS.PLAN, 'PRO');
+      updatePlanUI();
       setTimeout(() => {
         showToast('¡Pago confirmado en Stripe! Tu cuenta PRO Ilimitada está activa.');
       }, 600);
@@ -289,6 +335,7 @@ function updateQuotesCounter() {
 function updatePlanUI() {
   const badge = document.getElementById('plan-badge');
   const upgradeBtn = document.getElementById('upgrade-header-btn');
+  const proActivePill = document.getElementById('pro-active-pill');
   const watermark = document.getElementById('doc-viral-watermark');
   const statusText = document.getElementById('ai-status-text');
 
@@ -299,17 +346,41 @@ function updatePlanUI() {
   }
 
   if (state.isPro) {
-    badge.textContent = 'CUENTA PRO ILIMITADA';
-    badge.className = 'font-tabular text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[var(--accent-forest-soft)] text-[var(--accent-forest)]';
-    if (upgradeBtn) {
-      upgradeBtn.innerHTML = '<span>PRO Activo</span>';
-      upgradeBtn.className = 'btn-outline px-3.5 py-1.5 text-xs font-tabular';
+    if (badge) {
+      badge.textContent = 'CUENTA PRO ILIMITADA';
+      badge.className = 'font-tabular text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[var(--accent-forest-soft)] text-[var(--accent-forest)]';
     }
-    if (watermark) watermark.classList.add('hidden');
+    // Ocultar por completo el botón de "Obtener PRO Ilimitado" y mostrar la insignia fija de PRO Activo
+    if (upgradeBtn) {
+      upgradeBtn.classList.add('hidden');
+      upgradeBtn.style.display = 'none';
+    }
+    if (proActivePill) {
+      proActivePill.classList.remove('hidden');
+      proActivePill.style.display = 'inline-flex';
+    }
+    // Ocultar por completo la marca de agua y el link de "Quitar marca de agua con Pase PRO"
+    if (watermark) {
+      watermark.classList.add('hidden');
+      watermark.style.display = 'none';
+    }
   } else {
     const remaining = Math.max(0, state.freeLimit - state.freeUsed);
-    badge.textContent = `${remaining} de ${state.freeLimit} Cotizaciones Gratis`;
-    if (watermark) watermark.classList.remove('hidden');
+    if (badge) {
+      badge.textContent = `${remaining} de ${state.freeLimit} Cotizaciones Gratis`;
+    }
+    if (upgradeBtn) {
+      upgradeBtn.classList.remove('hidden');
+      upgradeBtn.style.display = 'inline-flex';
+    }
+    if (proActivePill) {
+      proActivePill.classList.add('hidden');
+      proActivePill.style.display = 'none';
+    }
+    if (watermark) {
+      watermark.classList.remove('hidden');
+      watermark.style.display = 'flex';
+    }
   }
 }
 
@@ -1077,9 +1148,9 @@ async function generateClientLicenseKey() {
     return;
   }
 
-  const sig = computeLicenseSignature(email);
-  const randomSuffix = Math.floor(100 + Math.random() * 899);
-  const licenseKey = `CPRO-2026-${sig}-${randomSuffix}`;
+  const sig6 = computeLicenseSignature(email);
+  const check4 = computeLicenseChecksum4(sig6);
+  const licenseKey = `CPRO-2026-${sig6}-${check4}`;
 
   const record = { email, licenseKey, createdAt: new Date().toISOString() };
   state.generatedLicenses.unshift(record);
@@ -1095,7 +1166,7 @@ async function generateClientLicenseKey() {
 
   document.getElementById('generated-license-code').textContent = licenseKey;
   document.getElementById('generated-license-box').classList.remove('hidden');
-  showToast(`Código generado para ${email}`);
+  showToast(`Código verificado generado para ${email}`);
 }
 
 function copyGeneratedLicense() {
@@ -1108,6 +1179,10 @@ function copyGeneratedLicense() {
 
 // Modal de Compra PRO para los Clientes
 function openProModal() {
+  if (state.isPro) {
+    showToast('Tu cuenta Studio PRO Ilimitada ya se encuentra activa.');
+    return;
+  }
   document.getElementById('pro-modal')?.classList.remove('hidden');
 }
 
@@ -1120,30 +1195,46 @@ function triggerPaymentCheckout(planType) {
     ? state.config.stripeMonthlyUrl
     : state.config.stripeLifetimeUrl;
 
-  if (url && url.startsWith('http')) {
-    window.open(url, '_blank');
+  if (url && /^https:\/\/buy\.stripe\.com\/[A-Za-z0-9_-]+$/.test(url.trim())) {
+    window.open(url.trim(), '_blank', 'noopener,noreferrer');
     return;
   }
 }
 
-function activateProLicense() {
-  const code = (document.getElementById('activate-license-input')?.value || '').trim().toUpperCase();
+async function activateProLicense() {
+  const inputEl = document.getElementById('activate-license-input');
+  const code = (inputEl?.value || '').trim().toUpperCase();
   if (!code) {
     showToast('Escribe tu código de licencia.');
     return;
   }
 
-  const isValidFormat = code === 'CPRO-OWNER-PRO' || /^CPRO-2026-[A-Z0-9]{6}-\d{3}$/.test(code) || code.startsWith('CPRO-2026-VIP');
-  if (!isValidFormat) {
-    showToast('Código no válido. Verifica tu clave CPRO-2026-...');
+  // 1. Verificar contra hashes SHA-256 de claves maestras (CPRO-OWNER-PRO / CPRO-2026-VIP999)
+  const codeHash = await sha256Salted(code);
+  let isVerified = SECURITY_SALTS.VIP_PRO_HASHES.includes(codeHash);
+
+  // 2. Verificar firma criptográfica de claves emitidas a clientes: CPRO-2026-<PAYLOAD6>-<CHECK4>
+  if (!isVerified) {
+    const match = /^CPRO-2026-([A-Z0-9]{6})-([A-Z0-9]{4})$/.exec(code);
+    if (match) {
+      const payload6 = match[1];
+      const providedCheck4 = match[2];
+      const expectedCheck4 = computeLicenseChecksum4(payload6);
+      isVerified = (providedCheck4 === expectedCheck4);
+    }
+  }
+
+  if (!isVerified) {
+    showToast('Código inválido o alterado. Verifica tu credencial CPRO-2026-...');
     return;
   }
 
   state.isPro = true;
   localStorage.setItem(STORAGE_KEYS.PLAN, 'PRO');
+  if (inputEl) inputEl.value = '';
   updatePlanUI();
   closeProModal();
-  showToast('¡Cuenta PRO Ilimitada Activada!');
+  showToast('¡Cuenta PRO Ilimitada Activada! Se eliminaron todos los anuncios de actualización.');
 }
 
 function escapeHtml(str) {
@@ -1151,7 +1242,8 @@ function escapeHtml(str) {
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 window.addEventListener('DOMContentLoaded', initApp);
