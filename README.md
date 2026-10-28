@@ -23,8 +23,12 @@
 ## 🚀 Cómo Ejecutar Localmente
 
 ```bash
+cp .env.example .env   # define tus secretos (nunca subas .env a GitHub)
 python server.py
 ```
 
 Abre en tu navegador: `http://localhost:8080`
-*(Tu clave maestra de dueño para desbloquear PRO ilimitado es: `CPRO-OWNER-PRO`)*
+
+El **Panel de Propietario** se abre desde el pie de página ("Acceso Propietario") con la clave definida en
+`COTIZAPRO_OWNER_PASSWORD`. La clave se verifica en el servidor y nunca se incluye en el código del navegador.
+Si la variable no está definida, el panel queda deshabilitado.

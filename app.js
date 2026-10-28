@@ -188,17 +188,9 @@ function switchTab(tabId) {
   if (tabId === 'calculator') calculateB2BAudit();
 }
 
-// Hashes SHA-256 con sal para no exponer contraseñas ni claves maestras en texto plano
+// Hash del token legado de retorno de Stripe (las claves maestras y de propietario ya no viven en el cliente)
 const SECURITY_SALTS = {
   PREFIX: 'COTIZAPRO_SALT_2026::',
-  OWNER_HASHES: [
-    '02fb5dc6d891c0cae4b4fc5d0db8b034178f190b512fd590e68fba887b7758a4',
-    'e7ab592726b94c85c35111b467c96281707445b3543418e3e6ce660087edf1d0'
-  ],
-  VIP_PRO_HASHES: [
-    'e7ab592726b94c85c35111b467c96281707445b3543418e3e6ce660087edf1d0',
-    '9d4abd1ee4330574dd8c2e658b328d868792fad21b33954f67be7ea9f5cb9647'
-  ],
   STRIPE_TOKEN_HASH: 'a0cd46572561803fdaa68724c2a5b3b45b380ff0a694d933b37c3d455a36bae4'
 };
 
@@ -221,20 +213,52 @@ function computeLicenseChecksum4(payload6) {
   return (h >>> 0).toString(36).toUpperCase().padStart(4, '0').slice(0, 4);
 }
 
-// Acceso Privado para el Propietario (Verificado con SHA-256)
+// Acceso Privado para el Propietario (verificado en el servidor; la clave nunca vive en el código)
+let ownerSessionToken = '';
+
+function ownerAuthHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${ownerSessionToken}`
+  };
+}
+
 async function promptOwnerAccess() {
   const pass = window.prompt('Ingresa tu clave de propietario para abrir la configuración interna:');
   if (!pass) return;
-  const clean = pass.trim();
-  const hashExact = await sha256Salted(clean);
-  const hashUpper = await sha256Salted(clean.toUpperCase());
-  if (SECURITY_SALTS.OWNER_HASHES.includes(hashExact) || SECURITY_SALTS.OWNER_HASHES.includes(hashUpper)) {
+  try {
+    const res = await fetch('/api/owner/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pass.trim() })
+    });
+    if (res.status === 429) {
+      showToast('Demasiados intentos. Espera unos minutos.');
+      return;
+    }
+    if (!res.ok) {
+      showToast('Credencial de propietario inválida.');
+      return;
+    }
+    const data = await res.json();
+    ownerSessionToken = data.token;
+    await loadOwnerConfig();
     document.getElementById('tab-btn-admin')?.classList.remove('hidden');
     switchTab('admin');
     showToast('Modo Propietario verificado y desbloqueado.');
-  } else {
-    showToast('Credencial de propietario inválida.');
+  } catch (_) {
+    showToast('El panel de propietario requiere el servidor de CotizaPro.');
   }
+}
+
+async function loadOwnerConfig() {
+  const res = await fetch('/api/owner/config', { headers: ownerAuthHeaders() });
+  if (!res.ok) return;
+  const data = await res.json();
+  state.config = { ...state.config, ...data.config, geminiApiKey: '' };
+  populateOwnerConfigInputs();
+  const keyInput = document.getElementById('cfg-gemini-key');
+  if (keyInput) keyInput.placeholder = data.config.geminiConfigured ? '•••••••• (configurada, escribe para reemplazar)' : 'AIzaSy...';
 }
 
 async function initApp() {
@@ -1098,7 +1122,7 @@ async function saveOwnerConfig() {
   try {
     await fetch('/api/config', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: ownerAuthHeaders(),
       body: JSON.stringify(state.config)
     });
   } catch (_) {}
@@ -1159,7 +1183,7 @@ async function generateClientLicenseKey() {
   try {
     await fetch('/api/licenses', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: ownerAuthHeaders(),
       body: JSON.stringify(record)
     });
   } catch (_) {}
@@ -1209,12 +1233,9 @@ async function activateProLicense() {
     return;
   }
 
-  // 1. Verificar contra hashes SHA-256 de claves maestras (CPRO-OWNER-PRO / CPRO-2026-VIP999)
-  const codeHash = await sha256Salted(code);
-  let isVerified = SECURITY_SALTS.VIP_PRO_HASHES.includes(codeHash);
-
-  // 2. Verificar firma criptográfica de claves emitidas a clientes: CPRO-2026-<PAYLOAD6>-<CHECK4>
-  if (!isVerified) {
+  // Verificar firma de claves emitidas a clientes: CPRO-2026-<PAYLOAD6>-<CHECK4>
+  let isVerified = false;
+  {
     const match = /^CPRO-2026-([A-Z0-9]{6})-([A-Z0-9]{4})$/.exec(code);
     if (match) {
       const payload6 = match[1];
