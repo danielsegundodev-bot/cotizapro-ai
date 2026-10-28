@@ -14,6 +14,8 @@ import threading
 import unittest
 import urllib.error
 from http.server import ThreadingHTTPServer
+from socketserver import ThreadingMixIn
+from wsgiref.simple_server import WSGIRequestHandler, WSGIServer, make_server
 
 TMP_DIR = tempfile.mkdtemp(prefix="cotizapro-test-")
 os.environ["COTIZAPRO_DB_PATH"] = os.path.join(TMP_DIR, "test.db")
@@ -21,6 +23,7 @@ os.environ["COTIZAPRO_OWNER_PASSWORD"] = "frase-de-prueba-larga-123"
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import server  # noqa: E402
+import wsgi  # noqa: E402
 
 CLIENT_A = "a" * 32
 CLIENT_B = "b" * 32
@@ -63,15 +66,24 @@ def fake_gemini_generate(api_key, prompt, json_mode=True):
     return {"candidates": [{"content": {"parts": [{"text": json.dumps(malicious)}]}}]}
 
 
+def configure_mocks():
+    # Each test class gets an empty database so redeemed sessions / quotes do not leak across runs
+    server.DB_PATH = tempfile.mktemp(suffix=".db", dir=TMP_DIR)
+    server.stripe_get = fake_stripe_get
+    server.gemini_generate = fake_gemini_generate
+    server.STRIPE_SECRET_KEY = "sk_test_mock"
+    server.STRIPE_PAYMENT_LINK_IDS = {"plink_ok"}
+    server.GEMINI_API_KEY = "AIzaFAKEKEYFAKEKEYFAKEKEY"
+    server.init_db()
+
+
 class SecurityRegressionTests(unittest.TestCase):
+    # The wsgiref test server adds its own Server header; real WSGI hosts set theirs
+    checks_server_header = True
+
     @classmethod
     def setUpClass(cls):
-        server.stripe_get = fake_stripe_get
-        server.gemini_generate = fake_gemini_generate
-        server.STRIPE_SECRET_KEY = "sk_test_mock"
-        server.STRIPE_PAYMENT_LINK_IDS = {"plink_ok"}
-        server.GEMINI_API_KEY = "AIzaFAKEKEYFAKEKEYFAKEKEY"
-        server.init_db()
+        configure_mocks()
         cls.httpd = ThreadingHTTPServer(("127.0.0.1", 0), server.CotizaProHandler)
         cls.port = cls.httpd.server_address[1]
         threading.Thread(target=cls.httpd.serve_forever, daemon=True).start()
@@ -85,6 +97,7 @@ class SecurityRegressionTests(unittest.TestCase):
         # Fresh rate-limit windows per test
         for limiter in (server.login_limiter, server.license_limiter, server.write_limiter, server.ai_limiter):
             limiter.hits.clear()
+        server.subscription_cache.clear()
 
     def request(self, method, path, body=None, headers=None, raw_body=None):
         conn = http.client.HTTPConnection("127.0.0.1", self.port, timeout=10)
@@ -265,7 +278,39 @@ class SecurityRegressionTests(unittest.TestCase):
         self.assertIn("frame-ancestors 'none'", csp)
         self.assertEqual(resp.getheader("X-Frame-Options"), "DENY")
         self.assertEqual(resp.getheader("X-Content-Type-Options"), "nosniff")
-        self.assertNotIn("Python", resp.getheader("Server"))
+        if self.checks_server_header:
+            self.assertNotIn("Python", resp.getheader("Server"))
+
+
+class _QuietWSGIRequestHandler(WSGIRequestHandler):
+    def log_message(self, fmt, *args):
+        pass
+
+
+class _ThreadingWSGIServer(ThreadingMixIn, WSGIServer):
+    daemon_threads = True
+
+
+class WSGISecurityRegressionTests(SecurityRegressionTests):
+    """Same attacks against the WSGI entrypoint used on PythonAnywhere."""
+
+    checks_server_header = False
+
+    @classmethod
+    def setUpClass(cls):
+        configure_mocks()
+        cls.httpd = make_server("127.0.0.1", 0, wsgi.application,
+                                server_class=_ThreadingWSGIServer, handler_class=_QuietWSGIRequestHandler)
+        cls.port = cls.httpd.server_address[1]
+        threading.Thread(target=cls.httpd.serve_forever, daemon=True).start()
+
+    def test_static_frontend_is_served(self):
+        status, body, resp = self.request("GET", "/")
+        self.assertEqual(status, 200)
+        self.assertIn(b"<!DOCTYPE html>", body)
+        self.assertIn("text/html", resp.getheader("Content-Type"))
+        status, _, resp = self.request("GET", "/tailwind.css")
+        self.assertEqual(status, 200)
 
 
 if __name__ == "__main__":

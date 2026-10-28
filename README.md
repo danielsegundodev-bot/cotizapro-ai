@@ -50,7 +50,19 @@ Si la variable no está definida, el panel queda deshabilitado.
    Las suscripciones mensuales dejan de ser válidas cuando se cancelan en Stripe.
 
 > GitHub Pages solo sirve archivos estáticos: ahí funciona el cotizador como demo, pero el desbloqueo PRO
-> y el Panel de Propietario requieren desplegar `server.py` (Render, Railway, Fly.io, un VPS, etc.).
+> y el Panel de Propietario requieren el servidor.
+
+## ☁️ Despliegue gratis en PythonAnywhere
+
+El plan gratuito (Beginner) incluye una app web con HTTPS y disco persistente para SQLite, y permite
+llamar a `api.stripe.com` y `*.googleapis.com`.
+
+1. Crea una cuenta gratis en pythonanywhere.com y copia tu **API token** (Account → API token).
+2. En tu `.env` local define `PA_USERNAME`, `PA_API_TOKEN` y los secretos del servidor.
+3. Ejecuta `python deploy_pythonanywhere.py`. El script sube los archivos, configura `wsgi.py` con HTTPS
+   forzado y recarga la app en `https://TU_USUARIO.pythonanywhere.com`.
+4. Las apps gratuitas se desactivan si no se renuevan: entra a la pestaña **Web** al menos cada
+   3 meses y pulsa **"Run until 3 months from today"**. PythonAnywhere avisa por correo antes.
 
 ## 🛡️ Pruebas de seguridad
 
