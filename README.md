@@ -51,3 +51,13 @@ Si la variable no está definida, el panel queda deshabilitado.
 
 > GitHub Pages solo sirve archivos estáticos: ahí funciona el cotizador como demo, pero el desbloqueo PRO
 > y el Panel de Propietario requieren desplegar `server.py` (Render, Railway, Fly.io, un VPS, etc.).
+
+## 🛡️ Pruebas de seguridad
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+La suite reproduce los ataques corregidos (secuestro de enlaces de Stripe, licencias falsificadas,
+PRO gratis por URL, XSS almacenado, fuga de cotizaciones entre usuarios, CSRF, archivos sensibles)
+y se ejecuta en GitHub Actions antes de cada despliegue.

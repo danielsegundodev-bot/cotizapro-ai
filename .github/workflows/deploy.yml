@@ -33,6 +33,9 @@ jobs:
           npm run build:css
           git diff --exit-code tailwind.css
 
+      - name: Run security regression tests
+        run: python3 -m unittest discover -s tests -v
+
       # Publish ONLY the static frontend; server.py, scripts, README and config stay out of Pages
       - name: Stage static site
         run: |
