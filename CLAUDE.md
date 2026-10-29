@@ -120,7 +120,13 @@ Todas las vulnerabilidades se explotaron primero con pruebas reales y después s
 
 - [x] URL cambiada a `cotizapro.pythonanywhere.com` (2026-10-28); la vieja redirige.
 - [ ] A largo plazo: dominio propio (unos $10–15 USD al año), que requiere el plan de pago de PythonAnywhere (unos $5 USD al mes). Al migrar, cambia la URL en `index.html` (canonical, og, twitter, JSON-LD), `robots.txt`, `sitemap.xml`, `pages/`, `CLAUDE.md`, las redirecciones de Stripe y Search Console.
-- [ ] Mover al servidor el límite de 3 PDFs gratis.
+- [ ] **PRIORIDAD: el límite de 3 PDFs gratis se puede saltar.** Hoy el contador vive en `localStorage` (`cotizapro_free_usage_v1`) y el PDF se genera con `window.print()` en el navegador. Con modo incógnito, borrando datos, cambiando de navegador o con DevTools se obtienen cotizaciones ilimitadas. El PRO sí está protegido (licencias verificadas en el servidor); lo débil es solo el límite gratuito.
+  Plan propuesto (de menor a mayor esfuerzo):
+  1. **Contador en el servidor por huella**: `POST /api/usage/consume` antes de imprimir, contando por IP (con `TRUST_PROXY`/`X-Real-IP`) + `X-Client-Id`. Frena a la mayoría, aunque con VPN o red móvil cambia la IP.
+  2. **Cuenta gratuita con correo verificado** (enlace mágico de un solo uso): el límite se cuenta por correo. Es lo más efectivo sin pedir tarjeta.
+  3. **PDF generado en el servidor** para usuarios sin PRO (o la marca de agua aplicada en el servidor), para que la versión gratis no pueda imprimirse sin pasar por el contador. Con `window.print()` siempre se podrá imprimir la vista previa con DevTools.
+  4. Mantener la marca de agua "Generada con CotizaPro" en la versión gratis como incentivo (hoy también se puede quitar desde el navegador).
+  Recomendación: 1 + 4 primero (rápido), luego 2 si hay abuso real. No bloquear de más: un poco de "fuga" en la versión gratis también trae usuarios.
 - [ ] Páginas de aterrizaje por giro (cotización para página web, remodelación, fotografía, clínica…) para ganar búsquedas de Google.
 - [ ] Renovar el token de API de PythonAnywhere (se expuso en un chat).
 - [ ] Desactivar los 3 Payment Links viejos en Stripe.
