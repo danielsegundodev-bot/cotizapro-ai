@@ -12,6 +12,7 @@ const STORAGE_KEYS = {
   CLIENT_ID: 'cotizapro_client_id_v1',
   SENDER: 'cotizapro_sender_profile_v1',
   DOC_THEME: 'cotizapro_doc_theme_v1',
+  TOUR_DONE: 'cotizapro_tour_done_v1',
   USAGE: 'cotizapro_free_usage_v1',
   THEME: 'cotizapro_atelier_theme_v1'
 };
@@ -109,11 +110,8 @@ const HIGH_TICKET_PRESETS = {
 // Estado de la Aplicación
 let state = {
   quoteNumber: 'CP-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000),
-  lineItems: [
-    { name: 'Diseño y Desarrollo de Plataforma Web Profesional', qty: 1, price: 380 },
-    { name: 'Sistema de Atención y Citas Automáticas en WhatsApp', qty: 1, price: 320 },
-    { name: 'Panel de Control y Capacitación de Uso', qty: 1, price: 150 }
-  ],
+  // La página arranca en blanco: nada de cotizaciones de ejemplo que confundan al visitante
+  lineItems: [],
   signatureDataUrl: null,
   isPro: false,
   freeUsed: 0,
@@ -229,7 +227,8 @@ function switchInspectorStep(stepNum) {
 function syncInlineEdit(inputId, newText) {
   const input = document.getElementById(inputId);
   if (input) {
-    input.value = String(newText || '').trim();
+    const text = String(newText || '').trim();
+    input.value = Object.values(DOC_PLACEHOLDERS).includes(text) ? '' : text;
     renderProposalPreview();
   }
 }
@@ -356,6 +355,7 @@ async function initApp() {
 
     // Al regresar de Stripe, el servidor confirma el pago con la API de Stripe y emite la licencia
     const sessionId = params.get('session_id') || '';
+    state.skipAutoTour = Boolean(sessionId || params.get('admin'));
     if (sessionId) {
       window.history.replaceState({}, document.title, window.location.pathname);
       await redeemStripeSession(sessionId);
@@ -391,10 +391,10 @@ async function initApp() {
   document.getElementById('doc-quote-number').textContent = state.quoteNumber;
 
   loadSenderProfile();
-  state.lineItems = localizeItems(state.lineItems);
   loadDocTheme();
   setSignatureMode('draw');
   initMobilePreviewShortcut();
+  maybeStartFirstVisitTour(state.skipAutoTour);
   populateOwnerConfigInputs();
   updatePlanUI();
   updateQuotesCounter();
@@ -426,7 +426,7 @@ function updatePlanUI() {
   if (state.isPro) {
     if (badge) {
       badge.textContent = 'CUENTA PRO ILIMITADA';
-      badge.className = 'hidden sm:inline whitespace-nowrap font-tabular text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[var(--accent-forest-soft)] text-[var(--accent-forest)]';
+      badge.className = 'hidden min-[1400px]:inline whitespace-nowrap font-tabular text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[var(--accent-forest-soft)] text-[var(--accent-forest)]';
     }
     // Ocultar por completo el botón de "Obtener PRO Ilimitado" y mostrar la insignia fija de PRO Activo
     if (upgradeBtn) {
@@ -465,22 +465,27 @@ function updatePlanUI() {
 function resetNewQuote() {
   state.quoteNumber = 'CP-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
   document.getElementById('doc-quote-number').textContent = state.quoteNumber;
-  document.getElementById('client-name').value = 'Nombre del Cliente';
-  document.getElementById('project-title').value = 'Propuesta de Servicios Profesionales';
-  document.getElementById('proposal-summary').value = 'Descripción detallada del alcance del proyecto, objetivos y beneficios para el cliente.';
-  state.lineItems = [
-    { name: 'Concepto o Entregable Principal', qty: 1, price: 350 }
-  ];
+  ['client-name', 'project-title', 'proposal-summary', 'delivery-time', 'ai-brief-input'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('preset-selector').value = '';
+  document.getElementById('ai-result')?.classList.add('hidden');
+  state.lineItems = [];
   renderLineItemsEditor();
   renderProposalPreview();
   switchInspectorStep(1);
-  showToast('Nueva cotización lista para editar.');
+  showToast('Nueva cotización en blanco lista para llenar.');
 }
 
 function renderLineItemsEditor() {
   const container = document.getElementById('line-items-editor');
   if (!container) return;
   container.innerHTML = '';
+  if (state.lineItems.length === 0) {
+    container.innerHTML = `<p class="text-xs text-[var(--ink-muted)] text-center py-6 px-3 rounded-lg border border-dashed border-[var(--border-hairline)]">Aún no tienes conceptos. Pulsa <strong>+ Agregar Concepto</strong>, usa la IA del paso 1 o elige una plantilla.</p>`;
+    return;
+  }
 
   state.lineItems.forEach((item, idx) => {
     const numLabel = String(idx + 1).padStart(2, '0');
@@ -590,38 +595,51 @@ function getCalculatedTotals() {
   };
 }
 
+// Textos guía que muestra la hoja mientras el usuario no llena un campo (se ven en gris)
+const DOC_PLACEHOLDERS = {
+  'doc-project-title': 'Título de tu cotización',
+  'doc-client-name': 'Nombre de tu cliente',
+  'doc-summary': 'Describe aquí el alcance del trabajo: qué incluye, cómo se entrega y qué beneficios obtiene tu cliente.',
+  'doc-sender-name': 'Tu Empresa',
+  'doc-sender-contact': 'tu@correo.com',
+  'doc-delivery-time': 'Por definir'
+};
+
+function setDocText(id, value, { respectFocus = false } = {}) {
+  const el = document.getElementById(id);
+  if (!el || (respectFocus && document.activeElement === el)) return;
+  const text = String(value || '').trim();
+  el.textContent = text || DOC_PLACEHOLDERS[id] || '';
+  el.classList.toggle('doc-placeholder', !text);
+}
+
 function renderProposalPreview() {
-  const senderName = document.getElementById('sender-name')?.value.trim() || 'Tu Empresa';
-  const senderContact = document.getElementById('sender-contact')?.value.trim() || 'tu@correo.com';
-  const clientName = document.getElementById('client-name')?.value || 'Cliente';
-  const projectTitle = document.getElementById('project-title')?.value || 'Propuesta Comercial';
+  const senderName = document.getElementById('sender-name')?.value.trim() || DOC_PLACEHOLDERS['doc-sender-name'];
+  const senderContact = document.getElementById('sender-contact')?.value.trim() || '';
+  const clientName = document.getElementById('client-name')?.value.trim() || '';
+  const projectTitle = document.getElementById('project-title')?.value.trim() || '';
   const summary = document.getElementById('proposal-summary')?.value || '';
-  const deliveryTime = document.getElementById('delivery-time')?.value || '10 días hábiles';
+  const deliveryTime = document.getElementById('delivery-time')?.value.trim() || '';
   const validityDays = document.getElementById('validity-days')?.value || '7 días';
   const paymentNote = document.getElementById('payment-methods-note')?.value || 'Transferencia bancaria, Tarjeta o PayPal.';
   const includeContract = document.getElementById('toggle-contract')?.checked;
 
   const calc = getCalculatedTotals();
 
-  const setIfNotFocused = (id, text) => {
-    const el = document.getElementById(id);
-    if (el && document.activeElement !== el) {
-      el.textContent = text;
-    }
-  };
-
-  setIfNotFocused('doc-project-title', projectTitle);
-  setIfNotFocused('doc-client-name', clientName);
-  setIfNotFocused('doc-summary', summary);
-
-  document.getElementById('doc-sender-name').textContent = senderName;
-  document.getElementById('doc-sender-contact').textContent = senderContact;
-  document.getElementById('doc-delivery-time').textContent = deliveryTime;
+  setDocText('doc-project-title', projectTitle, { respectFocus: true });
+  setDocText('doc-client-name', clientName, { respectFocus: true });
+  setDocText('doc-summary', summary, { respectFocus: true });
+  setDocText('doc-sender-name', document.getElementById('sender-name')?.value);
+  setDocText('doc-sender-contact', senderContact);
+  setDocText('doc-delivery-time', deliveryTime);
   document.getElementById('doc-validity').textContent = validityDays;
   document.getElementById('doc-deposit-condition').textContent = `${calc.depositRate}% Anticipo (${formatMoney(calc.depositAmount, calc.currency)})`;
 
   const tbody = document.getElementById('doc-items-tbody');
   tbody.innerHTML = '';
+  if (state.lineItems.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" class="py-6 px-3.5 text-center text-[color:var(--doc-muted)] italic">Aquí aparecerán tus conceptos y precios. Agrégalos en el paso 2, con la IA o con una plantilla.</td></tr>`;
+  }
   state.lineItems.forEach((item, index) => {
     const lineTotal = item.qty * item.price;
     const idxStr = String(index + 1).padStart(2, '0');
@@ -657,12 +675,12 @@ function renderProposalPreview() {
   const contractSec = document.getElementById('doc-contract-section');
   contractSec.classList.toggle('hidden', !includeContract);
   document.getElementById('contract-sender').textContent = senderName;
-  document.getElementById('contract-client').textContent = clientName;
-  document.getElementById('contract-delivery').textContent = deliveryTime;
+  document.getElementById('contract-client').textContent = clientName || 'el Cliente';
+  document.getElementById('contract-delivery').textContent = deliveryTime || 'el plazo acordado';
   document.getElementById('contract-total').textContent = formattedTotal;
 
   document.getElementById('sig-sender-name').textContent = senderName;
-  document.getElementById('sig-client-name').textContent = clientName;
+  document.getElementById('sig-client-name').textContent = clientName || DOC_PLACEHOLDERS['doc-client-name'];
 }
 
 // Autocompletado con IA
@@ -1072,6 +1090,134 @@ function loadDocTheme() {
   setDocTheme(DOC_THEMES[saved] ? saved : 'clasico', { silent: true });
 }
 
+// Guía rápida con burbujas: se muestra sola la primera visita y se repite con el botón "Guía"
+const TOUR_STEPS = [
+  { target: '#tour-ai', step: 1, title: 'Empieza aquí: la IA cotiza por ti', text: 'Escribe qué trabajo vas a cotizar, por ejemplo "logo para cafetería en Monterrey", y la IA llena el título, la descripción, los conceptos y los precios.' },
+  { target: '#preset-selector', title: 'O usa una plantilla por giro', text: 'Elige tu giro y se carga una cotización base que puedes editar a tu gusto.' },
+  { target: '#tour-sender', step: 1, tall: true, title: 'Tus datos, tu logo y tu cliente', text: 'Escribe tu nombre y contacto y sube tu logo. Se guardan solo en tu navegador para la próxima vez.' },
+  { target: '#tour-steps', title: 'Todo en 3 pasos', text: '1) Datos e IA · 2) Conceptos y precios (moneda, IVA, descuento y anticipo) · 3) Firma y contrato.' },
+  { target: '#proposal-document', tall: true, title: 'Vista previa en vivo', text: 'Así se verá tu PDF. También puedes hacer clic sobre los textos de la hoja para editarlos directamente.' },
+  { target: '#doc-theme-picker', title: 'Elige el diseño', text: 'Clásico y Minimal son gratis. Los diseños PRO puedes verlos en vista previa antes de comprar.' },
+  { target: '#tour-share', title: 'Compártela por WhatsApp', text: 'Envía a tu cliente un resumen con conceptos, total y anticipo, o copia el texto.' },
+  { target: '#btn-download-top', title: 'Descarga tu PDF', text: 'Revisamos que no falte nada y se abre para guardarla en PDF o imprimirla. Tienes 3 cotizaciones gratis.' },
+  { target: '#tab-btn-history', title: 'Tus cotizaciones guardadas', text: 'Todo lo que guardes o descargues queda aquí para abrirlo, duplicarlo o borrarlo.' }
+];
+let tourIndex = -1;
+let tourRepositionTimer = null;
+
+function startTour() {
+  closeProModal();
+  tourIndex = 0;
+  document.body.classList.add('tour-active');
+  const root = document.getElementById('tour-root');
+  root.classList.remove('hidden');
+  root.setAttribute('aria-hidden', 'false');
+  window.addEventListener('resize', scheduleTourReposition);
+  window.addEventListener('scroll', scheduleTourReposition, { passive: true });
+  document.addEventListener('keydown', onTourKeydown);
+  showTourStep();
+}
+
+function endTour() {
+  if (tourIndex < 0) return;
+  tourIndex = -1;
+  document.body.classList.remove('tour-active');
+  const root = document.getElementById('tour-root');
+  root.classList.add('hidden');
+  root.setAttribute('aria-hidden', 'true');
+  window.removeEventListener('resize', scheduleTourReposition);
+  window.removeEventListener('scroll', scheduleTourReposition);
+  document.removeEventListener('keydown', onTourKeydown);
+  try { localStorage.setItem(STORAGE_KEYS.TOUR_DONE, '1'); } catch (_) {}
+}
+
+function tourNext() {
+  if (tourIndex >= TOUR_STEPS.length - 1) {
+    endTour();
+    showToast('¡Listo! Puedes repetir la guía cuando quieras con el botón "?".');
+    return;
+  }
+  tourIndex += 1;
+  showTourStep();
+}
+
+function tourPrev() {
+  if (tourIndex <= 0) return;
+  tourIndex -= 1;
+  showTourStep();
+}
+
+function onTourKeydown(e) {
+  if (e.key === 'Escape') endTour();
+  else if (e.key === 'ArrowRight') tourNext();
+  else if (e.key === 'ArrowLeft') tourPrev();
+}
+
+function showTourStep() {
+  const step = TOUR_STEPS[tourIndex];
+  if (step.target !== '#tab-btn-history') switchTab('builder');
+  if (step.step) switchInspectorStep(step.step);
+  const el = document.querySelector(step.target);
+  document.getElementById('tour-counter').textContent = `${tourIndex + 1} de ${TOUR_STEPS.length}`;
+  document.getElementById('tour-title').textContent = step.title;
+  document.getElementById('tour-text').textContent = step.text;
+  document.getElementById('tour-prev').classList.toggle('invisible', tourIndex === 0);
+  document.getElementById('tour-next').innerHTML = tourIndex === TOUR_STEPS.length - 1 ? '¡Entendido!' : 'Siguiente &rarr;';
+  if (el) {
+    const rect = el.getBoundingClientRect();
+    const headerOffset = window.innerWidth >= 640 ? 96 : 16;
+    const top = step.tall || rect.height > window.innerHeight * 0.6
+      ? rect.top + window.scrollY - headerOffset
+      : rect.top + window.scrollY - (window.innerHeight - rect.height) / 2;
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+  }
+  positionTour();
+  setTimeout(positionTour, 450);
+  document.getElementById('tour-next').focus({ preventScroll: true });
+}
+
+function scheduleTourReposition() {
+  clearTimeout(tourRepositionTimer);
+  tourRepositionTimer = setTimeout(positionTour, 30);
+}
+
+function positionTour() {
+  if (tourIndex < 0) return;
+  const el = document.querySelector(TOUR_STEPS[tourIndex].target);
+  const highlight = document.getElementById('tour-highlight');
+  const bubble = document.getElementById('tour-bubble');
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const margin = 8;
+  const rect = el ? el.getBoundingClientRect() : { top: vh / 2, bottom: vh / 2, left: vw / 2, right: vw / 2 };
+  const top = Math.max(rect.top - 6, margin);
+  const bottom = Math.min(rect.bottom + 6, vh - margin);
+  const left = Math.max(rect.left - 6, margin);
+  const right = Math.min(rect.right + 6, vw - margin);
+  Object.assign(highlight.style, {
+    top: `${top}px`, left: `${left}px`,
+    width: `${Math.max(0, right - left)}px`, height: `${Math.max(0, bottom - top)}px`,
+    boxShadow: '0 0 0 9999px rgba(20, 20, 19, 0.55)'
+  });
+
+  const width = Math.min(360, vw - 32);
+  bubble.style.width = `${width}px`;
+  const bh = bubble.offsetHeight;
+  let bubbleTop;
+  if (bottom + 12 + bh <= vh - margin) bubbleTop = bottom + 12;
+  else if (top - 12 - bh >= margin) bubbleTop = top - 12 - bh;
+  else bubbleTop = vh - bh - 16;
+  const bubbleLeft = Math.min(Math.max(left, 16), vw - width - 16);
+  bubble.style.top = `${Math.max(margin, bubbleTop)}px`;
+  bubble.style.left = `${bubbleLeft}px`;
+}
+
+function maybeStartFirstVisitTour(skip) {
+  let done = false;
+  try { done = localStorage.getItem(STORAGE_KEYS.TOUR_DONE) === '1'; } catch (_) {}
+  if (!done && !skip) setTimeout(startTour, 700);
+}
+
 // Botón flotante en celular: solo aparece mientras la cotización está fuera de la pantalla
 function initMobilePreviewShortcut() {
   const fab = document.getElementById('mobile-preview-fab');
@@ -1085,25 +1231,106 @@ function initMobilePreviewShortcut() {
   observer.observe(doc);
 }
 
-// Datos del emisor: el ejemplo no trae datos reales; cada usuario guarda los suyos solo en su navegador
-function loadSenderProfile() {
+// Datos del emisor y logo: cada usuario guarda los suyos solo en su navegador (nunca en el servidor)
+const LOGO_MAX_BYTES = 2 * 1024 * 1024;
+const LOGO_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
+
+function readSenderProfile() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEYS.SENDER) || '{}');
-    const nameEl = document.getElementById('sender-name');
-    const contactEl = document.getElementById('sender-contact');
-    if (nameEl && typeof saved.name === 'string') nameEl.value = saved.name.slice(0, 120);
-    if (contactEl && typeof saved.contact === 'string') contactEl.value = saved.contact.slice(0, 120);
-  } catch (_) {}
+    return saved && typeof saved === 'object' ? saved : {};
+  } catch (_) {
+    return {};
+  }
+}
+
+function writeSenderProfile(patch) {
+  try {
+    localStorage.setItem(STORAGE_KEYS.SENDER, JSON.stringify({ ...readSenderProfile(), ...patch }));
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
+function loadSenderProfile() {
+  const saved = readSenderProfile();
+  const nameEl = document.getElementById('sender-name');
+  const contactEl = document.getElementById('sender-contact');
+  if (nameEl && typeof saved.name === 'string') nameEl.value = saved.name.slice(0, 120);
+  if (contactEl && typeof saved.contact === 'string') contactEl.value = saved.contact.slice(0, 120);
+  // Solo se aceptan data URLs de imagen generadas por nosotros (nunca URLs externas)
+  const logo = typeof saved.logo === 'string' && /^data:image\/(png|webp);base64,/.test(saved.logo) ? saved.logo : null;
+  renderLogo(logo);
 }
 
 function onSenderInput() {
-  try {
-    localStorage.setItem(STORAGE_KEYS.SENDER, JSON.stringify({
-      name: document.getElementById('sender-name')?.value || '',
-      contact: document.getElementById('sender-contact')?.value || ''
-    }));
-  } catch (_) {}
+  writeSenderProfile({
+    name: document.getElementById('sender-name')?.value || '',
+    contact: document.getElementById('sender-contact')?.value || ''
+  });
   renderProposalPreview();
+}
+
+function renderLogo(dataUrl) {
+  state.logoDataUrl = dataUrl || null;
+  [['doc-logo'], ['sender-logo-preview']].forEach(([id]) => {
+    const img = document.getElementById(id);
+    if (!img) return;
+    if (dataUrl) {
+      img.src = dataUrl;
+      img.classList.remove('hidden');
+    } else {
+      img.removeAttribute('src');
+      img.classList.add('hidden');
+    }
+  });
+  document.getElementById('sender-logo-empty')?.classList.toggle('hidden', Boolean(dataUrl));
+  document.getElementById('logo-remove-btn')?.classList.toggle('hidden', !dataUrl);
+}
+
+// El logo se redimensiona en el navegador (máx. 480x200) conservando transparencia
+function onLogoUpload(input) {
+  const file = input.files && input.files[0];
+  input.value = '';
+  if (!file) return;
+  if (!LOGO_TYPES.includes(file.type)) {
+    showToast('Formato no soportado. Usa un logo PNG, JPG o WEBP.');
+    return;
+  }
+  if (file.size > LOGO_MAX_BYTES) {
+    showToast('El logo pesa más de 2 MB. Usa una versión más ligera.');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = () => {
+    const image = new Image();
+    image.onload = () => {
+      const scale = Math.min(1, 480 / image.width, 200 / image.height);
+      const off = document.createElement('canvas');
+      off.width = Math.max(1, Math.round(image.width * scale));
+      off.height = Math.max(1, Math.round(image.height * scale));
+      off.getContext('2d').drawImage(image, 0, 0, off.width, off.height);
+      let dataUrl = off.toDataURL('image/png');
+      if (dataUrl.length > 400000) dataUrl = off.toDataURL('image/webp', 0.9);
+      renderLogo(dataUrl);
+      if (!writeSenderProfile({ logo: dataUrl })) {
+        showToast('Logo agregado (no se pudo recordar para la próxima vez en este navegador).');
+      } else {
+        showToast('Logo agregado a tu cotización.');
+      }
+      flashUpdated(['doc-logo']);
+    };
+    image.onerror = () => showToast('No pudimos leer esa imagen.');
+    image.src = reader.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeLogo() {
+  renderLogo(null);
+  writeSenderProfile({ logo: '' });
+  showToast('Logo quitado.');
 }
 
 // Descargar PDF
@@ -1113,12 +1340,23 @@ function exportProposalPDF() {
     openProModal();
     return;
   }
-  const senderInput = document.getElementById('sender-name');
-  if (senderInput && !senderInput.value.trim()) {
-    showToast('Escribe tu nombre o empresa antes de descargar la cotización.');
+  const missing = [
+    ['sender-name', 'tu nombre o empresa', 1],
+    ['client-name', 'el nombre de tu cliente', 1],
+    ['project-title', 'el título del trabajo', 1]
+  ].filter(([id]) => !document.getElementById(id)?.value.trim());
+  const hasItems = state.lineItems.some(i => String(i.name || '').trim() && safeNumber(i.price) > 0);
+  if (missing.length || !hasItems) {
+    const parts = missing.map(m => m[1]);
+    if (!hasItems) parts.push('al menos un concepto con precio');
+    showToast(`Antes de descargar, agrega ${parts.join(', ')}.`);
     switchTab('builder');
-    switchInspectorStep(1);
-    senderInput.focus();
+    if (missing.length) {
+      switchInspectorStep(missing[0][2]);
+      document.getElementById(missing[0][0])?.focus();
+    } else {
+      switchInspectorStep(2);
+    }
     return;
   }
 
@@ -1624,8 +1862,14 @@ const UI_ACTIONS = {
   loadPresetTemplate: el => loadPresetTemplate(el.value),
   syncInlineEdit: el => syncInlineEdit(el.dataset.arg, el.innerText),
   onSenderInput,
+  onLogoUpload: el => onLogoUpload(el),
+  removeLogo,
   setDocTheme: el => setDocTheme(el.dataset.arg),
   scrollToPreview,
+  startTour,
+  endTour,
+  tourNext,
+  tourPrev,
   setSignatureMode: el => setSignatureMode(el.dataset.arg),
   onSignatureUpload: el => onSignatureUpload(el),
   renderTypedSignature,

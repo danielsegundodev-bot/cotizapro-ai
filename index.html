@@ -74,18 +74,18 @@
     <div class="max-w-[1380px] mx-auto px-4 sm:px-8 py-3 sm:py-3.5 flex flex-wrap items-center justify-between gap-3 sm:gap-4">
 
       <!-- Brand Mark -->
-      <div class="flex items-center gap-3.5 cursor-pointer" data-click="switchTab" data-arg="builder">
+      <div class="flex items-center gap-2.5 sm:gap-3.5 cursor-pointer" data-click="switchTab" data-arg="builder">
         <div class="w-9 h-9 rounded-lg bg-[var(--ink-primary)] text-[var(--bg-canvas)] flex items-center justify-center font-editorial italic text-xl font-medium tracking-tight">
           C
         </div>
         <div>
           <div class="flex items-center gap-2.5">
-            <span class="whitespace-nowrap font-editorial text-xl font-medium tracking-tight text-[var(--ink-primary)]">CotizaPro <span class="italic font-normal text-[var(--accent-terracotta)]">Studio</span></span>
-            <span id="plan-badge" class="hidden sm:inline whitespace-nowrap font-tabular text-[9px] sm:text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded border border-[var(--border-hairline)] bg-[var(--bg-elevated)] text-[var(--ink-secondary)]">
+            <span class="whitespace-nowrap font-editorial text-xl font-medium tracking-tight text-[var(--ink-primary)]">CotizaPro <span class="italic font-normal text-[var(--accent-terracotta)] max-[379px]:hidden">Studio</span></span>
+            <span id="plan-badge" class="hidden min-[1400px]:inline whitespace-nowrap font-tabular text-[9px] sm:text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded border border-[var(--border-hairline)] bg-[var(--bg-elevated)] text-[var(--ink-secondary)]">
               3 Cotizaciones Gratis
             </span>
           </div>
-          <p class="text-[11px] text-[var(--ink-muted)] hidden sm:block">Cotizaciones profesionales, presupuestos y contratos con firma digital</p>
+          <p class="text-[11px] text-[var(--ink-muted)] hidden min-[1400px]:block">Cotizaciones profesionales, presupuestos y contratos con firma digital</p>
         </div>
       </div>
 
@@ -108,15 +108,18 @@
       </nav>
 
       <!-- Right Actions: Theme + Upgrade PRO -->
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button type="button" data-click="startTour" class="text-xs font-medium text-[var(--ink-secondary)] hover:text-[var(--ink-primary)] flex items-center gap-1.5 px-2 py-1.5 rounded-md border border-transparent hover:border-[var(--border-hairline)] transition" title="Ver guía rápida" aria-label="Ver guía rápida">
+          <span class="w-[18px] h-[18px] rounded-full border border-current flex items-center justify-center text-[11px] font-bold leading-none">?</span>
+        </button>
         <button data-click="toggleAtelierTheme" class="text-xs font-medium text-[var(--ink-secondary)] hover:text-[var(--ink-primary)] flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-transparent hover:border-[var(--border-hairline)] transition" title="Cambiar apariencia">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/>
           </svg>
-          <span id="theme-toggle-label" class="hidden sm:inline">Modo Carbón</span>
+          <span id="theme-toggle-label" class="hidden min-[1400px]:inline">Modo Carbón</span>
         </button>
 
-        <button id="upgrade-header-btn" data-click="openProModal" class="btn-terracotta px-4 py-2 text-xs flex items-center gap-1.5 shadow-sm">
+        <button id="upgrade-header-btn" data-click="openProModal" class="btn-terracotta px-3 sm:px-4 py-2 text-xs flex items-center gap-1.5 shadow-sm">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/>
           </svg>
@@ -173,7 +176,7 @@
             <span>Guardar</span>
           </button>
 
-          <button data-click="exportProposalPDF" class="btn-obsidian px-4 py-2 text-xs flex items-center gap-1.5">
+          <button id="btn-download-top" data-click="exportProposalPDF" class="btn-obsidian px-4 py-2 text-xs flex items-center gap-1.5">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z"/>
             </svg>
@@ -189,7 +192,7 @@
         <aside class="no-print lg:col-span-5 space-y-4 lg:sticky lg:top-20">
 
           <!-- 3-Step Selector -->
-          <div class="grid grid-cols-3 gap-1 p-1 rounded-lg bg-[var(--bg-subtle)] border border-[var(--border-hairline)]">
+          <div id="tour-steps" class="grid grid-cols-3 gap-1 p-1 rounded-lg bg-[var(--bg-subtle)] border border-[var(--border-hairline)]">
             <button id="step-btn-1" data-click="switchInspectorStep" data-arg="1" class="px-2.5 py-2 rounded-md text-xs font-semibold transition bg-[var(--bg-elevated)] text-[var(--ink-primary)] shadow-sm">
               1. Datos &amp; IA
             </button>
@@ -204,7 +207,7 @@
           <!-- STEP 1: AI AUTOCOMPLETE & CLIENT INFO -->
           <div id="inspector-step-1" class="space-y-4">
             <!-- AI Quick Generator -->
-            <div class="atelier-card rounded-xl p-5 space-y-3">
+            <div id="tour-ai" class="atelier-card rounded-xl p-5 space-y-3">
               <div class="flex items-center justify-between">
                 <h2 class="text-sm font-semibold text-[var(--ink-primary)]">Autocompletar con IA</h2>
                 <span id="ai-status-text" class="text-[11px] text-[var(--ink-muted)]">Listo</span>
@@ -230,10 +233,27 @@
             </div>
 
             <!-- Client & Sender Info -->
-            <div class="atelier-card rounded-xl p-5 space-y-4">
+            <div id="tour-sender" class="atelier-card rounded-xl p-5 space-y-4">
               <div class="flex items-center justify-between border-b border-[var(--border-hairline)] pb-2.5">
                 <h2 class="text-sm font-semibold text-[var(--ink-primary)]">Quién Cotiza y Para Quién</h2>
                 <span class="text-[11px] text-[var(--ink-muted)]">O edita directo en la hoja &rarr;</span>
+              </div>
+
+              <!-- Logo (free and PRO) -->
+              <div>
+                <span class="atelier-label">Tu logo <span class="text-[var(--ink-muted)]">(opcional · gratis)</span></span>
+                <div class="flex items-center gap-3">
+                  <div class="w-24 h-14 rounded-lg border border-dashed border-[var(--border-hairline)] bg-white flex items-center justify-center overflow-hidden shrink-0">
+                    <img id="sender-logo-preview" alt="Tu logo" class="hidden max-w-full max-h-full object-contain" />
+                    <span id="sender-logo-empty" class="text-[10px] text-[var(--ink-muted)]">Sin logo</span>
+                  </div>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <label for="logo-file" class="btn-outline px-3 py-1.5 text-xs cursor-pointer">Subir logo</label>
+                    <input id="logo-file" type="file" accept="image/png,image/jpeg,image/webp" class="sr-only" data-change="onLogoUpload" />
+                    <button type="button" id="logo-remove-btn" data-click="removeLogo" class="hidden text-[11px] font-medium text-[var(--accent-terracotta)] hover:underline">Quitar</button>
+                    <span class="w-full text-[11px] text-[var(--ink-muted)]">PNG, JPG o WEBP · máx. 2 MB · se guarda solo en tu navegador</span>
+                  </div>
+                </div>
               </div>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -247,23 +267,23 @@
                 </div>
                 <div>
                   <label class="atelier-label">Nombre de tu Cliente</label>
-                  <input id="client-name" type="text" value="Grupo Médico San Ángel" data-input="renderProposalPreview" class="atelier-input" />
+                  <input id="client-name" type="text" value="" placeholder="Ej: Clínica Dental Sonrisa" data-input="renderProposalPreview" class="atelier-input" />
                 </div>
                 <div>
                   <label class="atelier-label">Título del Proyecto / Trabajo</label>
-                  <input id="project-title" type="text" value="Desarrollo de Portal Web & Automatización de Citas" data-input="renderProposalPreview" class="atelier-input" />
+                  <input id="project-title" type="text" value="" placeholder="Ej: Diseño de página web con tienda en línea" data-input="renderProposalPreview" class="atelier-input" />
                 </div>
               </div>
 
               <div>
                 <label class="atelier-label">Descripción General de la Propuesta</label>
-                <textarea id="proposal-summary" rows="3" data-input="renderProposalPreview" class="atelier-input">Propuesta integral para el diseño, desarrollo y puesta en marcha de su plataforma digital de captación de clientes y agendamiento automático, optimizada para incrementar sus ventas y reducir tiempos operativos.</textarea>
+                <textarea id="proposal-summary" rows="3" placeholder="Ej: Qué incluye el trabajo, cómo se entrega y qué beneficios obtiene tu cliente." data-input="renderProposalPreview" class="atelier-input"></textarea>
               </div>
 
               <div class="grid grid-cols-2 gap-3">
                 <div>
                   <label class="atelier-label">Tiempo de Entrega</label>
-                  <input id="delivery-time" type="text" value="10 a 14 días hábiles" data-input="renderProposalPreview" class="atelier-input" />
+                  <input id="delivery-time" type="text" value="" placeholder="Ej: 10 a 14 días hábiles" data-input="renderProposalPreview" class="atelier-input" />
                 </div>
                 <div>
                   <label class="atelier-label">Vigencia de la Cotización</label>
@@ -406,7 +426,7 @@
         <div class="lg:col-span-7 space-y-4">
 
           <!-- Quick Action Bar Above the Paper -->
-          <div class="no-print atelier-card rounded-xl px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+          <div id="tour-share" class="no-print atelier-card rounded-xl px-4 py-3 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-3">
               <span class="font-tabular text-[11px] uppercase tracking-wider px-2 py-0.5 rounded bg-[var(--accent-forest-soft)] text-[var(--accent-forest)] font-semibold">
                 Total Cotizado
@@ -448,13 +468,14 @@
             <!-- Header -->
             <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-6 border-b-2 border-[color:var(--doc-ink)] pb-6">
               <div class="space-y-2 max-w-xl">
+                <img id="doc-logo" alt="Logo" class="hidden max-h-14 max-w-[200px] object-contain object-left mb-1" />
                 <div class="flex items-center gap-2">
                   <span class="font-tabular text-[10px] font-bold uppercase tracking-[0.14em] px-2 py-0.5 bg-[color:var(--doc-ink)] text-white">
                     COTIZACIÓN &amp; PROPUESTA DE SERVICIOS
                   </span>
                 </div>
                 <h2 id="doc-project-title" contenteditable="true" data-blur="syncInlineEdit" data-arg="project-title" class="inline-editable font-editorial text-2xl sm:text-3xl font-normal text-[color:var(--doc-ink)] leading-tight">
-                  Desarrollo de Portal Web &amp; Automatización de Citas
+                  Título de tu cotización
                 </h2>
                 <div class="pt-1 text-xs text-[color:var(--doc-text-2)] flex flex-wrap items-center gap-x-3 gap-y-1">
                   <span id="doc-sender-name" class="font-semibold text-[color:var(--doc-ink)]">Tu Empresa</span>
@@ -480,7 +501,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-3 border border-[color:var(--doc-rule)] divide-y sm:divide-y-0 sm:divide-x divide-[color:var(--doc-rule)] bg-[color:var(--doc-surface)] text-xs">
               <div class="p-3.5">
                 <span class="font-tabular text-[10px] uppercase tracking-wider text-[color:var(--doc-muted)] block">Cliente / Destinatario</span>
-                <span id="doc-client-name" contenteditable="true" data-blur="syncInlineEdit" data-arg="client-name" class="inline-editable font-semibold text-[color:var(--doc-ink)] text-sm mt-0.5 block">Grupo Médico San Ángel</span>
+                <span id="doc-client-name" contenteditable="true" data-blur="syncInlineEdit" data-arg="client-name" class="inline-editable font-semibold text-[color:var(--doc-ink)] text-sm mt-0.5 block">Nombre de tu cliente</span>
               </div>
               <div class="p-3.5">
                 <span class="font-tabular text-[10px] uppercase tracking-wider text-[color:var(--doc-muted)] block">Tiempo de Entrega</span>
@@ -604,7 +625,7 @@
                 <div class="h-20 flex items-end justify-start border-b border-[color:var(--doc-ink)] mb-2 pb-1">
                   <span class="font-editorial italic text-sm text-[color:var(--doc-muted)]">Firma de aceptación del cliente</span>
                 </div>
-                <p id="sig-client-name" class="text-xs font-bold text-[color:var(--doc-ink)]">Grupo Médico San Ángel</p>
+                <p id="sig-client-name" class="text-xs font-bold text-[color:var(--doc-ink)]">Nombre de tu cliente</p>
                 <p class="font-tabular text-[10px] uppercase tracking-wider text-[color:var(--doc-muted)]">Cliente · Acepto cotización</p>
               </div>
             </div>
@@ -1013,6 +1034,24 @@
           <input id="activate-license-input" type="text" placeholder="Escribe tu código CPRO-..." class="atelier-input font-tabular uppercase flex-1" />
           <button data-click="activateProLicense" class="btn-forest px-4 py-2 text-xs">Activar</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Guided tour (coach marks). Positioned from JS; never printed. -->
+  <div id="tour-root" class="no-print hidden" aria-hidden="true">
+    <div id="tour-backdrop" class="fixed inset-0 z-[60]"></div>
+    <div id="tour-highlight" class="fixed z-[61] rounded-xl ring-2 ring-[var(--accent-terracotta)] pointer-events-none transition-all duration-200"></div>
+    <div id="tour-bubble" role="dialog" aria-modal="true" aria-labelledby="tour-title" class="fixed z-[62] atelier-card rounded-xl p-4 shadow-2xl space-y-2.5">
+      <div class="flex items-center justify-between gap-3">
+        <span id="tour-counter" class="font-tabular text-[10px] font-semibold text-[var(--accent-terracotta)]"></span>
+        <button type="button" data-click="endTour" class="text-[11px] text-[var(--ink-muted)] hover:text-[var(--ink-primary)]">Saltar guía</button>
+      </div>
+      <h3 id="tour-title" class="text-sm font-semibold text-[var(--ink-primary)]"></h3>
+      <p id="tour-text" class="text-xs text-[var(--ink-secondary)] leading-relaxed"></p>
+      <div class="flex items-center justify-between gap-2 pt-1">
+        <button type="button" id="tour-prev" data-click="tourPrev" class="btn-outline px-3 py-1.5 text-xs">&larr; Atrás</button>
+        <button type="button" id="tour-next" data-click="tourNext" class="btn-obsidian px-4 py-1.5 text-xs">Siguiente &rarr;</button>
       </div>
     </div>
   </div>

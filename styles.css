@@ -231,6 +231,12 @@ body {
   --doc-heading-font: var(--font-sans); --doc-heading-weight: 700;
 }
 
+/* Guide text shown on the sheet while a field is still empty */
+.dossier-paper .doc-placeholder { color: var(--doc-muted) !important; font-style: italic; }
+
+/* The phone shortcut would float above the guided tour */
+body.tour-active #mobile-preview-fab { display: none !important; }
+
 /* Theme picker swatches */
 .theme-swatch {
   display: inline-flex; align-items: center; gap: 0.4rem;

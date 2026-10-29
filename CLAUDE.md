@@ -8,7 +8,10 @@
 - **Responde siempre en español**, incluidos los resúmenes finales. El código, los commits y los identificadores van en inglés.
 - El dueño prefiere que la IA **haga el trabajo completo** y solo le pida lo que únicamente él puede hacer (crear cuentas, autorizar accesos, clics en paneles).
 - Commits por fases, en inglés, con prefijo convencional: `security: phase N — ...`, `feat: ...`, `fix: ...`, `seo: ...`, `test: ...`, con un cuerpo que explique el porqué.
-- **Antes de desplegar, corre los tests:** `python3 -m unittest discover -s tests -v`. Deben pasar los 38.
+- **Antes de desplegar, corre las pruebas:**
+  - Servidor: `npm test` (= `python3 -m unittest discover -s tests -v`). Deben pasar los 41 tests.
+  - Navegador (`tests/e2e/`, Puppeteer con el Chrome instalado; si no está en la ruta de macOS, usa `CHROME_PATH`): levanta un servidor de prueba con `GEMINI_API_KEY= COTIZAPRO_OWNER_PASSWORD=frase-larga-de-prueba-123 COTIZAPRO_DB_PATH=/tmp/t.db PORT=8765 python3 server.py` y corre `smoke.js` (21 checks), `features.js` (25) y `onboarding.js` (22).
+  - Reinicia el servidor entre suites: el límite de 20 verificaciones de licencia por minuto por IP puede dar falsos fallos si las corres seguidas.
 - **No escanees el sitio en vivo** pidiendo rutas sensibles (`/.env`, `/.git/config`, `/server.py`…). El firewall de PythonAnywhere banea la IP. Las pruebas de seguridad se hacen en local con la suite de `tests/`.
 
 ## Qué es
@@ -31,7 +34,9 @@ envío por WhatsApp, calculadora de ROI y autocompletado con IA (Gemini). Modelo
 | `server.py` | Backend `http.server` + SQLite. Toda la seguridad y la validación viven aquí |
 | `wsgi.py` | Adaptador WSGI para PythonAnywhere; reutiliza el mismo `CotizaProHandler` |
 | `deploy_pythonanywhere.py` | Despliegue con un comando vía la API de PythonAnywhere |
-| `tests/test_security.py` | 38 tests de regresión de seguridad, contra `server.py` y contra `wsgi.py` |
+| `tests/test_security.py` | 41 tests de regresión (seguridad, IA y SEO), contra `server.py` y contra `wsgi.py` |
+| `tests/e2e/` | Pruebas en navegador real: `smoke.js` (flujo completo y ataques XSS), `features.js` (IA, firma, diseños, celular) y `onboarding.js` (arranque en blanco, logo y guía) |
+| `legacy_redirect_wsgi.py` | App WSGI de la cuenta vieja `ssjosedaniel`: redirige con 301 a la URL nueva |
 | `pages/` | Página de redirección que se publica en `gh-pages` |
 | `tailwind.css` | **Generado**: `npm install && npm run build:css` después de cambiar clases. El CI falla si queda desactualizado |
 | `favicon.svg`, `og-image.png`, `robots.txt`, `sitemap.xml` | SEO. Deben estar en `ALLOWED_STATIC_PATHS` (server.py) y en `PROJECT_FILES` (deploy) |
@@ -76,8 +81,14 @@ Todas las vulnerabilidades se explotaron primero con pruebas reales y después s
 
 ## Producto / UX / SEO (hecho)
 
-- El ejemplo de cotización ya **no trae datos personales del dueño**. Cada usuario escribe los suyos y se guardan solo en su navegador (`cotizapro_sender_profile_v1`).
-- Responsive verificado de 360 a 1440 px sin desborde. En celular el header mide 111 px.
+- **Arranque en blanco:** la página no trae cotización de ejemplo (sin cliente, título ni conceptos). Los campos muestran ejemplos en gris (`placeholder`) y la hoja muestra textos guía en gris itálica (`DOC_PLACEHOLDERS` y la clase `.doc-placeholder`). Editar un texto guía directo en la hoja no lo copia al formulario. "+ Nueva en Blanco" deja la página igual que al entrar.
+- **Antes de descargar el PDF** se exige: tu nombre o empresa, el nombre del cliente, el título y al menos un concepto con precio. Si falta algo, se avisa qué y se lleva al usuario al campo.
+- **Datos del emisor y logo** (gratis y PRO): cada usuario escribe los suyos y se guardan solo en su navegador (`cotizapro_sender_profile_v1`: `name`, `contact`, `logo`). El logo acepta PNG/JPG/WEBP de hasta 2 MB (SVG no, porque puede llevar scripts), se redimensiona a un máximo de 480×200 y se muestra arriba de la hoja (`#doc-logo`). Al cargar solo se aceptan data URLs `image/png|webp`, nunca URLs externas.
+- **Guía rápida (burbujas):** 9 pasos (`TOUR_STEPS`) que resaltan IA, plantillas, datos y logo, pasos, vista previa, diseños, WhatsApp, descarga e historial.
+  - Aparece sola en la primera visita (`cotizapro_tour_done_v1`), salvo al volver de Stripe.
+  - Se repite con el botón "?" del header. Se controla con Esc y con las flechas.
+  - Se adapta a celular y escritorio: baja hasta cada elemento y acomoda la burbuja dentro de la pantalla.
+- Responsive verificado de 360 a 1440 px sin desborde. Header: 67–74 px en escritorio; en celular, 2 renglones (111 px). El eslogan, el contador de cotizaciones gratis y "Modo Carbón" solo se ven desde 1400 px.
 - Sección de beneficios, precios y preguntas frecuentes debajo del cotizador.
 - SEO: title, description y H1 con palabras clave ("cotizador online gratis", "formato de cotización en PDF"), `es-MX`, canonical, Open Graph y Twitter con `og-image.png`, JSON-LD (WebApplication + FAQPage), `robots.txt` y `sitemap.xml`.
 - **Moneda por defecto: MXN.** Las plantillas y el generador local tienen precios base en USD y se convierten con `localizeBasePrice` (tipo de cambio aproximado y redondeo).
@@ -94,6 +105,16 @@ Todas las vulnerabilidades se explotaron primero con pruebas reales y después s
 - **Correr en local:** `python3 server.py` y abrir http://localhost:8080. El panel de propietario está en el pie de página ("Acceso Propietario").
 - **Renovación:** el plan gratis de PythonAnywhere exige entrar a la pestaña *Web* cada 3 meses y pulsar "Run until 3 months from today".
 - **Bloqueo de IP:** el 2026-10-28 PythonAnywhere baneó la IP de la casa del dueño por escaneo de rutas. Si `www.pythonanywhere.com` no responde desde su red, despliega desde el hotspot del celular (con datos móviles) o espera unas horas.
+
+## Historial de cambios (2026-10-28)
+
+1. Auditoría de seguridad en 10 fases (ver arriba) y suite de regresión.
+2. Despliegue gratis en PythonAnywhere (`wsgi.py` y `deploy_pythonanywhere.py`); después, cambio a `cotizapro.pythonanywhere.com` con redirección 301 desde la URL vieja.
+3. Stripe: links nuevos que regresan a la app con `session_id`; el servidor verifica el pago y solo aceptan pagos de esos links.
+4. Privacidad (sin datos del dueño), responsive, sección de precios y preguntas frecuentes, SEO técnico y Search Console.
+5. IA con confirmación visible, firma (dibujar, subir o escribir), 6 diseños (4 PRO), menos ruido visual y MXN por defecto.
+6. Gemini real (`gemini-3.5-flash-lite` con respaldo entre modelos).
+7. Arranque en blanco, logo para todos los planes, guía con burbujas y pruebas de navegador en `tests/e2e/`.
 
 ## Pendientes / ideas
 

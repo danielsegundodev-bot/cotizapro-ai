@@ -2,9 +2,12 @@
   "name": "cotizapro-ai",
   "private": true,
   "scripts": {
-    "build:css": "tailwindcss -c tailwind.config.js -i tailwind.input.css -o tailwind.css --minify"
+    "build:css": "tailwindcss -c tailwind.config.js -i tailwind.input.css -o tailwind.css --minify",
+    "test": "python3 -m unittest discover -s tests -v",
+    "test:e2e": "node tests/e2e/smoke.js http://127.0.0.1:8765 \"$OWNER\" && node tests/e2e/features.js http://127.0.0.1:8765 /tmp && node tests/e2e/onboarding.js http://127.0.0.1:8765 /tmp"
   },
   "devDependencies": {
+    "puppeteer-core": "23.11.1",
     "tailwindcss": "3.4.17"
   }
 }
